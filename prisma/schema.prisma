@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Job {
+  id           String    @id @default(uuid())
+  userId       String
+
+  // Job Data
+  status       String    @default("pending") // pending, processing, completed, failed
+  prompt       String
+  promptType   String    // "preset" or "custom"
+  presetId     String?
+
+  // Product Information
+  productName     String?
+  productCategory String?
+  productSku      String?
+
+  // Images
+  inputImages  String[]
+  outputData   Json?     // [{image: base64, driveLink: url, downloadUrl: url}]
+
+  // Contact
+  phone        String?
+  notifyByEmail Boolean  @default(true)
+
+  // Metadata
+  createdAt      DateTime  @default(now())
+  startedAt      DateTime?
+  completedAt    DateTime?
+  errorMessage   String?
+
+  // Notification
+  notificationSent Boolean @default(false)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model PromptPreset {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  prompt      String
+  category    String  // "background", "enhancement", "focus"
+  icon        String  // lucide icon name
+  order       Int
+  isActive    Boolean @default(true)
+
+  @@index([category])
+  @@index([order])
+}
+
+model CustomPrompt {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String
+  prompt      String
+  category    String   // "background", "enhancement", "focus", "other"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([category])
+}

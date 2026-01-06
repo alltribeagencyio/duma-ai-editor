@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nano-banana-image-editor
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Supabase
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+
+      # Database
+      - DATABASE_URL=${DATABASE_URL}
+
+      # n8n Webhook
+      - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL}
+
+      # App
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+
+      # System
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/presets', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

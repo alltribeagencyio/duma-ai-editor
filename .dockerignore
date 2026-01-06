@@ -1,0 +1,57 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Next.js
+.next/
+out/
+build/
+
+# Environment files
+.env
+.env*.local
+.env.production
+
+# Git
+.git
+.gitignore
+
+# Development files
+*.md
+!README.md
+.vscode
+.idea
+
+# Testing
+coverage
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Misc
+.DS_Store
+*.pem
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma
+prisma/migrations
+
+# Claude settings
+.claude/
+
+# Deployment guides (not needed in container)
+DEPLOYMENT.md
+DEPLOY-QUICK-START.md
+DEPLOY-ELESTIO.md
+
+# Setup scripts (not needed in container)
+setup-database.js
+test-credentials.js
+database-schema.sql
+vercel.json
