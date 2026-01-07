@@ -252,12 +252,12 @@ export function OnboardingFlow() {
             <div>
               <h2 className="text-3xl font-bold mb-2">Welcome to Duma AI!</h2>
               <p className="text-gray-600 text-lg">
-                Let's set up your account and create your personalized brand style.
+                Let&apos;s set up your account and create your personalized brand style.
                 This will only take a few minutes.
               </p>
             </div>
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">What you'll get:</h3>
+              <h3 className="font-semibold mb-2">What you&apos;ll get:</h3>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Personalized brand prompts for consistent image style</li>
                 <li>• Optimized settings based on your industry</li>
@@ -428,7 +428,7 @@ export function OnboardingFlow() {
             <div className="text-center mb-8">
               <Target className="w-12 h-12 mx-auto text-green-600 mb-3" />
               <h2 className="text-2xl font-bold mb-2">Goals & Usage</h2>
-              <p className="text-gray-600">Help us understand how you'll use Duma AI</p>
+              <p className="text-gray-600">Help us understand how you&apos;ll use Duma AI</p>
             </div>
 
             <div className="space-y-6">
@@ -479,7 +479,7 @@ export function OnboardingFlow() {
             <div className="text-center mb-8">
               <Zap className="w-12 h-12 mx-auto text-yellow-600 mb-3" />
               <h2 className="text-2xl font-bold mb-2">Stay connected</h2>
-              <p className="text-gray-600">Choose how you'd like to receive updates</p>
+              <p className="text-gray-600">Choose how you&apos;d like to receive updates</p>
             </div>
 
             <div className="space-y-6">
