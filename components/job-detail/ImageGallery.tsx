@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Download, ZoomIn, Loader2 } from 'lucide-react'
+import { Download, ZoomIn, Loader2, Edit3 } from 'lucide-react'
 
 const ImageLightbox = dynamic(
   () => import('./ImageLightbox').then(mod => ({ default: mod.ImageLightbox })),
@@ -13,9 +13,12 @@ interface ImageGalleryProps {
   imageUrls: string[]
   totalImages?: number
   onSelectionChange?: (selectedUrls: string[]) => void
+  jobId?: string
+  jobStatus?: string
+  onReEdit?: (imageUrl: string) => void
 }
 
-export function ImageGallery({ imageUrls, totalImages, onSelectionChange }: ImageGalleryProps) {
+export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId, jobStatus, onReEdit }: ImageGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
@@ -103,15 +106,16 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange }: Imag
             </div>
 
             {/* Overlay on hover */}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-4">
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   openLightbox(index)
                 }}
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                title="View full size"
               >
-                <ZoomIn className="h-6 w-6 text-white" />
+                <ZoomIn className="h-5 w-5 text-white" />
               </button>
               <button
                 onClick={(e) => {
@@ -119,9 +123,23 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange }: Imag
                   downloadImage(url, index)
                 }}
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                title="Download"
               >
-                <Download className="h-6 w-6 text-white" />
+                <Download className="h-5 w-5 text-white" />
               </button>
+              {/* Re-edit button - only show for completed jobs */}
+              {jobStatus === 'completed' && onReEdit && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onReEdit(url)
+                  }}
+                  className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                  title="Re-edit this image"
+                >
+                  <Edit3 className="h-5 w-5 text-white" />
+                </button>
+              )}
             </div>
           </div>
         ))}

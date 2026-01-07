@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ImageGallery } from './ImageGallery'
+import { ReEditModal } from '@/components/re-edit/ReEditModal'
 import { RefreshCw, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
@@ -18,6 +19,8 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
   const [showOriginalImages, setShowOriginalImages] = useState(true)
   const [showPrompt, setShowPrompt] = useState(true)
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined)
+  const [reEditModalOpen, setReEditModalOpen] = useState(false)
+  const [selectedImageForReEdit, setSelectedImageForReEdit] = useState<string>('')
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -205,6 +208,12 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
               <ImageGallery
                 imageUrls={outputImages}
                 onSelectionChange={setSelectedUrls}
+                jobId={job.id}
+                jobStatus={job.status}
+                onReEdit={(imageUrl) => {
+                  setSelectedImageForReEdit(imageUrl)
+                  setReEditModalOpen(true)
+                }}
               />
             </div>
 
@@ -243,6 +252,21 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
           </div>
         )}
       </div>
+
+      {/* Re-edit Modal */}
+      <ReEditModal
+        isOpen={reEditModalOpen}
+        onClose={() => {
+          setReEditModalOpen(false)
+          setSelectedImageForReEdit('')
+        }}
+        imageUrl={selectedImageForReEdit}
+        jobId={job.id}
+        onSuccess={() => {
+          // Optionally refetch job data or navigate to new job
+          window.location.reload() // Simple approach for now
+        }}
+      />
     </AppLayout>
   )
 }
