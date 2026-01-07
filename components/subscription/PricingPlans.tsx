@@ -119,7 +119,7 @@ export function PricingPlans({ currentPlan, onSelectPlan }: PricingPlansProps) {
               <Checkbox
                 id="setup-fee"
                 checked={includeSetupFee}
-                onCheckedChange={setIncludeSetupFee}
+                onCheckedChange={(checked) => setIncludeSetupFee(checked === true)}
               />
               <label htmlFor="setup-fee" className="text-sm font-medium cursor-pointer">
                 Include one-time setup fee for brand prompt creation and optimization

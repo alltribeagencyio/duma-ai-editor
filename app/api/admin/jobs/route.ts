@@ -41,7 +41,7 @@ export async function GET() {
     })
 
     // Get user emails
-    const userIds = [...new Set(jobs.map(j => j.userId))]
+    const userIds = Array.from(new Set(jobs.map(j => j.userId)))
     const users = await prisma.user.findMany({
       where: { id: { in: userIds } },
       select: { id: true, email: true }
