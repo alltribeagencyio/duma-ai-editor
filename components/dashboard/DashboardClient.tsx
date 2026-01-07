@@ -17,10 +17,17 @@ interface Job {
   createdAt: string
 }
 
+interface UserProfile {
+  monthlyCredits: number
+  creditsUsed: number
+  practiceCredits: number
+}
+
 export function DashboardClient() {
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined)
   const [jobs, setJobs] = useState<Job[]>([])
   const [presetPrompts, setPresetPrompts] = useState<any[]>([])
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
@@ -46,9 +53,10 @@ export function DashboardClient() {
 
   const fetchData = async () => {
     try {
-      const [jobsRes, presetsRes] = await Promise.all([
+      const [jobsRes, presetsRes, profileRes] = await Promise.all([
         fetch('/api/jobs'),
         fetch('/api/prompts/presets'),
+        fetch('/api/user/profile'),
       ])
 
       if (jobsRes.ok) {
@@ -59,6 +67,15 @@ export function DashboardClient() {
       if (presetsRes.ok) {
         const { prompts } = await presetsRes.json()
         setPresetPrompts(prompts)
+      }
+
+      if (profileRes.ok) {
+        const { user } = await profileRes.json()
+        setUserProfile({
+          monthlyCredits: user.monthlyCredits || 0,
+          creditsUsed: user.creditsUsed || 0,
+          practiceCredits: user.practiceCredits || 0,
+        })
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -140,7 +157,8 @@ export function DashboardClient() {
         {/* Metrics */}
         <MetricCards
           totalEnhanced={totalEnhanced}
-          timeSaved={timeSaved}
+          creditsRemaining={userProfile ? (userProfile.monthlyCredits + userProfile.practiceCredits - userProfile.creditsUsed) : 0}
+          creditsUsed={userProfile?.creditsUsed || 0}
           storageUsed={storageUsed}
           engineStatus={engineStatus}
         />

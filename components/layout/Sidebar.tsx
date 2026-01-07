@@ -94,10 +94,16 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
         {/* Header */}
         <div className={cn('p-6 flex items-center justify-between', collapsed && 'px-4')}>
           {!collapsed && (
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Duma AI</h1>
-              <p className="text-sm text-gray-600">Image Editor</p>
+            <div className="flex items-center gap-3">
+              <div className="text-4xl">🦁</div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">DUMA</h1>
+                <p className="text-sm text-gray-600">AI Image Editor</p>
+              </div>
             </div>
+          )}
+          {collapsed && (
+            <div className="text-3xl">🦁</div>
           )}
           {/* Collapse button - desktop only */}
           <button

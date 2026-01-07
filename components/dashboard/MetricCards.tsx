@@ -1,18 +1,20 @@
 'use client'
 
 import { memo } from 'react'
-import { Check, Clock, HardDrive, Zap } from 'lucide-react'
+import { Check, Coins, HardDrive, Zap } from 'lucide-react'
 
 interface MetricCardsProps {
   totalEnhanced: number
-  timeSaved: number // in minutes
+  creditsRemaining: number
+  creditsUsed: number
   storageUsed: number // in MB
   engineStatus: 'ready' | 'busy' | 'offline'
 }
 
 export const MetricCards = memo(function MetricCards({
   totalEnhanced,
-  timeSaved,
+  creditsRemaining,
+  creditsUsed,
   storageUsed,
   engineStatus,
 }: MetricCardsProps) {
@@ -23,13 +25,6 @@ export const MetricCards = memo(function MetricCards({
   }
 
   const status = statusConfig[engineStatus]
-
-  const formatTime = (minutes: number) => {
-    if (minutes < 60) return `${minutes}m`
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
-    return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`
-  }
 
   const metrics: Array<{
     label: string
@@ -48,10 +43,10 @@ export const MetricCards = memo(function MetricCards({
       bg: 'bg-blue-50',
     },
     {
-      label: 'Time Saved',
-      value: formatTime(timeSaved),
-      subtitle: 'Est. prep, shoot & editing',
-      icon: Clock,
+      label: 'Credits Remaining',
+      value: creditsRemaining.toLocaleString(),
+      subtitle: `${creditsUsed} credits used`,
+      icon: Coins,
       color: 'text-purple-600',
       bg: 'bg-purple-50',
     },
