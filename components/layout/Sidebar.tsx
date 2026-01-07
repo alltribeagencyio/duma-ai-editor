@@ -3,7 +3,7 @@
 import { useState, useEffect, memo, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, Plus, Clock, Settings, Menu, X, LogOut, FileText, ChevronLeft, ChevronRight, User, BarChart3, CreditCard } from 'lucide-react'
+import { Home, Plus, Clock, Settings, Menu, X, LogOut, FileText, ChevronLeft, ChevronRight, User, BarChart3, CreditCard, HelpCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -47,6 +47,7 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
     { icon: BarChart3, label: 'Analytics', href: '/analytics' },
     { icon: CreditCard, label: 'Subscription', href: '/subscription' },
     { icon: User, label: 'Profile', href: '/profile' },
+    { icon: HelpCircle, label: 'Help', href: '/help' },
   ], [])
 
   const handleLogout = useCallback(async () => {
