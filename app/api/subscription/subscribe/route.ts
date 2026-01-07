@@ -66,8 +66,8 @@ export async function POST(req: NextRequest) {
     if (!paystackCustomer) {
       const customerResult = await paystackService.createCustomer({
         email: user.email!,
-        first_name: userProfile.name?.split(' ')[0],
-        last_name: userProfile.name?.split(' ').slice(1).join(' '),
+        first_name: userProfile.fullName?.split(' ')[0],
+        last_name: userProfile.fullName?.split(' ').slice(1).join(' '),
         phone: userProfile.phone || undefined
       })
 
