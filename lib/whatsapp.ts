@@ -147,12 +147,12 @@ export async function shouldSendWhatsAppNotification(userId: string): Promise<{ 
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
-        whatsappNotifications: true,
+        notificationsWhatsApp: true,
         whatsappNumber: true
       }
     })
 
-    if (!user || !user.whatsappNotifications || !user.whatsappNumber) {
+    if (!user || !user.notificationsWhatsApp || !user.whatsappNumber) {
       return { enabled: false }
     }
 

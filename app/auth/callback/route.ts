@@ -36,8 +36,8 @@ export async function GET(req: NextRequest) {
               practiceCredits: 0,
               creditsUsed: 0,
               hasCompletedOnboarding: false,
-              emailNotifications: true,
-              whatsappNotifications: false,
+              notificationsEmail: true,
+              notificationsWhatsApp: false,
               setupFeesPaid: false
             }
           })

@@ -43,8 +43,8 @@ interface OnboardingData {
 
   // Communication
   whatsappNumber?: string
-  emailNotifications: boolean
-  whatsappNotifications: boolean
+  notificationsEmail: boolean
+  notificationsWhatsApp: boolean
 }
 
 const industries = [
@@ -88,8 +88,8 @@ export function OnboardingFlow() {
     primaryGoals: [],
     expectedUsage: '',
     whatsappNumber: '',
-    emailNotifications: true,
-    whatsappNotifications: false
+    notificationsEmail: true,
+    notificationsWhatsApp: false
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -174,8 +174,8 @@ export function OnboardingFlow() {
           industry: data.industry,
           businessType: data.businessType,
           whatsappNumber: data.whatsappNumber,
-          emailNotifications: data.emailNotifications,
-          whatsappNotifications: data.whatsappNotifications,
+          notificationsEmail: data.notificationsEmail,
+          notificationsWhatsApp: data.notificationsWhatsApp,
           hasCompletedOnboarding: true
         })
       })
@@ -486,8 +486,8 @@ export function OnboardingFlow() {
               <div className="space-y-4">
                 <label className="flex items-center space-x-3 p-4 border rounded-lg">
                   <Checkbox
-                    checked={data.emailNotifications}
-                    onCheckedChange={(checked) => updateData({ emailNotifications: !!checked })}
+                    checked={data.notificationsEmail}
+                    onCheckedChange={(checked) => updateData({ notificationsEmail: !!checked })}
                   />
                   <div>
                     <div className="font-medium">Email Notifications</div>
@@ -497,8 +497,8 @@ export function OnboardingFlow() {
 
                 <label className="flex items-center space-x-3 p-4 border rounded-lg">
                   <Checkbox
-                    checked={data.whatsappNotifications}
-                    onCheckedChange={(checked) => updateData({ whatsappNotifications: !!checked })}
+                    checked={data.notificationsWhatsApp}
+                    onCheckedChange={(checked) => updateData({ notificationsWhatsApp: !!checked })}
                   />
                   <div>
                     <div className="font-medium">WhatsApp Notifications</div>
@@ -507,7 +507,7 @@ export function OnboardingFlow() {
                 </label>
               </div>
 
-              {data.whatsappNotifications && (
+              {data.notificationsWhatsApp && (
                 <div>
                   <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
                   <Input
