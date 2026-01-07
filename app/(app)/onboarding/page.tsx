@@ -1,10 +1,10 @@
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow'
-import { createServerComponentClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 
 export default async function OnboardingPage() {
-  const supabase = createServerComponentClient()
+  const supabase = createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

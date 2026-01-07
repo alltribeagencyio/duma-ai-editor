@@ -1,10 +1,10 @@
 import { AppLayout } from '@/components/layout/AppLayout'
 import { CreditAnalytics } from '@/components/analytics/CreditAnalytics'
-import { createServerComponentClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export default async function AnalyticsPage() {
-  const supabase = createServerComponentClient()
+  const supabase = createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
