@@ -44,8 +44,8 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
     { icon: Plus, label: 'New Edit', href: '/new' },
     { icon: FileText, label: 'Prompts', href: '/prompts' },
     { icon: Clock, label: 'History', href: '/history' },
-    { icon: BarChart3, label: 'Analytics', href: '/analytics' },
-    { icon: CreditCard, label: 'Subscription', href: '/subscription' },
+    // { icon: BarChart3, label: 'Analytics', href: '/analytics' }, // Hidden for MVP
+    // { icon: CreditCard, label: 'Subscription', href: '/subscription' }, // Hidden for MVP - manual billing
     { icon: User, label: 'Profile', href: '/profile' },
     { icon: HelpCircle, label: 'Help', href: '/help' },
   ], [])
