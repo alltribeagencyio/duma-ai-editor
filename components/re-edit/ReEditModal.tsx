@@ -155,7 +155,7 @@ export function ReEditModal({ isOpen, onClose, imageUrl, jobId, onSuccess }: ReE
               />
             </div>
             <p className="text-sm text-gray-600">
-              This image will be re-edited with your selected prompt. You'll be charged 1 credit for this re-edit.
+              This image will be re-edited with your selected prompt. You&apos;ll be charged 1 credit for this re-edit.
             </p>
           </div>
 

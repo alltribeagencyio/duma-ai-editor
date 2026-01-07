@@ -88,7 +88,7 @@ export function CreditUsageCard({ profile }: CreditUsageCardProps) {
               Credits Running Low
             </div>
             <div className="text-sm text-orange-600 mb-2">
-              You've used {usagePercentage.toFixed(1)}% of your credits this month
+              You&apos;ve used {usagePercentage.toFixed(1)}% of your credits this month
             </div>
             {profile.subscriptionTier === 'free' && (
               <Button size="sm" className="bg-orange-600 hover:bg-orange-700">

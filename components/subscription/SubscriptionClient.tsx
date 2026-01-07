@@ -174,7 +174,7 @@ export function SubscriptionClient() {
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">What's included in the setup fee?</h4>
+              <h4 className="font-medium mb-2">What&apos;s included in the setup fee?</h4>
               <p className="text-sm text-gray-600">
                 The setup fee includes personalized brand prompt creation based on your industry
                 and style preferences, plus 100 practice credits to test your brand prompts.

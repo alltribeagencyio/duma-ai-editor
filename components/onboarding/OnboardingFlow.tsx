@@ -530,14 +530,14 @@ export function OnboardingFlow() {
               <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold mb-2 text-green-600">You're all set!</h2>
+              <h2 className="text-3xl font-bold mb-2 text-green-600">You&apos;re all set!</h2>
               <p className="text-gray-600 text-lg">
                 Your account has been configured and your brand style has been created.
-                You're ready to start creating amazing images with Duma AI!
+                You&apos;re ready to start creating amazing images with Duma AI!
               </p>
             </div>
             <div className="bg-green-50 p-6 rounded-lg">
-              <h3 className="font-semibold mb-3">What's next?</h3>
+              <h3 className="font-semibold mb-3">What&apos;s next?</h3>
               <ul className="text-sm text-gray-600 space-y-2 text-left">
                 <li>• Visit your dashboard to start creating images</li>
                 <li>• Check your brand prompts in the Prompts section</li>
