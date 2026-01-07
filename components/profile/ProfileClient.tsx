@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 interface UserProfile {
   id: string
   email: string
-  name?: string
+  fullName?: string
   phone?: string
   brandName?: string
   brandIndustry?: string

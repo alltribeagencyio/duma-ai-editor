@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
         data: {
           id: user.id,
           email: user.email!,
-          name: user.user_metadata?.full_name || user.user_metadata?.name,
+          fullName: user.user_metadata?.full_name || user.user_metadata?.name,
           lastLoginAt: new Date(),
         },
       })

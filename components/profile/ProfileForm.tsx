@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator'
 interface UserProfile {
   id: string
   email: string
-  name?: string
+  fullName?: string
   phone?: string
   brandName?: string
   brandIndustry?: string
@@ -38,7 +38,7 @@ interface ProfileFormProps {
 
 export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
   const [formData, setFormData] = useState({
-    name: profile.name || '',
+    fullName: profile.fullName || '',
     phone: profile.phone || '',
     brandName: profile.brandName || '',
     brandIndustry: profile.brandIndustry || '',
@@ -101,8 +101,8 @@ export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
                   Full Name
                 </label>
                 <Input
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  value={formData.fullName}
+                  onChange={(e) => handleInputChange('fullName', e.target.value)}
                   placeholder="Your full name"
                 />
               </div>
