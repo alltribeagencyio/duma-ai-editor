@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({
@@ -32,35 +33,71 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
+  // Protected routes that require authentication
+  const protectedRoutes = ['/dashboard', '/new', '/jobs', '/history', '/profile', '/analytics', '/subscription', '/prompts']
+  const isProtectedRoute = protectedRoutes.some(route => req.nextUrl.pathname.startsWith(route))
+
   // If no session and trying to access protected routes, redirect to login
-  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
+  if (!session && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
-  if (!session && req.nextUrl.pathname.startsWith('/new')) {
-    return NextResponse.redirect(new URL('/login', req.url))
-  }
+  // If session exists, check onboarding status for certain routes
+  if (session) {
+    // If trying to access auth pages, redirect to dashboard
+    if (req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/signup')) {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
 
-  if (!session && req.nextUrl.pathname.startsWith('/jobs')) {
-    return NextResponse.redirect(new URL('/login', req.url))
-  }
+    // Check if user needs to complete onboarding (except for onboarding page itself)
+    if (!req.nextUrl.pathname.startsWith('/onboarding') && isProtectedRoute) {
+      try {
+        const userProfile = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { hasCompletedOnboarding: true }
+        })
 
-  if (!session && req.nextUrl.pathname.startsWith('/history')) {
-    return NextResponse.redirect(new URL('/login', req.url))
-  }
+        if (!userProfile?.hasCompletedOnboarding) {
+          return NextResponse.redirect(new URL('/onboarding', req.url))
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error)
+        // Continue without redirect if database check fails
+      }
+    }
 
-  // If session exists and trying to access auth pages, redirect to dashboard
-  if (session && req.nextUrl.pathname.startsWith('/login')) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
+    // If user has completed onboarding and tries to access onboarding page, redirect to dashboard
+    if (req.nextUrl.pathname.startsWith('/onboarding')) {
+      try {
+        const userProfile = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { hasCompletedOnboarding: true }
+        })
 
-  if (session && req.nextUrl.pathname.startsWith('/signup')) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
+        if (userProfile?.hasCompletedOnboarding) {
+          return NextResponse.redirect(new URL('/dashboard', req.url))
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error)
+      }
+    }
   }
 
   return res
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/new/:path*', '/jobs/:path*', '/history/:path*', '/login', '/signup'],
+  matcher: [
+    '/dashboard/:path*',
+    '/new/:path*',
+    '/jobs/:path*',
+    '/history/:path*',
+    '/profile/:path*',
+    '/analytics/:path*',
+    '/subscription/:path*',
+    '/prompts/:path*',
+    '/onboarding/:path*',
+    '/login',
+    '/signup'
+  ],
 }
