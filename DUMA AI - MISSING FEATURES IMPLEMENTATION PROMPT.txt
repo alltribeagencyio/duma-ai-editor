@@ -1,0 +1,347 @@
+# DUMA AI - MISSING FEATURES IMPLEMENTATION PROMPT
+
+## CRITICAL INSTRUCTIONS FOR CLAUDE CODE:
+
+### BEFORE STARTING ANY IMPLEMENTATION:
+1. **EVALUATE CURRENT APP STATE:**
+   - Thoroughly examine the existing codebase structure
+   - Identify all currently implemented features and their implementation patterns
+   - Map out the existing database schema in Supabase
+   - Review current authentication flow and user management
+   - Understand the webhook → n8n → Supabase architecture completely
+   - Identify existing UI patterns, component libraries, and styling approaches
+
+2. **ASSESS FEATURE DEPENDENCIES:**
+   - Review the feature list below and identify dependencies between features
+   - Determine if the suggested execution order makes sense given the current app state
+   - Propose alternative execution order if needed based on your assessment
+   - Identify any prerequisite setup or configuration needed before implementation
+
+3. **PLAN YOUR APPROACH:**
+   - Create a detailed implementation plan for each feature before coding
+   - Identify potential conflicts with existing functionality
+   - Propose database schema changes needed (if any)
+   - Plan UI/UX integration points with existing interface
+   - Document any assumptions you're making
+
+### DURING IMPLEMENTATION:
+- DO NOT add or recreate features that already exist in the application
+- INTEGRATE new features seamlessly with existing codebase without breaking functionality
+- Ensure all integrations work correctly with current webhook → n8n workflow → Supabase DB & bucket architecture
+- Test thoroughly before marking any feature as complete
+- Maintain code consistency with existing patterns and conventions
+- Follow existing authentication, routing, and state management patterns
+- If you encounter conflicts or issues, STOP and explain the problem before proceeding
+- Ask for clarification if existing functionality is unclear
+
+### EXECUTION ORDER:
+The features are listed below in the recommended order of implementation to minimize conflicts and build dependencies progressively. However, YOU MUST RE-EVALUATE this order based on the current app state and propose changes if needed.
+
+**Phase 1: Foundation & Infrastructure (Low Risk)**
+- Feature #4: Google OAuth Authentication
+- Feature #11: Onboarding Flow
+- Feature #10: User Profile & Settings
+- Feature #12: Security & Data Protection
+
+**Phase 2: Core Backend Systems (Medium Risk)**
+- Feature #3: Admin Interface (implement in stages)
+- Feature #5: Payment & Subscription Management System
+
+**Phase 3: User-Facing Features (Medium-High Risk)**
+- Feature #2: Brand Prompts via Onboarding
+- Feature #6: Credit Usage Dashboard & Analytics
+- Feature #8: Image Gallery Enhancement (History Page)
+- Feature #1: Image Re-editing/Upscaling System
+
+**Phase 4: Notifications & Polish (Low-Medium Risk)**
+- Feature #7: WhatsApp Notification & Delivery
+- Feature #14: Mobile Responsiveness
+- Feature #15: Support & Help System
+
+**Phase 5: Advanced Features (High Risk)**
+- Feature #9: Bulk Image Processing - Enterprise Enhancement
+- Feature #13: Error Handling & User Feedback (integrate throughout)
+
+## PROJECT CONTEXT:
+Duma AI is a product photography web application that transforms phone photos into studio-quality images using AI. The app uses:
+- Webhooks to trigger n8n workflows for image editing
+- Supabase for database and storage bucket
+- Paystack for payment processing
+- Current max upload: 10 images per batch
+- Existing features: basic image upload/editing, history page with product-based organization, search by SKU/name/date
+
+---
+
+## FEATURE #1: IMAGE RE-EDITING/UPSCALING SYSTEM
+
+### Description:
+After users receive their initial edited images, they should be able to select any image they like and re-edit it with different prompts for iterative refinement.
+
+### Requirements:
+1. **Image Selection Interface:**
+   - Add "Re-edit" or "Upscale" button/action on each processed image
+   - Allow users to select an image from their results or history page
+   - Display the selected image clearly before re-editing
+
+2. **Prompt Selection for Re-editing:**
+   - Present three prompt options when re-editing:
+     * Custom prompts (user-written text input)
+     * Brand prompts (saved brand-specific prompts from onboarding)
+     * App preset prompts (default system presets)
+   - UI should clearly distinguish between the three prompt types
+   - Allow users to preview/modify prompts before submission
+
+3. **Re-editing Process:**
+   - Trigger the same webhook → n8n workflow for processing
+   - Track that this is a re-edit (not a new upload) in the database
+   - Deduct 1 credit per re-edit from user's credit balance
+   - Show processing status/loading indicator
+   - Notify user when re-edit is complete (WhatsApp if enabled)
+
+4. **Version Tracking:**
+   - Link re-edited images to their original source image
+   - Store relationship: Original → Re-edit v1 → Re-edit v2, etc.
+   - Save metadata: which prompt was used, timestamp, credits consumed
+
+5. **Integration Points:**
+   - Must work with existing webhook/n8n/Supabase architecture
+   - Add necessary database fields to track image versions and relationships
+   - Ensure credit system properly deducts for re-edits
+   - Update history page to display re-edited versions (see Feature #8)
+
+---
+
+## FEATURE #2: BRAND PROMPTS VIA ONBOARDING
+
+### Description:
+During user onboarding, create custom brand prompts based on their brand requirements to ensure consistent, on-brand results across all their product images.
+
+### Requirements:
+1. **Onboarding Flow Integration:**
+   - Add brand prompt creation step in onboarding wizard
+   - This step should only appear if user chooses to pay the setup fee
+   - Create an intuitive interface for brand prompt configuration
+
+2. **Brand Prompt Creation Interface:**
+   - **Brand Information Gathering:**
+     * Brand name
+     * Industry/product category
+     * Brand aesthetic/style preferences (dropdown + text input)
+     * Color preferences
+     * Background preferences (solid color, gradient, studio, outdoor, etc.)
+     * Lighting preferences (bright, moody, natural, etc.)
+     * Any specific requirements or restrictions
+   
+   - **Prompt Templates:**
+     * Provide industry-specific templates to help users
+     * Allow users to customize templates
+     * Preview sample results if possible
+
+3. **Prompt Storage:**
+   - Store brand prompts in centralized Supabase prompt database
+   - Link brand prompts to user account
+   - Allow multiple brand prompts per user (limits: 10 for Starter, 30 for Pro, 100+ for Enterprise)
+   - Store metadata: creation date, last used, usage count
+
+4. **Practice Credits:**
+   - Upon setup fee payment, allocate practice credits:
+     * Starter: 100 free credits
+     * Pro: 200 free credits
+   - Track practice credits separately from monthly credits
+   - Allow users to use practice credits for testing brand prompts OR final production
+   - Display practice credit balance clearly in UI
+
+5. **Brand Prompt Management (in app):**
+   - Users should be able to view their brand prompts after onboarding
+   - Allow editing of existing brand prompts
+   - Allow creation of new brand prompts (within tier limits)
+   - Show which prompt was used for each image in history
+
+6. **Integration with Image Editing:**
+   - Brand prompts should appear as selectable options during image upload
+   - Brand prompts should be available during re-editing (Feature #1)
+   - Clear labeling to distinguish brand prompts from custom/preset prompts
+
+---
+
+## FEATURE #3: ADMIN INTERFACE (WORDPRESS WP-ADMIN STYLE)
+
+### Description:
+Create a comprehensive admin dashboard that allows administrators to manage the entire platform without touching code, similar to WordPress wp-admin.
+
+### Requirements:
+
+### 3.1 ADMIN AUTHENTICATION & ACCESS:
+- Separate admin login portal (e.g., /admin or /duma-admin)
+- Admin user management: create, edit, delete admin accounts
+- Role-based permissions (Super Admin, Admin, Support Staff)
+- Two-factor authentication for admin accounts
+- Audit logs: track all admin actions with timestamps
+
+### 3.2 PRESET PROMPTS MANAGEMENT:
+- **View All Preset Prompts:**
+  * List all app-wide preset prompts in a table
+  * Show prompt name, description, category, usage count, last updated
+  * Search and filter functionality
+
+- **Add New Preset Prompts:**
+  * Form to create new preset prompts
+  * Fields: name, description, prompt text, category/tags
+  * Preview functionality
+  * Set as active/inactive
+
+- **Edit Preset Prompts:**
+  * Modify existing prompt text, name, description
+  * Version history of changes
+  * Preview changes before saving
+
+- **Delete Preset Prompts:**
+  * Soft delete (mark as inactive) vs hard delete
+  * Warning if prompt is actively being used
+
+### 3.3 BRAND PROMPTS MANAGEMENT (PER CUSTOMER):
+- **Customer Account Search:**
+  * Search for customer by name, email, account ID
+  * View customer details and current package
+
+- **Create Brand Prompts for Customers:**
+  * Select customer account
+  * Create custom brand prompts on behalf of customer
+  * Same interface as user-facing brand prompt creation
+  * Assign to customer account
+
+- **Edit Customer Brand Prompts:**
+  * View all brand prompts for a specific customer
+  * Edit, activate, deactivate customer brand prompts
+  * Add notes/comments for internal tracking
+
+- **Bulk Operations:**
+  * Apply template brand prompts to multiple customers
+  * Export customer prompts for backup
+
+### 3.4 USER MANAGEMENT:
+- **User Directory:**
+  * Searchable list of all users
+  * Filter by: package tier, subscription status, signup date, credit balance
+  * Sort by various metrics
+
+- **User Details View:**
+  * Personal information (name, email, phone, signup date)
+  * Current subscription tier and status
+  * Credit balance (practice + monthly)
+  * Credit usage history and patterns
+  * Payment history
+  * Brand prompts (if applicable)
+  * Processing history and statistics
+
+- **User Account Actions:**
+  * Manually adjust credit balance (add/remove credits with reason)
+  * Change subscription tier
+  * Suspend/unsuspend account
+  * Reset password
+  * Send notification to user
+  * View and manage user's images
+
+- **Bulk User Operations:**
+  * Export user data (CSV)
+  * Bulk credit adjustments
+  * Bulk notifications
+
+### 3.5 WEBHOOKS & INTEGRATION MANAGEMENT:
+- **Webhook Configuration:**
+  * Add, edit, delete webhook endpoints
+  * Configure webhook URL for n8n workflows
+  * Set authentication tokens/API keys
+  * Enable/disable webhooks
+  * Test webhook functionality (send test payload)
+
+- **Webhook Monitoring:**
+  * View webhook call logs (recent 1000+ calls)
+  * Success/failure rates (dashboard with charts)
+  * Response times and performance metrics
+  * Error logs with full request/response details
+  * Retry failed webhooks manually
+
+- **n8n Integration Settings:**
+  * Configure n8n workflow endpoints
+  * Set authentication credentials
+  * Test n8n connectivity
+  * View n8n workflow status
+
+### 3.6 DATABASE & STORAGE MANAGEMENT:
+- **Supabase Connection Settings:**
+  * Configure database connection strings
+  * Manage Supabase API keys
+  * Test database connectivity
+  * View connection pool status
+
+- **Storage Bucket Monitoring:**
+  * View total storage usage (GB/TB)
+  * Storage usage by user
+  * Image count and file size statistics
+  * Storage growth trends (charts)
+  * Cleanup tools for orphaned files
+
+- **Database Health:**
+  * Monitor database performance metrics
+  * View slow queries
+  * Database backup status
+  * Connection status and uptime
+
+### 3.7 CREDITS & BILLING MANAGEMENT:
+- **Credit Allocation:**
+  * Manually add credits to any user account
+  * Remove credits with reason/note
+  * Grant bonus credits (marketing/support)
+  * Bulk credit operations
+
+- **Plan Management:**
+  * View all subscription plans and pricing
+  * Edit plan features and pricing
+  * Create promotional pricing
+  * Manage setup fees
+  * Assign users to different tiers manually
+
+- **Usage Analytics:**
+  * Credit consumption patterns per user
+  * Most active users (by credit usage)
+  * Average credits per user by tier
+  * Credits per image type/prompt type
+  * Revenue per user calculations
+
+- **Billing Overrides:**
+  * Apply discounts to specific users
+  * Waive setup fees
+  * Custom pricing for Enterprise clients
+  * Refund management
+
+### 3.8 SYSTEM MONITORING:
+- **Processing Queue:**
+  * View pending image processing jobs in real-time
+  * Queue length and wait times
+  * Failed jobs with retry options
+  * Priority queue management (Enterprise first)
+  * Clear/reset queue functionality
+
+- **Error Logs:**
+  * System errors and exceptions
+  * Failed API calls (Paystack, n8n, Supabase)
+  * Failed image processing jobs
+  * Filter by: date, error type, severity
+  * Export logs for debugging
+
+- **Performance Metrics:**
+  * Average image processing time
+  * API response times
+  * System uptime/downtime
+  * Concurrent users
+  * Server resource usage (if applicable)
+  * Database query performance
+
+- **Dashboard Overview:**
+  * Key metrics at a glance
+  * Total users, active subscriptions
+  * Credits used today/this month
+  * Revenue today/this month
+  * Processing jobs completed
+  * System health status

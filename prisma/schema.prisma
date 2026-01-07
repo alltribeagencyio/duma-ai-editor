@@ -17,8 +17,14 @@ model Job {
   // Job Data
   status       String    @default("pending") // pending, processing, completed, failed
   prompt       String
-  promptType   String    // "preset" or "custom"
+  promptType   String    // "preset", "custom", "brand"
   presetId     String?
+  brandPromptId String?  // Link to brand prompt if used
+
+  // Re-editing & Versions
+  parentJobId    String?   // Link to original job for re-edits
+  isReEdit       Boolean   @default(false)
+  creditsCost    Int       @default(1)
 
   // Product Information
   productName     String?
@@ -45,6 +51,7 @@ model Job {
   @@index([userId])
   @@index([status])
   @@index([createdAt])
+  @@index([parentJobId])
 }
 
 model PromptPreset {
@@ -73,4 +80,85 @@ model CustomPrompt {
 
   @@index([userId])
   @@index([category])
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  name            String?
+  phone           String?
+  avatar          String?
+
+  // Subscription & Billing
+  subscriptionTier    String   @default("free")        // free, starter, pro, enterprise
+  subscriptionStatus  String   @default("active")      // active, canceled, past_due, trialing
+  subscriptionId      String?                          // Paystack subscription ID
+  planId              String?                          // Paystack plan ID
+
+  // Credits
+  monthlyCredits      Int      @default(0)             // Monthly allocation
+  practiceCredits     Int      @default(0)             // One-time practice credits
+  creditsUsed         Int      @default(0)             // Total credits consumed
+  creditsReset        DateTime?                        // Next reset date
+
+  // Brand & Preferences
+  brandName           String?
+  brandIndustry       String?
+  brandAesthetic      String?
+  brandColors         String[]                         // Array of color preferences
+  brandRequirements   String?                          // Custom brand requirements text
+
+  // Settings
+  notificationsEmail     Boolean @default(true)
+  notificationsWhatsApp  Boolean @default(false)
+  whatsappNumber         String?
+  language               String  @default("en")
+  timezone               String  @default("UTC")
+
+  // Setup & Onboarding
+  hasCompletedOnboarding Boolean @default(false)
+  setupFeesPaid          Boolean @default(false)
+  onboardingStep         Int     @default(0)
+
+  // Metadata
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lastLoginAt     DateTime?
+  lastActiveAt    DateTime?
+
+  @@index([email])
+  @@index([subscriptionTier])
+  @@index([subscriptionStatus])
+}
+
+model BrandPrompt {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String
+  prompt      String
+  category    String   // "background", "enhancement", "focus", "brand"
+  industry    String?  // Target industry
+  isActive    Boolean  @default(true)
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([category])
+  @@index([industry])
+}
+
+model CreditUsage {
+  id          String   @id @default(uuid())
+  userId      String
+  jobId       String?  // Link to Job if applicable
+  amount      Int      // Credits consumed
+  type        String   // "upload", "re_edit", "upscale", "bulk", "manual_adjustment"
+  description String?  // Human readable description
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
 }
