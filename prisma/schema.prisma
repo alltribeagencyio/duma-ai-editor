@@ -162,3 +162,90 @@ model CreditUsage {
   @@index([type])
   @@index([createdAt])
 }
+
+model SubscriptionPlan {
+  id              String  @id @default(uuid())
+  name            String  @unique // "free", "starter", "pro", "enterprise"
+  displayName     String  // "Starter Plan"
+  description     String  // Plan description
+  price           Int     // Price in kobo (Paystack uses kobo)
+  currency        String  @default("NGN")
+
+  // Features
+  monthlyCredits  Int     // Credits per month
+  maxBrandPrompts Int     // Brand prompts limit
+  setupFee        Int     @default(0) // One-time setup fee
+
+  // Paystack Integration
+  paystackPlanCode String? @unique // Paystack plan code
+
+  // Features flags
+  hasWhatsAppSupport   Boolean @default(false)
+  hasPrioritySupport   Boolean @default(false)
+  hasBulkProcessing    Boolean @default(false)
+  hasAdvancedAnalytics Boolean @default(false)
+  hasCustomBranding    Boolean @default(false)
+
+  isActive        Boolean @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+}
+
+model Subscription {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  planId                String
+
+  // Paystack Integration
+  paystackCustomerCode  String?  // Paystack customer code
+  paystackSubscriptionCode String? @unique // Paystack subscription code
+  paystackAuthCode      String?  // Payment authorization code
+
+  status                String   @default("active") // active, canceled, past_due, trialing, incomplete
+  currentPeriodStart    DateTime
+  currentPeriodEnd      DateTime
+  cancelAtPeriodEnd     Boolean  @default(false)
+  canceledAt            DateTime?
+
+  // Setup fees
+  setupFeePaid          Boolean  @default(false)
+  setupFeeAmount        Int?
+  setupFeePaidAt        DateTime?
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([paystackSubscriptionCode])
+}
+
+model Payment {
+  id                  String   @id @default(uuid())
+  userId              String
+  subscriptionId      String?
+
+  // Paystack Integration
+  paystackReference   String   @unique
+  paystackTransactionId String?
+
+  amount              Int      // Amount in kobo
+  currency            String   @default("NGN")
+  status              String   // success, failed, pending, abandoned
+  type                String   // subscription, setup_fee, credit_purchase, manual
+  description         String?
+
+  // Metadata
+  metadata            Json?    // Additional payment metadata
+  paidAt              DateTime?
+  createdAt           DateTime @default(now())
+
+  @@index([userId])
+  @@index([paystackReference])
+  @@index([status])
+  @@index([type])
+}
