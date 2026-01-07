@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Users, Briefcase, DollarSign, TrendingUp, Settings } from 'lucide-react'
+import { Users, Briefcase, DollarSign, TrendingUp, Settings, MessageSquare } from 'lucide-react'
 import { UserManagement } from './UserManagement'
 import { JobManagement } from './JobManagement'
 import { AdminStats } from './AdminStats'
 import { SystemSettings } from './SystemSettings'
+import { PromptManagement } from './PromptManagement'
 
 export function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -108,6 +109,10 @@ export function AdminDashboard() {
             <Briefcase className="h-4 w-4 mr-2" />
             Jobs
           </TabsTrigger>
+          <TabsTrigger value="prompts">
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Prompts
+          </TabsTrigger>
           <TabsTrigger value="analytics">
             <TrendingUp className="h-4 w-4 mr-2" />
             Analytics
@@ -124,6 +129,10 @@ export function AdminDashboard() {
 
         <TabsContent value="jobs" className="space-y-4">
           <JobManagement />
+        </TabsContent>
+
+        <TabsContent value="prompts" className="space-y-4">
+          <PromptManagement />
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
