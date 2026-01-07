@@ -19,20 +19,53 @@ import {
   PieChart,
   Activity
 } from 'lucide-react'
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  PieChart as RechartsPieChart,
-  Cell,
-  BarChart,
-  Bar,
-  Legend
-} from 'recharts'
+// Simple chart components (replace with recharts after npm install)
+const SimpleLineChart = ({ data }: { data: any[] }) => (
+  <div className="h-72 flex items-end justify-center space-x-2 p-4 bg-gray-50 rounded">
+    {data.slice(-10).map((item, index) => (
+      <div
+        key={index}
+        className="bg-blue-500 rounded-t"
+        style={{
+          height: `${Math.max((item.credits / Math.max(...data.map(d => d.credits))) * 100, 10)}%`,
+          width: '20px'
+        }}
+        title={`${item.date}: ${item.credits} credits`}
+      />
+    ))}
+  </div>
+)
+
+const SimplePieChart = ({ data }: { data: any[] }) => (
+  <div className="h-48 flex items-center justify-center">
+    <div className="text-center">
+      <div className="text-lg font-bold mb-2">Usage Distribution</div>
+      {data.map((item, index) => (
+        <div key={index} className="text-sm mb-1">
+          {item.type}: {item.amount} ({Math.round(item.percentage)}%)
+        </div>
+      ))}
+    </div>
+  </div>
+)
+
+const SimpleBarChart = ({ data }: { data: any[] }) => (
+  <div className="h-64 flex items-end justify-center space-x-4 p-4 bg-gray-50 rounded">
+    {data.map((item, index) => (
+      <div key={index} className="flex flex-col items-center">
+        <div
+          className="bg-blue-500 rounded-t mb-2"
+          style={{
+            height: `${Math.max((item.count / Math.max(...data.map(d => d.count))) * 100, 20)}px`,
+            width: '40px'
+          }}
+        />
+        <div className="text-xs text-center">{item.status}</div>
+        <div className="text-xs font-bold">{item.count}</div>
+      </div>
+    ))}
+  </div>
+)
 
 interface CreditAnalytics {
   period: number
@@ -274,31 +307,7 @@ export function CreditAnalytics() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={analytics.usage.daily}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200" />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={formatDate}
-                  className="text-xs"
-                />
-                <YAxis className="text-xs" />
-                <Tooltip
-                  labelFormatter={(value) => formatDate(value as string)}
-                  formatter={(value: number, name: string) => [
-                    value,
-                    name === 'credits' ? 'Credits' : 'Transactions'
-                  ]}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="credits"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <SimpleLineChart data={analytics.usage.daily} />
           </CardContent>
         </Card>
 
@@ -315,33 +324,14 @@ export function CreditAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ResponsiveContainer width="100%" height={200}>
-                <RechartsPieChart>
-                  <RechartsPieChart
-                    data={analytics.usage.byType.map(item => ({
-                      name: item.type,
-                      value: item.amount
-                    }))}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={80}
-                  >
-                    {analytics.usage.byType.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={pieChartColors[index % pieChartColors.length]} />
-                    ))}
-                  </RechartsPieChart>
-                  <Tooltip />
-                </RechartsPieChart>
-              </ResponsiveContainer>
+              <SimplePieChart data={analytics.usage.byType} />
 
               <div className="space-y-2">
                 {analytics.usage.byType.map((item, index) => (
                   <div key={item.type} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: pieChartColors[index % pieChartColors.length] }}
+                        className="w-3 h-3 rounded-full bg-blue-500"
                       />
                       <span className="text-sm capitalize">{item.type}</span>
                     </div>
@@ -369,15 +359,7 @@ export function CreditAnalytics() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-medium mb-4">Jobs by Status</h4>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={analytics.jobs.byStatus}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="status" className="text-xs" />
-                  <YAxis className="text-xs" />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#3b82f6" />
-                </BarChart>
-              </ResponsiveContainer>
+              <SimpleBarChart data={analytics.jobs.byStatus} />
             </div>
 
             <div className="space-y-4">
