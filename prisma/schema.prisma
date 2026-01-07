@@ -120,6 +120,10 @@ model User {
   setupFeesPaid          Boolean @default(false)
   onboardingStep         Int     @default(0)
 
+  // Admin & Roles
+  isAdmin                Boolean @default(false)
+  role                   String  @default("user")  // user, admin, superadmin
+
   // Metadata
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -129,6 +133,7 @@ model User {
   @@index([email])
   @@index([subscriptionTier])
   @@index([subscriptionStatus])
+  @@index([isAdmin])
 }
 
 model BrandPrompt {

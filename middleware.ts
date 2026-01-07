@@ -85,7 +85,7 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession()
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/dashboard', '/new', '/jobs', '/history', '/profile', '/analytics', '/subscription', '/prompts', '/help']
+  const protectedRoutes = ['/dashboard', '/new', '/jobs', '/history', '/profile', '/analytics', '/subscription', '/prompts', '/help', '/admin']
   const isProtectedRoute = protectedRoutes.some(route => req.nextUrl.pathname.startsWith(route))
 
   // If no session and trying to access protected routes, redirect to login
@@ -148,6 +148,7 @@ export const config = {
     '/subscription/:path*',
     '/prompts/:path*',
     '/help/:path*',
+    '/admin/:path*',
     '/onboarding/:path*',
     '/login',
     '/signup',
