@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
         email: user.email!,
         first_name: userProfile.name?.split(' ')[0],
         last_name: userProfile.name?.split(' ').slice(1).join(' '),
-        phone: userProfile.phone
+        phone: userProfile.phone || undefined
       })
 
       if (!customerResult.success) {
