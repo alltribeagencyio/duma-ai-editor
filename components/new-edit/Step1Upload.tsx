@@ -115,7 +115,7 @@ export function Step1Upload() {
       <div
         {...getRootProps()}
         className={cn(
-          'border-2 border-dashed rounded-xl p-12 transition-all duration-200 cursor-pointer',
+          'border-2 border-dashed rounded-xl p-6 md:p-10 lg:p-12 transition-all duration-200 cursor-pointer',
           isDragActive
             ? 'border-gray-900 bg-gray-100'
             : 'border-gray-300 bg-white hover:border-gray-400 hover:bg-gray-50'
@@ -174,7 +174,7 @@ export function Step1Upload() {
 
       {/* Image previews */}
       {images.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
           {images.map((image, index) => (
             <div
               key={index}
@@ -188,9 +188,10 @@ export function Step1Upload() {
               />
               <button
                 onClick={() => removeImage(index)}
-                className="absolute top-2 right-2 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+                className="absolute top-1 right-1 md:top-2 md:right-2 w-8 h-8 md:w-6 md:h-6 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+                aria-label={`Remove image ${index + 1}`}
               >
-                <X className="h-4 w-4 text-gray-600" />
+                <X className="h-5 w-5 md:h-4 md:w-4 text-gray-600" />
               </button>
             </div>
           ))}

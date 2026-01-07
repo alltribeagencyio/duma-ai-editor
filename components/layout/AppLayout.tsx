@@ -77,29 +77,29 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
 
       {/* Top header bar */}
       <header
-        className={`fixed top-0 right-0 h-24 bg-white border-b border-gray-200 z-40 transition-all duration-300 ${
+        className={`fixed top-0 right-0 h-16 md:h-20 lg:h-24 bg-white border-b border-gray-200 z-40 transition-all duration-300 ${
           sidebarCollapsed ? 'left-0 md:left-20' : 'left-0 md:left-80'
         }`}
       >
-        <div className="h-full px-8 flex items-center justify-between">
+        <div className="h-full px-4 md:px-6 lg:px-8 flex items-center justify-between">
           {title && (
-            <div className="py-2">
-              <h1 className="text-2xl font-bold text-gray-900 leading-tight">{title}</h1>
-              {subtitle && <p className="text-sm text-gray-600 mt-1.5">{subtitle}</p>}
+            <div className="py-2 flex-1 min-w-0 pr-4">
+              <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 leading-tight truncate">{title}</h1>
+              {subtitle && <p className="text-xs md:text-sm text-gray-600 mt-1 md:mt-1.5 truncate">{subtitle}</p>}
             </div>
           )}
-          <div className={`relative ${!title ? 'ml-auto' : ''}`}>
+          <div className={`relative flex-shrink-0 ${!title ? 'ml-auto' : ''}`}>
             {userId && <FloatingNotifications userId={userId} />}
           </div>
         </div>
       </header>
 
       <main
-        className={`min-h-screen pt-[106px] transition-all duration-300 ${
-          sidebarCollapsed ? 'md:pl-20' : 'md:pl-96'
+        className={`min-h-screen pt-16 md:pt-20 lg:pt-[106px] transition-all duration-300 ${
+          sidebarCollapsed ? 'md:pl-20' : 'md:pl-80'
         }`}
       >
-        <div className="pl-8 pr-8 pt-5 pb-5">{children}</div>
+        <div className="px-4 md:px-6 lg:px-8 py-4 md:py-5">{children}</div>
       </main>
     </div>
   )

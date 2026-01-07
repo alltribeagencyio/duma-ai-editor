@@ -21,6 +21,18 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
   const pathname = usePathname()
   const router = useRouter()
 
+  // Add scroll lock when mobile sidebar is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [mobileOpen])
+
   const toggleCollapsed = useCallback(() => {
     const newValue = !collapsed
     localStorage.setItem('sidebarCollapsed', String(newValue))
@@ -53,12 +65,13 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile menu button - 44x44px minimum touch target */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-lg bg-white border border-gray-200 shadow-sm"
+        className="fixed top-3 left-3 z-50 md:hidden p-3 rounded-lg bg-white border border-gray-200 shadow-sm min-w-[44px] min-h-[44px] flex items-center justify-center"
+        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
       >
-        {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
       </button>
 
       {/* Mobile backdrop */}
