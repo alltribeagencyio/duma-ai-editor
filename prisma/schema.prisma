@@ -30,6 +30,8 @@ model Job {
   isReEdit         Boolean?  @default(false)
   creditsCost      Int?      @default(1)
   brandPromptId    String?
+  creditDeducted   Boolean   @default(false)
+  webhookId        String?
 
   @@index([userId])
   @@index([status])
@@ -37,6 +39,8 @@ model Job {
   @@index([parentJobId])
   @@index([brandPromptId])
   @@index([isReEdit])
+  @@index([creditDeducted])
+  @@index([webhookId])
 }
 
 model PromptPreset {
@@ -72,6 +76,7 @@ model User {
   email                  String    @unique
   fullName               String?
   phone                  String?
+  phoneCountryCode       String?   @default("+254")
   avatar                 String?
   subscriptionTier       String    @default("free")
   subscriptionStatus     String    @default("active")
@@ -99,14 +104,16 @@ model User {
   lastLoginAt            DateTime? @db.Timestamptz(6)
   lastActiveAt           DateTime? @db.Timestamptz(6)
   isAdmin                Boolean   @default(false)
+  isSuperAdmin           Boolean   @default(false)
   role                   String    @default("user")
 
   @@index([isAdmin])
+  @@index([isSuperAdmin])
 }
 
 model BrandPrompt {
   id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
-  userId      String
+  createdBy   String
   name        String
   description String
   prompt      String
@@ -118,7 +125,7 @@ model BrandPrompt {
   createdAt   DateTime? @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
 
-  @@index([userId])
+  @@index([createdBy])
   @@index([category])
   @@index([industry])
 }
@@ -203,4 +210,95 @@ model Payment {
   @@index([paystackReference])
   @@index([status])
   @@index([type])
+}
+
+model UserWebhook {
+  id              String   @id @default(uuid())
+  userId          String
+  name            String
+  webhookUrl      String
+  isActive        Boolean  @default(false)
+  priority        Int      @default(0)
+  webhookType     String   @default("image_processing")
+  tierRestriction String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isActive])
+  @@index([webhookType])
+}
+
+model BrandPromptAssignment {
+  id            String   @id @default(uuid())
+  brandPromptId String
+  userId        String
+  assignedBy    String
+  createdAt     DateTime @default(now())
+
+  @@unique([brandPromptId, userId])
+  @@index([userId])
+  @@index([brandPromptId])
+}
+
+model WorkflowLog {
+  id              String    @id @default(uuid())
+  userId          String
+  jobId           String?
+  webhookId       String?
+  workflowType    String
+  executionId     String?
+  executionUrl    String?
+  status          String
+  requestPayload  Json?
+  responsePayload Json?
+  errorMessage    String?
+  duration        Int?
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@index([userId])
+  @@index([jobId])
+  @@index([workflowType])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model SupportTicket {
+  id              String    @id @default(uuid())
+  userId          String
+  userEmail       String
+  userName        String?
+  subject         String
+  message         String
+  category        String
+  priority        String    @default("normal")
+  status          String    @default("open")
+  assignedTo      String?
+  n8nExecutionId  String?
+  internalNotes   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  resolvedAt      DateTime?
+
+  @@index([userId])
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model AdminLog {
+  id         String   @id @default(uuid())
+  adminId    String
+  action     String
+  targetType String?
+  targetId   String?
+  details    Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
 }

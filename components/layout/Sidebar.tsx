@@ -20,12 +20,29 @@ interface SidebarProps {
 export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsedChange }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
   // Mark as mounted to enable transitions
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const response = await fetch('/api/user/profile')
+        if (response.ok) {
+          const { user } = await response.json()
+          setIsAdmin(user.isAdmin || user.isSuperAdmin)
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error)
+      }
+    }
+    checkAdmin()
   }, [])
 
   // Add scroll lock when mobile sidebar is open
@@ -160,6 +177,28 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
               </Link>
             )
           })}
+
+          {/* Admin Panel Access */}
+          {isAdmin && (
+            <>
+              <Separator className="my-2" />
+              <Link
+                href="/admin/dashboard"
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-sm',
+                  pathname.startsWith('/admin')
+                    ? 'bg-gradient-to-r from-duma-primary to-duma-secondary text-white shadow-sm'
+                    : 'text-gray-600 hover:bg-gradient-to-r hover:from-duma-primary/5 hover:to-duma-secondary/5 hover:text-duma-primary border border-gray-100',
+                  collapsed && 'justify-center px-2'
+                )}
+                title={collapsed ? 'Admin Panel' : undefined}
+              >
+                <Settings className="h-4 w-4 flex-shrink-0" />
+                {!collapsed && <span className="font-medium">Admin Panel</span>}
+              </Link>
+            </>
+          )}
         </nav>
 
         {/* Activity Log - hide when collapsed */}
