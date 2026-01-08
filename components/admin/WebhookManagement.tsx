@@ -530,14 +530,14 @@ export function WebhookManagement() {
               Tier Restriction (Optional)
             </label>
             <Select
-              value={formData.tierRestriction}
-              onValueChange={(value) => setFormData({ ...formData, tierRestriction: value })}
+              value={formData.tierRestriction || 'none'}
+              onValueChange={(value) => setFormData({ ...formData, tierRestriction: value === 'none' ? '' : value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="No restriction" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No restriction</SelectItem>
+                <SelectItem value="none">No restriction</SelectItem>
                 <SelectItem value="professional">Professional+</SelectItem>
                 <SelectItem value="enterprise">Enterprise only</SelectItem>
               </SelectContent>
