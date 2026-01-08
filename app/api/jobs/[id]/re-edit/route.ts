@@ -61,6 +61,7 @@ export async function POST(
     }
 
     // Create re-edit job
+    // IMPORTANT: Credits will be deducted ONLY on successful completion via webhook callback
     const reEditJob = await prisma.job.create({
       data: {
         userId: user.id,
@@ -71,6 +72,7 @@ export async function POST(
         parentJobId: originalJob.id,
         isReEdit: true,
         creditsCost: 1,
+        creditDeducted: false, // Credits not deducted yet
         // Use selected image as input, or fallback to original images
         inputImages: selectedImageUrl ? [selectedImageUrl] : originalJob.inputImages,
         productName: originalJob.productName,
@@ -82,24 +84,8 @@ export async function POST(
       },
     })
 
-    // Update user credits
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        creditsUsed: userProfile.creditsUsed + 1
-      }
-    })
-
-    // Log credit usage
-    await prisma.creditUsage.create({
-      data: {
-        userId: user.id,
-        jobId: reEditJob.id,
-        amount: 1,
-        type: 're_edit',
-        description: `Re-edit of job ${originalJob.id}`
-      }
-    })
+    // REMOVED: Credit deduction - now happens in webhook callback on successful completion
+    // This prevents charging users for failed jobs
 
     // Send webhook to n8n for processing
     const webhookUrl = process.env.N8N_WEBHOOK_URL

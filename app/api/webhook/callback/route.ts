@@ -29,9 +29,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Verify job exists
+    // Verify job exists and get user info
     const existingJob = await prisma.job.findUnique({
       where: { id: jobId },
+      include: { user: true },
     })
 
     if (!existingJob) {
@@ -49,6 +50,40 @@ export async function POST(req: NextRequest) {
       ? { images: outputImages, timestamp: new Date().toISOString() }
       : Prisma.JsonNull
 
+    // CRITICAL FIX: Deduct credits ONLY on successful completion if not already deducted
+    if (status === 'completed' && !existingJob.creditDeducted) {
+      const creditsCost = existingJob.creditsCost || 1
+
+      console.log('💳 Deducting credits:', creditsCost, 'from user:', existingJob.userId)
+
+      // Deduct credits from user
+      await prisma.user.update({
+        where: { id: existingJob.userId },
+        data: {
+          creditsUsed: {
+            increment: creditsCost,
+          },
+        },
+      })
+
+      // Log credit usage
+      await prisma.creditUsage.create({
+        data: {
+          userId: existingJob.userId,
+          jobId: existingJob.id,
+          amount: creditsCost,
+          type: existingJob.isReEdit ? 're_edit' : 'new_job',
+          description: `Job ${existingJob.id} completed successfully`,
+        },
+      })
+
+      console.log('✅ Credits deducted and logged')
+    } else if (status === 'completed' && existingJob.creditDeducted) {
+      console.log('ℹ️ Credits already deducted for this job, skipping')
+    } else if (status === 'failed') {
+      console.log('ℹ️ Job failed, no credits deducted')
+    }
+
     // Update job in database
     const updatedJob = await prisma.job.update({
       where: { id: jobId },
@@ -57,6 +92,7 @@ export async function POST(req: NextRequest) {
         outputData,
         completedAt: status === 'completed' ? new Date() : null,
         errorMessage: errorMessage || null,
+        creditDeducted: status === 'completed' ? true : false,
       },
     })
 

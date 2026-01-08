@@ -118,7 +118,12 @@ export function CreditUsageCard({ profile }: CreditUsageCardProps) {
 
         {/* Action Buttons */}
         <div className="flex gap-2">
-          <Button variant="outline" className="flex-1" size="sm">
+          <Button
+            variant="outline"
+            className="flex-1"
+            size="sm"
+            onClick={() => window.location.href = '/credits/usage'}
+          >
             Usage History
           </Button>
           <Button variant="outline" className="flex-1" size="sm">
