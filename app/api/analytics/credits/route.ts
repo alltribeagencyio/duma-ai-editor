@@ -152,7 +152,7 @@ export async function GET(req: NextRequest) {
         },
         user: {
           tier: userProfile.subscriptionTier,
-          memberSince: userProfile.createdAt.toISOString()
+          memberSince: userProfile.createdAt?.toISOString() || new Date().toISOString()
         }
       }
     })

@@ -83,8 +83,8 @@ export async function POST(req: NextRequest) {
 
     // Calculate total amount (subscription + setup fee if applicable)
     let totalAmount = plan.price
-    if (paySetupFee && plan.setupFee > 0 && !userProfile.setupFeesPaid) {
-      totalAmount += plan.setupFee
+    if (paySetupFee && (plan.setupFee || 0) > 0 && !userProfile.setupFeesPaid) {
+      totalAmount += (plan.setupFee || 0)
     }
 
     // Create transaction reference
@@ -114,8 +114,8 @@ export async function POST(req: NextRequest) {
         paystackReference: reference,
         amount: totalAmount,
         status: 'pending',
-        type: paySetupFee && plan.setupFee > 0 ? 'subscription_with_setup' : 'subscription',
-        description: `${plan.displayName} subscription${paySetupFee && plan.setupFee > 0 ? ' with setup fee' : ''}`
+        type: paySetupFee && (plan.setupFee || 0) > 0 ? 'subscription_with_setup' : 'subscription',
+        description: `${plan.displayName} subscription${paySetupFee && (plan.setupFee || 0) > 0 ? ' with setup fee' : ''}`
       }
     })
 

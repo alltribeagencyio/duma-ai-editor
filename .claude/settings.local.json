@@ -10,7 +10,12 @@
       "Bash(git fetch:*)",
       "Bash(grep:*)",
       "Bash(npm run build:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(npx prisma:*)",
+      "Bash(cat:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next build)"
     ],
     "deny": [],
     "ask": []
