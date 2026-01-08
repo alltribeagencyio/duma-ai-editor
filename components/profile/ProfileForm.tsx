@@ -8,12 +8,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { PhoneInput } from '@/components/ui/phone-input'
 
 interface UserProfile {
   id: string
   email: string
   fullName?: string
   phone?: string
+  phoneCountryCode?: string
   brandName?: string
   brandIndustry?: string
   brandAesthetic?: string
@@ -40,6 +42,7 @@ export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: profile.fullName || '',
     phone: profile.phone || '',
+    phoneCountryCode: profile.phoneCountryCode || '+254',
     brandName: profile.brandName || '',
     brandIndustry: profile.brandIndustry || '',
     brandAesthetic: profile.brandAesthetic || '',
@@ -111,10 +114,12 @@ export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
                 <label className="text-sm font-medium text-gray-700">
                   Phone Number
                 </label>
-                <Input
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="+1 (555) 123-4567"
+                <PhoneInput
+                  countryCode={formData.phoneCountryCode}
+                  phoneNumber={formData.phone}
+                  onCountryCodeChange={(code) => handleInputChange('phoneCountryCode', code)}
+                  onPhoneNumberChange={(e) => handleInputChange('phone', e.target.value)}
+                  placeholder="123 456 7890"
                 />
               </div>
             </div>
@@ -334,7 +339,7 @@ export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">
-                  Timezone
+                  Timezone (for notifications & scheduling)
                 </label>
                 <Select
                   value={formData.timezone}
@@ -345,12 +350,20 @@ export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="UTC">UTC</SelectItem>
-                    <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                    <SelectItem value="America/Chicago">Central Time</SelectItem>
-                    <SelectItem value="America/Denver">Mountain Time</SelectItem>
-                    <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
+                    <SelectItem value="Africa/Nairobi">East Africa Time (Nairobi)</SelectItem>
+                    <SelectItem value="Africa/Lagos">West Africa Time (Lagos)</SelectItem>
+                    <SelectItem value="Africa/Cairo">Egypt (Cairo)</SelectItem>
+                    <SelectItem value="Africa/Johannesburg">South Africa (Johannesburg)</SelectItem>
+                    <SelectItem value="Africa/Casablanca">Morocco (Casablanca)</SelectItem>
+                    <SelectItem value="America/New_York">Eastern Time (US)</SelectItem>
+                    <SelectItem value="America/Chicago">Central Time (US)</SelectItem>
+                    <SelectItem value="America/Denver">Mountain Time (US)</SelectItem>
+                    <SelectItem value="America/Los_Angeles">Pacific Time (US)</SelectItem>
                     <SelectItem value="Europe/London">London</SelectItem>
                     <SelectItem value="Europe/Paris">Paris</SelectItem>
+                    <SelectItem value="Asia/Dubai">Dubai</SelectItem>
+                    <SelectItem value="Asia/Singapore">Singapore</SelectItem>
+                    <SelectItem value="Asia/Tokyo">Tokyo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

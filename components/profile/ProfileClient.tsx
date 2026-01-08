@@ -13,6 +13,7 @@ interface UserProfile {
   email: string
   fullName?: string
   phone?: string
+  phoneCountryCode?: string
   brandName?: string
   brandIndustry?: string
   brandAesthetic?: string

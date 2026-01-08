@@ -81,6 +81,7 @@ export async function PUT(req: NextRequest) {
     const {
       fullName,
       phone,
+      phoneCountryCode,
       brandName,
       brandIndustry,
       brandAesthetic,
@@ -98,6 +99,7 @@ export async function PUT(req: NextRequest) {
       data: {
         fullName,
         phone,
+        phoneCountryCode,
         brandName,
         brandIndustry,
         brandAesthetic,
