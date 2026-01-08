@@ -143,9 +143,7 @@ export function ProfileClient() {
     >
       <div className="w-full max-w-screen-2xl mx-auto space-y-8">
         {/* Account Overview */}
-        <div className="max-w-2xl">
-          <CreditUsageCard profile={profile} />
-        </div>
+        <CreditUsageCard profile={profile} />
 
         {/* Profile Form */}
         <ProfileForm
