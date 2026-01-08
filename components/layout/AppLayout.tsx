@@ -23,17 +23,22 @@ interface AppLayoutProps {
 
 export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutProps) {
   const [userId, setUserId] = useState<string | null>(null)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    // Initialize from localStorage immediately to prevent flash
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebarCollapsed')
+      return saved === 'true'
+    }
+    return false
+  })
+  const [mounted, setMounted] = useState(false)
 
   // Memoize Supabase client to avoid recreating on every render
   const supabase = useMemo(() => createClient(), [])
 
-  // Load sidebar collapsed state from localStorage
+  // Mark as mounted to enable transitions after initial render
   useEffect(() => {
-    const saved = localStorage.getItem('sidebarCollapsed')
-    if (saved !== null) {
-      setSidebarCollapsed(saved === 'true')
-    }
+    setMounted(true)
   }, [])
 
   const fetchUser = useCallback(async () => {
@@ -77,7 +82,7 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
 
       {/* Top header bar */}
       <header
-        className={`fixed top-0 right-0 h-14 bg-white border-b border-gray-100 z-40 transition-all duration-300 ${
+        className={`fixed top-0 right-0 h-14 bg-white border-b border-gray-100 z-40 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'left-0 md:left-16' : 'left-0 md:left-64'
         }`}
       >
@@ -95,7 +100,7 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
       </header>
 
       <main
-        className={`min-h-screen pt-14 transition-all duration-300 ${
+        className={`min-h-screen pt-14 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'md:pl-16' : 'md:pl-64'
         }`}
       >

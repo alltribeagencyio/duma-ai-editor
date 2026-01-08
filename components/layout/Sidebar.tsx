@@ -19,8 +19,14 @@ interface SidebarProps {
 
 export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsedChange }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+
+  // Mark as mounted to enable transitions
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Add scroll lock when mobile sidebar is open
   useEffect(() => {
@@ -87,7 +93,8 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-full bg-white border-r border-gray-100 flex flex-col transition-all duration-300',
+          'fixed left-0 top-0 z-40 h-full bg-white border-r border-gray-100 flex flex-col',
+          mounted && 'transition-all duration-300',
           collapsed ? 'w-16' : 'w-64',
           mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         )}
