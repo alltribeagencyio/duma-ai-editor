@@ -27,13 +27,20 @@ export default function AdminDashboardPage() {
 
         <div className="bg-white rounded-lg border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <a
               href="/admin/users"
               className="p-4 border border-gray-200 rounded-lg hover:border-duma-primary/50 hover:bg-duma-primary/5 transition-all"
             >
               <div className="font-medium text-gray-900">Manage Users</div>
               <div className="text-sm text-gray-600 mt-1">View and edit user accounts</div>
+            </a>
+            <a
+              href="/admin/webhooks"
+              className="p-4 border border-gray-200 rounded-lg hover:border-duma-primary/50 hover:bg-duma-primary/5 transition-all"
+            >
+              <div className="font-medium text-gray-900">Manage Webhooks</div>
+              <div className="text-sm text-gray-600 mt-1">Configure user workflows</div>
             </a>
             <a
               href="/admin/prompts"

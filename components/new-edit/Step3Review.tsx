@@ -135,41 +135,6 @@ export function Step3Review() {
         </div>
       </div>
 
-      {/* Notification Options */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Get Notified</h2>
-
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="notify-email"
-              checked={notifyByEmail}
-              onCheckedChange={(checked) => setNotifyByEmail(checked as boolean)}
-            />
-            <label
-              htmlFor="notify-email"
-              className="text-sm text-gray-700 cursor-pointer"
-            >
-              Email me when editing is complete ({userEmail})
-            </label>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="phone" className="text-sm font-medium text-gray-700">
-              Phone (optional for SMS)
-            </label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+1234567890"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-            <p className="text-xs text-gray-500">Format: +1234567890</p>
-          </div>
-        </div>
-      </div>
-
       {/* Submit */}
       <div className="space-y-4 pt-4">
         <Button
