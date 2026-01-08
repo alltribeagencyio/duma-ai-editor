@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const brandPrompts = await prisma.brandPrompt.findMany({
       where: {
-        userId: user.id,
+        createdBy: user.id,
         isActive: true
       },
       orderBy: [{ category: 'asc' }, { usageCount: 'desc' }],
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     // Count existing brand prompts
     const existingCount = await prisma.brandPrompt.count({
       where: {
-        userId: user.id,
+        createdBy: user.id,
         isActive: true
       }
     })
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
 
     const brandPrompt = await prisma.brandPrompt.create({
       data: {
-        userId: user.id,
+        createdBy: user.id,
         name,
         description: description || '',
         prompt,

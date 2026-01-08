@@ -54,14 +54,6 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip: offset,
-        include: {
-          user: {
-            select: {
-              email: true,
-              fullName: true,
-            },
-          },
-        },
       }),
       prisma.workflowLog.count({ where }),
     ])

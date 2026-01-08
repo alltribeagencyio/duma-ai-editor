@@ -30,15 +30,6 @@ export async function GET(
 
     const webhook = await prisma.userWebhook.findUnique({
       where: { id: params.id },
-      include: {
-        user: {
-          select: {
-            email: true,
-            fullName: true,
-            subscriptionTier: true,
-          },
-        },
-      },
     })
 
     if (!webhook) {

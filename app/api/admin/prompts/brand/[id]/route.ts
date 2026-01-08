@@ -29,18 +29,6 @@ export async function GET(
 
     const prompt = await prisma.brandPrompt.findUnique({
       where: { id: params.id },
-      include: {
-        assignments: {
-          include: {
-            user: {
-              select: {
-                email: true,
-                fullName: true,
-              },
-            },
-          },
-        },
-      },
     })
 
     if (!prompt) {
@@ -83,7 +71,7 @@ export async function PUT(
     }
 
     const body = await req.json()
-    const { name, description, prompt, category, tags, industry, isActive } = body
+    const { name, description, prompt, category, industry, isActive } = body
 
     // Check if prompt exists
     const existingPrompt = await prisma.brandPrompt.findUnique({
@@ -102,7 +90,6 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(prompt !== undefined && { prompt }),
         ...(category !== undefined && { category }),
-        ...(tags !== undefined && { tags }),
         ...(industry !== undefined && { industry }),
         ...(isActive !== undefined && { isActive }),
         updatedAt: new Date(),

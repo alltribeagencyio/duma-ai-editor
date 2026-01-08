@@ -45,14 +45,6 @@ export async function GET(req: NextRequest) {
         { isActive: 'desc' },
         { priority: 'asc' },
       ],
-      include: {
-        user: {
-          select: {
-            email: true,
-            fullName: true,
-          },
-        },
-      },
     })
 
     return NextResponse.json({ webhooks })

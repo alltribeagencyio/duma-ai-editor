@@ -24,8 +24,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    const prompts = await prisma.presetPrompt.findMany({
-      orderBy: { createdAt: 'desc' },
+    const prompts = await prisma.promptPreset.findMany({
+      orderBy: { order: 'asc' },
     })
 
     return NextResponse.json({ prompts })
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { name, description, prompt, category, industry, tags, imageUrl } = body
+    const { name, description, prompt, category, icon, order, isActive = true } = body
 
     // Validate required fields
     if (!name || !prompt) {
@@ -72,15 +72,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Create preset prompt
-    const presetPrompt = await prisma.presetPrompt.create({
+    const presetPrompt = await prisma.promptPreset.create({
       data: {
         name,
         description,
         prompt,
         category,
-        industry,
-        tags,
-        imageUrl,
+        icon: icon || '🎨',
+        order: order || 0,
+        isActive,
       },
     })
 

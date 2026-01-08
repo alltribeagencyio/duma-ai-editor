@@ -30,10 +30,9 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Verify job exists and get user info
+    // Verify job exists
     const existingJob = await prisma.job.findUnique({
       where: { id: jobId },
-      include: { user: true },
     })
 
     if (!existingJob) {
@@ -91,8 +90,8 @@ export async function POST(req: NextRequest) {
       data: {
         status,
         outputData,
-        completedAt: status === 'completed' ? new Date() : null,
-        errorMessage: errorMessage || null,
+        ...(status === 'completed' && { completedAt: new Date() }),
+        ...(errorMessage && { errorMessage }),
         creditDeducted: status === 'completed' ? true : false,
       },
     })
@@ -107,14 +106,14 @@ export async function POST(req: NextRequest) {
       data: {
         userId: existingJob.userId,
         jobId: existingJob.id,
-        webhookId: existingJob.webhookId,
+        ...(existingJob.webhookId && { webhookId: existingJob.webhookId }),
         workflowType: 'image_processing',
-        executionId: executionId || null,
-        executionUrl: executionUrl || null,
+        ...(executionId && { executionId }),
+        ...(executionUrl && { executionUrl }),
         status,
         requestPayload: null, // Request was sent from job creation
         responsePayload: body as any,
-        errorMessage: errorMessage || null,
+        ...(errorMessage && { errorMessage }),
         duration,
         completedAt: new Date(),
       },

@@ -45,11 +45,6 @@ export async function GET(req: NextRequest) {
         { usageCount: 'desc' },
         { createdAt: 'desc' },
       ],
-      include: {
-        _count: {
-          select: { assignments: true },
-        },
-      },
     })
 
     return NextResponse.json({ prompts })
@@ -85,7 +80,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { name, description, prompt, category, tags, industry, isActive = true } = body
+    const { name, description, prompt, category, industry, isActive = true } = body
 
     // Validate required fields
     if (!name || !prompt) {
@@ -102,7 +97,6 @@ export async function POST(req: NextRequest) {
         description,
         prompt,
         category,
-        tags,
         industry,
         createdBy: user.id,
         isActive,

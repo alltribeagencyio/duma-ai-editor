@@ -46,8 +46,11 @@ export default async function CreditUsagePage() {
       totalCredits={totalCredits}
       usedCredits={usedCredits}
       availableCredits={availableCredits}
-      creditsReset={userProfile?.creditsReset}
-      creditHistory={creditHistory}
+      creditsReset={userProfile?.creditsReset ?? null}
+      creditHistory={creditHistory.map(ch => ({
+        ...ch,
+        createdAt: ch.createdAt ?? new Date()
+      }))}
     />
   )
 }

@@ -19,19 +19,20 @@ export async function GET(req: NextRequest) {
       where: {
         userId: user.id,
       },
-      include: {
-        brandPrompt: {
-          where: {
-            isActive: true, // Only return active prompts
-          },
-        },
+      select: {
+        brandPromptId: true,
       },
     })
 
-    // Extract the brand prompts and increment usage count
-    const prompts = assignments
-      .filter((assignment) => assignment.brandPrompt !== null)
-      .map((assignment) => assignment.brandPrompt)
+    // Get the actual brand prompts that are active
+    const prompts = await prisma.brandPrompt.findMany({
+      where: {
+        id: {
+          in: assignments.map((a) => a.brandPromptId),
+        },
+        isActive: true, // Only return active prompts
+      },
+    })
 
     return NextResponse.json({ prompts })
   } catch (error) {

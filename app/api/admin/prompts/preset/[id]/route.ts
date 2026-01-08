@@ -28,10 +28,10 @@ export async function PUT(
     }
 
     const body = await req.json()
-    const { name, description, prompt, category, industry, tags, imageUrl } = body
+    const { name, description, prompt, category, icon, order, isActive } = body
 
     // Check if prompt exists
-    const existingPrompt = await prisma.presetPrompt.findUnique({
+    const existingPrompt = await prisma.promptPreset.findUnique({
       where: { id: params.id },
     })
 
@@ -40,17 +40,16 @@ export async function PUT(
     }
 
     // Update prompt
-    const updatedPrompt = await prisma.presetPrompt.update({
+    const updatedPrompt = await prisma.promptPreset.update({
       where: { id: params.id },
       data: {
         ...(name !== undefined && { name }),
         ...(description !== undefined && { description }),
         ...(prompt !== undefined && { prompt }),
         ...(category !== undefined && { category }),
-        ...(industry !== undefined && { industry }),
-        ...(tags !== undefined && { tags }),
-        ...(imageUrl !== undefined && { imageUrl }),
-        updatedAt: new Date(),
+        ...(icon !== undefined && { icon }),
+        ...(order !== undefined && { order }),
+        ...(isActive !== undefined && { isActive }),
       },
     })
 
@@ -103,7 +102,7 @@ export async function DELETE(
     }
 
     // Check if prompt exists
-    const prompt = await prisma.presetPrompt.findUnique({
+    const prompt = await prisma.promptPreset.findUnique({
       where: { id: params.id },
     })
 
@@ -112,7 +111,7 @@ export async function DELETE(
     }
 
     // Delete prompt
-    await prisma.presetPrompt.delete({
+    await prisma.promptPreset.delete({
       where: { id: params.id },
     })
 
