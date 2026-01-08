@@ -37,6 +37,7 @@ export function ProfileClient() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -64,10 +65,17 @@ export function ProfileClient() {
       const response = await fetch('/api/user/profile')
       if (response.ok) {
         const { user } = await response.json()
+        console.log('Profile loaded:', user)
         setProfile(user)
+        setError(null)
+      } else {
+        const errorText = await response.text()
+        console.error('Profile fetch failed:', response.status, errorText)
+        setError(`Failed to load profile: ${response.status}`)
       }
     } catch (error) {
       console.error('Error fetching profile:', error)
+      setError('Network error: Could not load profile')
     } finally {
       setIsLoading(false)
     }
@@ -95,11 +103,33 @@ export function ProfileClient() {
     }
   }
 
-  if (isLoading || !profile) {
+  if (isLoading) {
     return (
       <AppLayout userEmail={userEmail}>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+        </div>
+      </AppLayout>
+    )
+  }
+
+  if (error || !profile) {
+    return (
+      <AppLayout userEmail={userEmail}>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <div className="p-4 text-sm text-red-600 bg-red-50 rounded-lg max-w-md">
+            {error || 'Failed to load profile. Please check your database connection.'}
+          </div>
+          <button
+            onClick={() => {
+              setIsLoading(true)
+              setError(null)
+              fetchProfile()
+            }}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
+          >
+            Retry
+          </button>
         </div>
       </AppLayout>
     )

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,47 +8,35 @@ datasource db {
 }
 
 model Job {
-  id           String    @id @default(uuid())
-  userId       String
-
-  // Job Data
-  status       String    @default("pending") // pending, processing, completed, failed
-  prompt       String
-  promptType   String    // "preset", "custom", "brand"
-  presetId     String?
-  brandPromptId String?  // Link to brand prompt if used
-
-  // Re-editing & Versions
-  parentJobId    String?   // Link to original job for re-edits
-  isReEdit       Boolean   @default(false)
-  creditsCost    Int       @default(1)
-
-  // Product Information
-  productName     String?
-  productCategory String?
-  productSku      String?
-
-  // Images
-  inputImages  String[]
-  outputData   Json?     // [{image: base64, driveLink: url, downloadUrl: url}]
-
-  // Contact
-  phone        String?
-  notifyByEmail Boolean  @default(true)
-
-  // Metadata
-  createdAt      DateTime  @default(now())
-  startedAt      DateTime?
-  completedAt    DateTime?
-  errorMessage   String?
-
-  // Notification
-  notificationSent Boolean @default(false)
+  id               String    @id @default(uuid())
+  userId           String
+  status           String    @default("pending")
+  prompt           String
+  promptType       String
+  presetId         String?
+  productName      String?
+  productCategory  String?
+  productSku       String?
+  inputImages      String[]
+  outputData       Json?
+  phone            String?
+  notifyByEmail    Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  startedAt        DateTime?
+  completedAt      DateTime?
+  errorMessage     String?
+  notificationSent Boolean   @default(false)
+  parentJobId      String?
+  isReEdit         Boolean?  @default(false)
+  creditsCost      Int?      @default(1)
+  brandPromptId    String?
 
   @@index([userId])
   @@index([status])
   @@index([createdAt])
   @@index([parentJobId])
+  @@index([brandPromptId])
+  @@index([isReEdit])
 }
 
 model PromptPreset {
@@ -59,8 +44,8 @@ model PromptPreset {
   name        String
   description String
   prompt      String
-  category    String  // "background", "enhancement", "focus"
-  icon        String  // lucide icon name
+  category    String
+  icon        String
   order       Int
   isActive    Boolean @default(true)
 
@@ -74,7 +59,7 @@ model CustomPrompt {
   name        String
   description String
   prompt      String
-  category    String   // "background", "enhancement", "focus", "other"
+  category    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -83,71 +68,55 @@ model CustomPrompt {
 }
 
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  fullName        String?
-  phone           String?
-  avatar          String?
-
-  // Subscription & Billing
-  subscriptionTier    String   @default("free")        // free, starter, pro, enterprise
-  subscriptionStatus  String   @default("active")      // active, canceled, past_due, trialing
-  subscriptionId      String?                          // Paystack subscription ID
-  planId              String?                          // Paystack plan ID
-
-  // Credits
-  monthlyCredits      Int      @default(0)             // Monthly allocation
-  practiceCredits     Int      @default(0)             // One-time practice credits
-  creditsUsed         Int      @default(0)             // Total credits consumed
-  creditsReset        DateTime?                        // Next reset date
-
-  // Brand & Preferences
-  brandName           String?
-  brandIndustry       String?
-  brandAesthetic      String?
-  brandColors         String[]                         // Array of color preferences
-  brandRequirements   String?                          // Custom brand requirements text
-
-  // Settings
-  notificationsEmail     Boolean @default(true)
-  notificationsWhatsApp  Boolean @default(false)
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  fullName               String?
+  phone                  String?
+  avatar                 String?
+  subscriptionTier       String    @default("free")
+  subscriptionStatus     String    @default("active")
+  subscriptionId         String?
+  planId                 String?
+  monthlyCredits         Int       @default(10)
+  practiceCredits        Int       @default(0)
+  creditsUsed            Int       @default(0)
+  creditsReset           DateTime? @db.Timestamptz(6)
+  brandName              String?
+  brandIndustry          String?
+  brandAesthetic         String?
+  brandColors            String[]
+  brandRequirements      String?
+  notificationsEmail     Boolean?  @default(true)
+  notificationsWhatsApp  Boolean?  @default(false)
   whatsappNumber         String?
-  language               String  @default("en")
-  timezone               String  @default("UTC")
+  language               String?   @default("en")
+  timezone               String?   @default("UTC")
+  hasCompletedOnboarding Boolean?  @default(false)
+  setupFeesPaid          Boolean?  @default(false)
+  onboardingStep         Int?      @default(0)
+  createdAt              DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+  lastLoginAt            DateTime? @db.Timestamptz(6)
+  lastActiveAt           DateTime? @db.Timestamptz(6)
+  isAdmin                Boolean   @default(false)
+  role                   String    @default("user")
 
-  // Setup & Onboarding
-  hasCompletedOnboarding Boolean @default(false)
-  setupFeesPaid          Boolean @default(false)
-  onboardingStep         Int     @default(0)
-
-  // Admin & Roles
-  isAdmin                Boolean @default(false)
-  role                   String  @default("user")  // user, admin, superadmin
-
-  // Metadata
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  lastLoginAt     DateTime?
-  lastActiveAt    DateTime?
-
-  @@index([email])
-  @@index([subscriptionTier])
-  @@index([subscriptionStatus])
   @@index([isAdmin])
 }
 
 model BrandPrompt {
-  id          String   @id @default(uuid())
+  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
   userId      String
   name        String
   description String
   prompt      String
-  category    String   // "background", "enhancement", "focus", "brand"
-  industry    String?  // Target industry
-  isActive    Boolean  @default(true)
-  usageCount  Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  category    String
+  industry    String?
+  isActive    Boolean?  @default(true)
+  isDefault   Boolean?  @default(false)
+  usageCount  Int?      @default(0)
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
 
   @@index([userId])
   @@index([category])
@@ -155,13 +124,13 @@ model BrandPrompt {
 }
 
 model CreditUsage {
-  id          String   @id @default(uuid())
+  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
   userId      String
-  jobId       String?  // Link to Job if applicable
-  amount      Int      // Credits consumed
-  type        String   // "upload", "re_edit", "upscale", "bulk", "manual_adjustment"
-  description String?  // Human readable description
-  createdAt   DateTime @default(now())
+  jobId       String?
+  amount      Int
+  type        String
+  description String?
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
 
   @@index([userId])
   @@index([type])
@@ -169,60 +138,46 @@ model CreditUsage {
 }
 
 model SubscriptionPlan {
-  id              String  @id @default(uuid())
-  name            String  @unique // "free", "starter", "pro", "enterprise"
-  displayName     String  // "Starter Plan"
-  description     String  // Plan description
-  price           Int     // Price in kobo (Paystack uses kobo)
-  currency        String  @default("NGN")
-
-  // Features
-  monthlyCredits  Int     // Credits per month
-  maxBrandPrompts Int     // Brand prompts limit
-  setupFee        Int     @default(0) // One-time setup fee
-
-  // Paystack Integration
-  paystackPlanCode String? @unique // Paystack plan code
-
-  // Features flags
-  hasWhatsAppSupport   Boolean @default(false)
-  hasPrioritySupport   Boolean @default(false)
-  hasBulkProcessing    Boolean @default(false)
-  hasAdvancedAnalytics Boolean @default(false)
-  hasCustomBranding    Boolean @default(false)
-
-  isActive        Boolean @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                   String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  name                 String    @unique
+  displayName          String
+  description          String
+  price                Int
+  currency             String?   @default("NGN")
+  monthlyCredits       Int
+  maxBrandPrompts      Int
+  setupFee             Int?      @default(0)
+  paystackPlanCode     String?   @unique
+  hasWhatsAppSupport   Boolean?  @default(false)
+  hasPrioritySupport   Boolean?  @default(false)
+  hasBulkProcessing    Boolean?  @default(false)
+  hasAdvancedAnalytics Boolean?  @default(false)
+  hasCustomBranding    Boolean?  @default(false)
+  isActive             Boolean?  @default(true)
+  createdAt            DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
 
   @@index([name])
   @@index([isActive])
 }
 
 model Subscription {
-  id                    String   @id @default(uuid())
-  userId                String   @unique
-  planId                String
-
-  // Paystack Integration
-  paystackCustomerCode  String?  // Paystack customer code
-  paystackSubscriptionCode String? @unique // Paystack subscription code
-  paystackAuthCode      String?  // Payment authorization code
-
-  status                String   @default("active") // active, canceled, past_due, trialing, incomplete
-  currentPeriodStart    DateTime
-  currentPeriodEnd      DateTime
-  cancelAtPeriodEnd     Boolean  @default(false)
-  canceledAt            DateTime?
-
-  // Setup fees
-  setupFeePaid          Boolean  @default(false)
-  setupFeeAmount        Int?
-  setupFeePaidAt        DateTime?
-
-  // Metadata
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                       String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  userId                   String    @unique
+  planId                   String
+  paystackCustomerCode     String?
+  paystackSubscriptionCode String?   @unique
+  paystackAuthCode         String?
+  status                   String?   @default("active")
+  currentPeriodStart       DateTime  @db.Timestamptz(6)
+  currentPeriodEnd         DateTime  @db.Timestamptz(6)
+  cancelAtPeriodEnd        Boolean?  @default(false)
+  canceledAt               DateTime? @db.Timestamptz(6)
+  setupFeePaid             Boolean?  @default(false)
+  setupFeeAmount           Int?
+  setupFeePaidAt           DateTime? @db.Timestamptz(6)
+  createdAt                DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt                DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
 
   @@index([userId])
   @@index([status])
@@ -230,24 +185,19 @@ model Subscription {
 }
 
 model Payment {
-  id                  String   @id @default(uuid())
-  userId              String
-  subscriptionId      String?
-
-  // Paystack Integration
-  paystackReference   String   @unique
+  id                    String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  userId                String
+  subscriptionId        String?
+  paystackReference     String    @unique
   paystackTransactionId String?
-
-  amount              Int      // Amount in kobo
-  currency            String   @default("NGN")
-  status              String   // success, failed, pending, abandoned
-  type                String   // subscription, setup_fee, credit_purchase, manual
-  description         String?
-
-  // Metadata
-  metadata            Json?    // Additional payment metadata
-  paidAt              DateTime?
-  createdAt           DateTime @default(now())
+  amount                Int
+  currency              String?   @default("NGN")
+  status                String
+  type                  String
+  description           String?
+  metadata              Json?
+  paidAt                DateTime? @db.Timestamptz(6)
+  createdAt             DateTime? @default(now()) @db.Timestamptz(6)
 
   @@index([userId])
   @@index([paystackReference])

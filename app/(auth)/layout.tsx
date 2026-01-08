@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export default function AuthLayout({
   children,
 }: {
@@ -5,9 +7,17 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Duma AI</h1>
-        <p className="text-gray-600">Professional AI-powered product photo editing</p>
+      <div className="mb-8 text-center flex flex-col items-center">
+        <div className="relative w-32 h-32 mb-4">
+          <Image
+            src="/duma-logo.png"
+            alt="Duma Logo"
+            width={128}
+            height={128}
+            className="object-contain"
+            priority
+          />
+        </div>
       </div>
       {children}
     </div>

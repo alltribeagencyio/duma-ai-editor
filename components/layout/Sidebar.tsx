@@ -2,6 +2,7 @@
 
 import { useState, useEffect, memo, useCallback, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { Home, Plus, Clock, Settings, Menu, X, LogOut, FileText, ChevronLeft, ChevronRight, User, BarChart3, CreditCard, HelpCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -95,7 +96,16 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
         <div className={cn('p-6 flex items-center justify-between', collapsed && 'px-4')}>
           {!collapsed && (
             <div className="flex items-center gap-3">
-              <div className="text-4xl">🦁</div>
+              <div className="relative w-12 h-12">
+                <Image
+                  src="/duma-logo.png"
+                  alt="Duma Logo"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                  priority
+                />
+              </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">DUMA</h1>
                 <p className="text-sm text-gray-600">AI Image Editor</p>
@@ -103,7 +113,16 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
             </div>
           )}
           {collapsed && (
-            <div className="text-3xl">🦁</div>
+            <div className="relative w-10 h-10">
+              <Image
+                src="/duma-logo.png"
+                alt="Duma"
+                width={40}
+                height={40}
+                className="object-contain"
+                priority
+              />
+            </div>
           )}
           {/* Collapse button - desktop only */}
           <button
