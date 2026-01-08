@@ -1,4 +1,3 @@
-import { AdminLayout } from '@/components/admin/AdminLayout'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
@@ -27,5 +26,5 @@ export default async function AdminLayoutWrapper({
     redirect('/dashboard')
   }
 
-  return <AdminLayout userEmail={userProfile.email}>{children}</AdminLayout>
+  return <>{children}</>
 }

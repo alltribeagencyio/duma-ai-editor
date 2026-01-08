@@ -82,15 +82,15 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
 
       {/* Top header bar */}
       <header
-        className={`fixed top-0 right-0 h-14 bg-white border-b border-gray-100 z-40 ${mounted ? 'transition-all duration-300' : ''} ${
+        className={`fixed top-0 right-0 h-16 bg-white border-b border-gray-100 z-40 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'left-0 md:left-16' : 'left-0 md:left-64'
         }`}
       >
-        <div className="h-full px-4 md:px-5 flex items-center justify-between">
+        <div className="h-full px-5 md:px-6 flex items-center justify-between">
           {title && (
             <div className="flex-1 min-w-0 pr-4">
-              <h1 className="text-base md:text-lg font-semibold text-gray-900 leading-tight truncate">{title}</h1>
-              {subtitle && <p className="text-xs text-gray-500 mt-0.5 truncate">{subtitle}</p>}
+              <h1 className="text-lg font-semibold text-gray-900 leading-tight truncate">{title}</h1>
+              {subtitle && <p className="text-sm text-gray-500 mt-0.5 truncate">{subtitle}</p>}
             </div>
           )}
           <div className={`relative flex-shrink-0 ${!title ? 'ml-auto' : ''}`}>
@@ -100,11 +100,11 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
       </header>
 
       <main
-        className={`min-h-screen pt-14 ${mounted ? 'transition-all duration-300' : ''} ${
+        className={`min-h-screen pt-16 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'md:pl-16' : 'md:pl-64'
         }`}
       >
-        <div className="px-4 md:px-5 py-4">{children}</div>
+        <div className="px-5 md:px-6 py-6">{children}</div>
       </main>
     </div>
   )

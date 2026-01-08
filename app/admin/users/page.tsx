@@ -1,10 +1,12 @@
+'use client'
+
+import { AdminLayout } from '@/components/admin/AdminLayout'
 import { UserManagement } from '@/components/admin/UserManagement'
 
-export const metadata = {
-  title: 'User Management | Duma AI Admin',
-  description: 'Manage user accounts and permissions',
-}
-
 export default function AdminUsersPage() {
-  return <UserManagement />
+  return (
+    <AdminLayout title="User Management" subtitle="Manage user accounts and permissions">
+      <UserManagement />
+    </AdminLayout>
+  )
 }

@@ -100,12 +100,6 @@ export function SupportTickets() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-semibold text-gray-900">Support Tickets</h2>
-        <p className="text-gray-600 mt-1">View and manage customer support requests</p>
-      </div>
-
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">

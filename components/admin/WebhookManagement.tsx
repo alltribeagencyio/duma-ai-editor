@@ -319,11 +319,7 @@ export function WebhookManagement() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-900">Webhook Management</h2>
-          <p className="text-gray-600 mt-1">Configure N8N webhooks for users</p>
-        </div>
+      <div className="flex items-center justify-end">
         <Button onClick={handleCreate} className="bg-gradient-to-r from-duma-primary to-duma-secondary text-white">
           <Plus className="h-4 w-4 mr-2" />
           Add Webhook
