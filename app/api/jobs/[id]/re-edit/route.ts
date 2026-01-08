@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
+import { selectWebhookForUser } from '@/lib/webhooks/selector'
 
 // POST /api/jobs/[id]/re-edit - Create a re-edit job from an existing completed job
 export async function POST(
@@ -60,6 +61,12 @@ export async function POST(
       )
     }
 
+    // Select appropriate webhook for user
+    const selectedWebhook = await selectWebhookForUser({
+      userId: user.id,
+      webhookType: 'image_processing',
+    })
+
     // Create re-edit job
     // IMPORTANT: Credits will be deducted ONLY on successful completion via webhook callback
     const reEditJob = await prisma.job.create({
@@ -73,6 +80,7 @@ export async function POST(
         isReEdit: true,
         creditsCost: 1,
         creditDeducted: false, // Credits not deducted yet
+        webhookId: selectedWebhook.webhookId || null,
         // Use selected image as input, or fallback to original images
         inputImages: selectedImageUrl ? [selectedImageUrl] : originalJob.inputImages,
         productName: originalJob.productName,
@@ -88,7 +96,8 @@ export async function POST(
     // This prevents charging users for failed jobs
 
     // Send webhook to n8n for processing
-    const webhookUrl = process.env.N8N_WEBHOOK_URL
+    const webhookUrl = selectedWebhook.webhookUrl
+    console.log('📤 Re-edit webhook:', selectedWebhook)
     if (webhookUrl) {
       const webhookPayload = {
         jobId: reEditJob.id,

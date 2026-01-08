@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
 import heicConvert from 'heic-convert'
+import { selectWebhookForUser } from '@/lib/webhooks/selector'
 
 // Helper function to convert HEIC to JPEG
 async function convertHeicToJpeg(file: File): Promise<{ buffer: Buffer; fileName: string }> {
@@ -116,6 +117,14 @@ export async function POST(req: NextRequest) {
       inputImageUrls.push(publicUrl)
     }
 
+    // Select appropriate webhook for user
+    const selectedWebhook = await selectWebhookForUser({
+      userId: user.id,
+      webhookType: 'image_processing',
+    })
+
+    console.log('📤 Selected webhook:', selectedWebhook)
+
     // Create job in database
     const job = await prisma.job.create({
       data: {
@@ -130,12 +139,16 @@ export async function POST(req: NextRequest) {
         productSku,
         inputImages: inputImageUrls,
         status: 'pending',
+        webhookId: selectedWebhook.webhookId || null,
+        creditDeducted: false, // Credits will be deducted on successful completion
       },
     })
 
     // Send webhook to n8n
-    const webhookUrl = process.env.N8N_WEBHOOK_URL
+    const webhookUrl = selectedWebhook.webhookUrl
     console.log('📤 Webhook URL:', webhookUrl)
+    console.log('📤 Webhook ID:', selectedWebhook.webhookId || 'fallback (env)')
+    console.log('📤 Webhook Name:', selectedWebhook.webhookName || 'N8N_WEBHOOK_URL')
 
     if (webhookUrl) {
       const webhookPayload = {
