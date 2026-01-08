@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ProfileForm } from './ProfileForm'
-import { SubscriptionCard } from './SubscriptionCard'
 import { CreditUsageCard } from './CreditUsageCard'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -144,8 +143,7 @@ export function ProfileClient() {
     >
       <div className="w-full max-w-screen-2xl mx-auto space-y-8">
         {/* Account Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <SubscriptionCard profile={profile} />
+        <div className="max-w-2xl">
           <CreditUsageCard profile={profile} />
         </div>
 

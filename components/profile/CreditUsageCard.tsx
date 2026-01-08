@@ -9,6 +9,7 @@ interface UserProfile {
   practiceCredits: number
   creditsUsed: number
   subscriptionTier: string
+  hasCompletedOnboarding: boolean
 }
 
 interface CreditUsageCardProps {
@@ -81,6 +82,25 @@ export function CreditUsageCard({ profile }: CreditUsageCardProps) {
           </div>
         </div>
 
+        {/* Complete Setup Alert */}
+        {!profile.hasCompletedOnboarding && (
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="text-sm font-medium text-blue-800 mb-1">
+              Complete Your Setup
+            </div>
+            <div className="text-sm text-blue-600 mb-2">
+              Finish onboarding to unlock all features and get your practice credits
+            </div>
+            <Button
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => window.location.href = '/onboarding'}
+            >
+              Continue Setup
+            </Button>
+          </div>
+        )}
+
         {/* Low Credit Warning */}
         {usagePercentage >= 80 && (
           <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
@@ -91,10 +111,33 @@ export function CreditUsageCard({ profile }: CreditUsageCardProps) {
               You&apos;ve used {usagePercentage.toFixed(1)}% of your credits this month
             </div>
             {profile.subscriptionTier === 'free' && (
-              <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+              <Button
+                size="sm"
+                className="bg-orange-600 hover:bg-orange-700"
+                onClick={() => window.location.href = '/subscription'}
+              >
                 Upgrade Plan
               </Button>
             )}
+          </div>
+        )}
+
+        {/* Upgrade Plan Prompt for Free Tier */}
+        {profile.subscriptionTier === 'free' && usagePercentage < 80 && (
+          <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+            <div className="text-sm font-medium text-purple-800 mb-1">
+              Upgrade Your Plan
+            </div>
+            <div className="text-sm text-purple-600 mb-2">
+              Get more credits and premium features
+            </div>
+            <Button
+              size="sm"
+              className="bg-purple-600 hover:bg-purple-700"
+              onClick={() => window.location.href = '/subscription'}
+            >
+              View Plans
+            </Button>
           </div>
         )}
 
@@ -117,17 +160,20 @@ export function CreditUsageCard({ profile }: CreditUsageCardProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <Button
             variant="outline"
-            className="flex-1"
             size="sm"
             onClick={() => window.location.href = '/credits/usage'}
           >
             Usage History
           </Button>
-          <Button variant="outline" className="flex-1" size="sm">
-            Buy Credits
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.location.href = '/subscription'}
+          >
+            Billing History
           </Button>
         </div>
       </CardContent>
