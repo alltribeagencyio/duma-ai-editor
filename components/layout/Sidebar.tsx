@@ -95,27 +95,25 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
         {/* Header */}
         <div className={cn('p-6 flex items-center justify-between', collapsed && 'px-4')}>
           {!collapsed && (
-            <div className="flex items-center justify-center w-full">
-              <div className="relative w-32 h-32">
-                <Image
-                  src="/duma-logo.png"
-                  alt="Duma Logo"
-                  width={128}
-                  height={128}
-                  className="object-contain"
-                  priority
-                />
-              </div>
+            <div className="flex items-center justify-center w-full px-2">
+              <Image
+                src="/duma-logo.png"
+                alt="Duma Logo"
+                width={200}
+                height={100}
+                className="w-auto h-auto max-w-full max-h-24 object-contain"
+                priority
+              />
             </div>
           )}
           {collapsed && (
-            <div className="relative w-10 h-10">
+            <div className="flex items-center justify-center">
               <Image
                 src="/duma-icon.png"
                 alt="Duma"
                 width={40}
                 height={40}
-                className="object-contain"
+                className="w-auto h-auto max-w-[40px] max-h-[40px] object-contain"
                 priority
               />
             </div>
