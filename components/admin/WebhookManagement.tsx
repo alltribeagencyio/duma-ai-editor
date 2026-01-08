@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Modal } from '@/components/ui/modal'
-import { Plus, Pencil, Trash2, Power, PowerOff, ExternalLink } from 'lucide-react'
+import { Plus, Pencil, Trash2, Power, PowerOff, ExternalLink, AlertCircle, CheckCircle2, X } from 'lucide-react'
 
 interface Webhook {
   id: string
@@ -31,6 +31,10 @@ export function WebhookManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingWebhook, setEditingWebhook] = useState<Webhook | null>(null)
   const [userIdFilter, setUserIdFilter] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState({
     userId: '',
     name: '',
@@ -43,18 +47,26 @@ export function WebhookManagement() {
 
   const fetchWebhooks = async () => {
     try {
+      setError(null)
       const params = new URLSearchParams()
       if (userIdFilter) {
         params.append('userId', userIdFilter)
       }
 
       const response = await fetch(`/api/admin/webhooks?${params}`)
-      if (response.ok) {
-        const { webhooks } = await response.json()
-        setWebhooks(webhooks)
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch webhooks' }))
+        throw new Error(errorData.error || `Failed to fetch webhooks: ${response.status}`)
       }
+
+      const data = await response.json()
+      // Handle case where webhooks might be undefined
+      setWebhooks(Array.isArray(data.webhooks) ? data.webhooks : [])
     } catch (error) {
       console.error('Error fetching webhooks:', error)
+      setError(error instanceof Error ? error.message : 'Failed to load webhooks. Please try again.')
+      setWebhooks([])
     } finally {
       setIsLoading(false)
     }
@@ -64,8 +76,20 @@ export function WebhookManagement() {
     fetchWebhooks()
   }, [userIdFilter])
 
+  // Auto-dismiss success messages after 5 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [successMessage])
+
   const handleCreate = () => {
     setEditingWebhook(null)
+    setValidationErrors({})
+    setError(null)
     setFormData({
       userId: '',
       name: '',
@@ -80,6 +104,8 @@ export function WebhookManagement() {
 
   const handleEdit = (webhook: Webhook) => {
     setEditingWebhook(webhook)
+    setValidationErrors({})
+    setError(null)
     setFormData({
       userId: webhook.userId,
       name: webhook.name,
@@ -92,59 +118,134 @@ export function WebhookManagement() {
     setIsModalOpen(true)
   }
 
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {}
+
+    // Required fields validation
+    if (!formData.name.trim()) {
+      errors.name = 'Webhook name is required'
+    }
+
+    if (!formData.webhookUrl.trim()) {
+      errors.webhookUrl = 'Webhook URL is required'
+    } else {
+      // Validate URL format
+      try {
+        const url = new URL(formData.webhookUrl)
+        if (!url.protocol.startsWith('http')) {
+          errors.webhookUrl = 'Webhook URL must start with http:// or https://'
+        }
+      } catch {
+        errors.webhookUrl = 'Please enter a valid URL'
+      }
+    }
+
+    if (!editingWebhook && !formData.userId.trim()) {
+      errors.userId = 'User ID is required'
+    }
+
+    // Validate priority is a valid number
+    if (isNaN(formData.priority) || formData.priority < 0) {
+      errors.priority = 'Priority must be a positive number'
+    }
+
+    setValidationErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
   const handleSave = async () => {
+    // Validate form before submission
+    if (!validateForm()) {
+      setError('Please fix the validation errors before saving')
+      return
+    }
+
     try {
+      setIsSaving(true)
+      setError(null)
+
+      // Ensure priority is converted to a number
+      const priorityValue = typeof formData.priority === 'string'
+        ? parseInt(formData.priority, 10)
+        : formData.priority
+
+      if (isNaN(priorityValue)) {
+        throw new Error('Priority must be a valid number')
+      }
+
       if (editingWebhook) {
         // Update existing webhook
         const response = await fetch(`/api/admin/webhooks/${editingWebhook.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: formData.name,
-            webhookUrl: formData.webhookUrl,
+            name: formData.name.trim(),
+            webhookUrl: formData.webhookUrl.trim(),
             webhookType: formData.webhookType,
-            priority: formData.priority,
+            priority: priorityValue,
             tierRestriction: formData.tierRestriction || null,
             isActive: formData.isActive,
           }),
         })
 
-        if (response.ok) {
-          await fetchWebhooks()
-          setIsModalOpen(false)
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: 'Failed to update webhook' }))
+          throw new Error(errorData.error || `Failed to update webhook: ${response.status}`)
         }
+
+        await fetchWebhooks()
+        setSuccessMessage('Webhook updated successfully!')
+        setIsModalOpen(false)
       } else {
         // Create new webhook
         const response = await fetch('/api/admin/webhooks', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            ...formData,
+            userId: formData.userId.trim(),
+            name: formData.name.trim(),
+            webhookUrl: formData.webhookUrl.trim(),
+            webhookType: formData.webhookType,
+            priority: priorityValue,
             tierRestriction: formData.tierRestriction || null,
+            isActive: formData.isActive,
           }),
         })
 
-        if (response.ok) {
-          await fetchWebhooks()
-          setIsModalOpen(false)
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: 'Failed to create webhook' }))
+          throw new Error(errorData.error || `Failed to create webhook: ${response.status}`)
         }
+
+        await fetchWebhooks()
+        setSuccessMessage('Webhook created successfully!')
+        setIsModalOpen(false)
       }
     } catch (error) {
       console.error('Error saving webhook:', error)
+      setError(error instanceof Error ? error.message : 'Failed to save webhook. Please try again.')
+    } finally {
+      setIsSaving(false)
     }
   }
 
   const handleToggle = async (id: string) => {
     try {
+      setError(null)
       const response = await fetch(`/api/admin/webhooks/${id}/toggle`, {
         method: 'POST',
       })
 
-      if (response.ok) {
-        await fetchWebhooks()
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to toggle webhook' }))
+        throw new Error(errorData.error || `Failed to toggle webhook: ${response.status}`)
       }
+
+      await fetchWebhooks()
+      setSuccessMessage('Webhook status updated successfully!')
     } catch (error) {
       console.error('Error toggling webhook:', error)
+      setError(error instanceof Error ? error.message : 'Failed to toggle webhook. Please try again.')
     }
   }
 
@@ -154,15 +255,21 @@ export function WebhookManagement() {
     }
 
     try {
+      setError(null)
       const response = await fetch(`/api/admin/webhooks/${id}`, {
         method: 'DELETE',
       })
 
-      if (response.ok) {
-        await fetchWebhooks()
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to delete webhook' }))
+        throw new Error(errorData.error || `Failed to delete webhook: ${response.status}`)
       }
+
+      await fetchWebhooks()
+      setSuccessMessage('Webhook deleted successfully!')
     } catch (error) {
       console.error('Error deleting webhook:', error)
+      setError(error instanceof Error ? error.message : 'Failed to delete webhook. Please try again.')
     }
   }
 
@@ -176,6 +283,41 @@ export function WebhookManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
+          <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-green-800 font-medium">{successMessage}</p>
+          </div>
+          <button
+            onClick={() => setSuccessMessage(null)}
+            className="text-green-600 hover:text-green-800"
+            aria-label="Dismiss"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-red-800 font-medium">Error</p>
+            <p className="text-red-700 text-sm mt-1">{error}</p>
+          </div>
+          <button
+            onClick={() => setError(null)}
+            className="text-red-600 hover:text-red-800"
+            aria-label="Dismiss"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -204,7 +346,7 @@ export function WebhookManagement() {
 
       {/* Webhooks List */}
       <div className="grid gap-4">
-        {webhooks.length === 0 ? (
+        {!webhooks || webhooks.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-gray-600">
               No webhooks configured yet
@@ -292,6 +434,14 @@ export function WebhookManagement() {
         size="lg"
       >
         <div className="space-y-4">
+          {/* Modal Error Display */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          )}
+
           {!editingWebhook && (
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
@@ -301,7 +451,11 @@ export function WebhookManagement() {
                 value={formData.userId}
                 onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
                 placeholder="Enter user ID"
+                className={validationErrors.userId ? 'border-red-500' : ''}
               />
+              {validationErrors.userId && (
+                <p className="text-red-600 text-sm">{validationErrors.userId}</p>
+              )}
             </div>
           )}
 
@@ -313,7 +467,11 @@ export function WebhookManagement() {
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g., Production Webhook, Advanced Processing"
+              className={validationErrors.name ? 'border-red-500' : ''}
             />
+            {validationErrors.name && (
+              <p className="text-red-600 text-sm">{validationErrors.name}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -324,7 +482,11 @@ export function WebhookManagement() {
               value={formData.webhookUrl}
               onChange={(e) => setFormData({ ...formData, webhookUrl: e.target.value })}
               placeholder="https://n8n.example.com/webhook/..."
+              className={validationErrors.webhookUrl ? 'border-red-500' : ''}
             />
+            {validationErrors.webhookUrl && (
+              <p className="text-red-600 text-sm">{validationErrors.webhookUrl}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -354,9 +516,16 @@ export function WebhookManagement() {
               <Input
                 type="number"
                 value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10)
+                  setFormData({ ...formData, priority: isNaN(value) ? 0 : value })
+                }}
                 placeholder="0 = highest"
+                className={validationErrors.priority ? 'border-red-500' : ''}
               />
+              {validationErrors.priority && (
+                <p className="text-red-600 text-sm">{validationErrors.priority}</p>
+              )}
             </div>
           </div>
 
@@ -393,15 +562,30 @@ export function WebhookManagement() {
           </div>
 
           <div className="flex justify-end gap-3 mt-6">
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsModalOpen(false)
+                setError(null)
+                setValidationErrors({})
+              }}
+              disabled={isSaving}
+            >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
-              disabled={!formData.name || !formData.webhookUrl || (!editingWebhook && !formData.userId)}
+              disabled={isSaving || !formData.name || !formData.webhookUrl || (!editingWebhook && !formData.userId)}
               className="bg-gradient-to-r from-duma-primary to-duma-secondary text-white"
             >
-              {editingWebhook ? 'Update' : 'Create'}
+              {isSaving ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                  {editingWebhook ? 'Updating...' : 'Creating...'}
+                </>
+              ) : (
+                editingWebhook ? 'Update' : 'Create'
+              )}
             </Button>
           </div>
         </div>

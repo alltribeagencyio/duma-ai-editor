@@ -45,46 +45,42 @@ export function AdminSidebar({ collapsed, onCollapsedChange, userEmail }: AdminS
 
   return (
     <aside className={cn(
-      'fixed left-0 top-0 z-40 h-full bg-gradient-to-b from-duma-primary to-duma-secondary border-r border-gray-100 flex flex-col transition-all duration-300',
+      'fixed left-0 top-0 z-40 h-full bg-white border-r border-gray-100 flex flex-col transition-all duration-300',
       collapsed ? 'w-16' : 'w-64'
     )}>
       {/* Header */}
-      <div className={cn('p-4 flex items-center justify-between border-b border-white/10', collapsed && 'px-3 flex-col gap-2')}>
-        {!collapsed ? (
-          <div className="flex items-center gap-3">
-            <div className="relative w-8 h-8 flex-shrink-0">
-              <Image
-                src="/duma-logo.png"
-                alt="Duma Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-                priority
-              />
-            </div>
-            <div className="text-white">
-              <div className="text-base font-bold">Admin Panel</div>
-              <div className="text-xs opacity-80">Duma AI</div>
-            </div>
-          </div>
-        ) : (
-          <div className="relative w-8 h-8">
+      <div className={cn('p-4 flex items-center justify-between', collapsed && 'px-3')}>
+        {!collapsed && (
+          <div className="flex items-center justify-center w-full px-2">
             <Image
               src="/duma-logo.png"
               alt="Duma Logo"
-              width={32}
-              height={32}
-              className="object-contain"
+              width={180}
+              height={90}
+              className="w-auto h-auto max-w-full max-h-16 object-contain"
               priority
             />
           </div>
         )}
+        {collapsed && (
+          <div className="flex items-center justify-center">
+            <Image
+              src="/duma-icon.png"
+              alt="Duma"
+              width={32}
+              height={32}
+              className="w-auto h-auto max-w-[32px] max-h-[32px] object-contain"
+              priority
+            />
+          </div>
+        )}
+        {/* Collapse button - desktop only */}
         <button
           onClick={toggleCollapsed}
-          className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-white"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className="hidden md:flex p-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {collapsed ? <ChevronRight className="h-4 w-4 text-gray-500" /> : <ChevronLeft className="h-4 w-4 text-gray-500" />}
         </button>
       </div>
 
@@ -99,39 +95,65 @@ export function AdminSidebar({ collapsed, onCollapsedChange, userEmail }: AdminS
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-sm',
+                'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-sm',
                 isActive
-                  ? 'bg-white text-duma-primary font-medium shadow-sm'
-                  : 'text-white/90 hover:bg-white/10',
+                  ? 'bg-gradient-to-r from-duma-primary/10 to-duma-secondary/10 text-duma-primary border-l-2 border-duma-primary'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                 collapsed && 'justify-center px-2'
               )}
               title={collapsed ? item.label : undefined}
             >
               <Icon className="h-4 w-4 flex-shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
+              {!collapsed && <span className="font-medium">{item.label}</span>}
             </Link>
           )
         })}
       </nav>
 
       {/* User Info & Exit */}
-      <div className="p-3 border-t border-white/10">
-        {!collapsed && userEmail && (
-          <div className="px-3 py-2 mb-2 text-white/80 text-xs truncate">
-            {userEmail}
-          </div>
-        )}
-        <Link
-          href="/dashboard"
-          className={cn(
-            'flex items-center gap-2 px-3 py-2 rounded-lg text-white/90 hover:bg-white/10 transition-colors text-sm',
-            collapsed && 'justify-center px-2'
+      <div className={cn('p-3 border-t border-gray-100', collapsed && 'px-2')}>
+        <div className="space-y-2">
+          {!collapsed ? (
+            <>
+              {userEmail && (
+                <div className="flex items-center gap-2 px-2 mb-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-duma-primary to-duma-secondary flex items-center justify-center text-white font-medium text-xs">
+                    {userEmail.split('@')[0].slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-600 truncate">{userEmail}</p>
+                  </div>
+                </div>
+              )}
+              <Link
+                href="/dashboard"
+                className="w-full flex items-center justify-start gap-2 px-3 py-2 rounded-lg text-gray-600 hover:text-duma-primary hover:bg-duma-primary/5 text-sm transition-colors"
+                title="Exit to User Panel"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Exit Admin</span>
+              </Link>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              {userEmail && (
+                <div
+                  className="w-8 h-8 rounded-full bg-gradient-to-br from-duma-primary to-duma-secondary flex items-center justify-center text-white font-medium text-xs cursor-pointer"
+                  title={userEmail}
+                >
+                  {userEmail.split('@')[0].slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              <Link
+                href="/dashboard"
+                className="p-1.5 hover:bg-duma-primary/5 hover:text-duma-primary rounded-lg transition-colors"
+                title="Exit to User Panel"
+              >
+                <LogOut className="h-3.5 w-3.5 text-gray-600" />
+              </Link>
+            </div>
           )}
-          title={collapsed ? 'Exit to User Panel' : undefined}
-        >
-          <LogOut className="h-4 w-4" />
-          {!collapsed && <span>Exit Admin</span>}
-        </Link>
+        </div>
       </div>
     </aside>
   )
