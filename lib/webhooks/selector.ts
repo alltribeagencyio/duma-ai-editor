@@ -45,88 +45,28 @@ function meetsTierRequirement(userTier: string, tierRestriction: string | null):
 /**
  * Selects the appropriate webhook URL for a user
  *
+ * SIMPLIFIED: Always returns the N8N_WEBHOOK_URL environment variable
+ * Per-user webhooks are disabled for simplicity
+ *
  * Selection logic:
- * 1. Fetch all active webhooks for the user and webhook type
- * 2. Filter by tier restrictions
- * 3. Return highest priority webhook
- * 4. Fallback to N8N_WEBHOOK_URL environment variable
+ * 1. Return N8N_WEBHOOK_URL environment variable
  */
 export async function selectWebhookForUser({
   userId,
   webhookType = 'image_processing',
 }: WebhookSelectionOptions): Promise<SelectedWebhook> {
-  try {
-    // Fetch user to check subscription tier
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { subscriptionTier: true },
-    })
+  console.log(`[Webhook Selector] Using global webhook for user ${userId} (type: ${webhookType})`)
 
-    if (!user) {
-      console.warn(`[Webhook Selector] User ${userId} not found, using fallback webhook`)
-      return {
-        webhookUrl: process.env.N8N_WEBHOOK_URL || '',
-      }
-    }
+  const webhookUrl = process.env.N8N_WEBHOOK_URL || ''
 
-    // Fetch active webhooks for user, ordered by priority (ascending)
-    const webhooks = await prisma.userWebhook.findMany({
-      where: {
-        userId,
-        webhookType,
-        isActive: true,
-      },
-      orderBy: {
-        priority: 'asc', // Lower priority number = higher priority
-      },
-    })
+  if (!webhookUrl) {
+    console.warn('[Webhook Selector] N8N_WEBHOOK_URL environment variable is not set!')
+  } else {
+    console.log(`[Webhook Selector] Using webhook URL: ${webhookUrl}`)
+  }
 
-    console.log(`[Webhook Selector] Found ${webhooks.length} active webhooks for user ${userId}`)
-
-    // Filter by tier restrictions
-    const eligibleWebhooks = webhooks.filter((webhook) => {
-      const meetsRequirement = meetsTierRequirement(
-        user.subscriptionTier,
-        webhook.tierRestriction
-      )
-
-      if (!meetsRequirement) {
-        console.log(
-          `[Webhook Selector] Webhook ${webhook.name} (${webhook.id}) filtered out due to tier restriction: ${webhook.tierRestriction} > ${user.subscriptionTier}`
-        )
-      }
-
-      return meetsRequirement
-    })
-
-    console.log(`[Webhook Selector] ${eligibleWebhooks.length} eligible webhooks after tier filtering`)
-
-    // Return highest priority webhook (first in list after sorting)
-    if (eligibleWebhooks.length > 0) {
-      const selected = eligibleWebhooks[0]
-      console.log(
-        `[Webhook Selector] Selected webhook: ${selected.name} (${selected.id}) with priority ${selected.priority}`
-      )
-      return {
-        webhookUrl: selected.webhookUrl,
-        webhookId: selected.id,
-        webhookName: selected.name,
-      }
-    }
-
-    // Fallback to environment variable
-    console.log(`[Webhook Selector] No eligible webhooks found, using fallback from env`)
-    return {
-      webhookUrl: process.env.N8N_WEBHOOK_URL || '',
-    }
-  } catch (error) {
-    console.error('[Webhook Selector] Error selecting webhook:', error)
-    console.log('[Webhook Selector] Falling back to environment variable webhook')
-
-    // Safe fallback on error
-    return {
-      webhookUrl: process.env.N8N_WEBHOOK_URL || '',
-    }
+  return {
+    webhookUrl,
   }
 }
 

@@ -30,7 +30,7 @@ export function AdminSidebar({ collapsed, onCollapsedChange, userEmail }: AdminS
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
     { icon: Users, label: 'Users', href: '/admin/users' },
-    { icon: Webhook, label: 'Webhooks', href: '/admin/webhooks' },
+    // { icon: Webhook, label: 'Webhooks', href: '/admin/webhooks' }, // Disabled - using global webhook
     { icon: MessageSquare, label: 'Prompts', href: '/admin/prompts' },
     { icon: HeadphonesIcon, label: 'Support', href: '/admin/support' },
     { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
