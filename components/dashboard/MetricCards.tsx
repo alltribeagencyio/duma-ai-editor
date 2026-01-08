@@ -39,16 +39,16 @@ export const MetricCards = memo(function MetricCards({
       label: 'Total Enhanced',
       value: totalEnhanced.toLocaleString(),
       icon: Check,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50',
+      color: 'text-duma-secondary',
+      bg: 'bg-duma-secondary/10',
     },
     {
       label: 'Credits Remaining',
       value: creditsRemaining.toLocaleString(),
       subtitle: `${creditsUsed} credits used`,
       icon: Coins,
-      color: 'text-purple-600',
-      bg: 'bg-purple-50',
+      color: 'text-duma-primary',
+      bg: 'bg-duma-primary/10',
     },
     {
       label: 'Storage Used',
@@ -74,7 +74,7 @@ export const MetricCards = memo(function MetricCards({
         return (
           <div
             key={metric.label}
-            className="bg-white rounded-lg border border-gray-200 p-7 hover:border-gray-300 transition-colors"
+            className="bg-white rounded-lg border border-gray-100 p-6 hover:border-duma-primary/20 transition-all hover:shadow-sm"
           >
             <div className="flex items-center justify-between mb-2">
               <div className={`p-2 rounded-lg ${metric.bg}`}>

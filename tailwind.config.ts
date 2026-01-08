@@ -13,6 +13,14 @@ const config: Config = {
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        duma: {
+          primary: "#ad00ab",
+          secondary: "#6900f5",
+          "primary-light": "#c933c7",
+          "primary-dark": "#8a0089",
+          "secondary-light": "#8533f7",
+          "secondary-dark": "#5200c4",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

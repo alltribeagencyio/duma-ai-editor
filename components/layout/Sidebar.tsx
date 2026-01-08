@@ -87,21 +87,21 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-full bg-white border-r border-gray-200 flex flex-col transition-all duration-300',
-          collapsed ? 'w-20' : 'w-80',
+          'fixed left-0 top-0 z-40 h-full bg-white border-r border-gray-100 flex flex-col transition-all duration-300',
+          collapsed ? 'w-16' : 'w-64',
           mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         )}
       >
         {/* Header */}
-        <div className={cn('p-6 flex items-center justify-between', collapsed && 'px-4')}>
+        <div className={cn('p-4 flex items-center justify-between', collapsed && 'px-3')}>
           {!collapsed && (
             <div className="flex items-center justify-center w-full px-2">
               <Image
                 src="/duma-logo.png"
                 alt="Duma Logo"
-                width={200}
-                height={100}
-                className="w-auto h-auto max-w-full max-h-24 object-contain"
+                width={180}
+                height={90}
+                className="w-auto h-auto max-w-full max-h-16 object-contain"
                 priority
               />
             </div>
@@ -111,9 +111,9 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
               <Image
                 src="/duma-icon.png"
                 alt="Duma"
-                width={40}
-                height={40}
-                className="w-auto h-auto max-w-[40px] max-h-[40px] object-contain"
+                width={32}
+                height={32}
+                className="w-auto h-auto max-w-[32px] max-h-[32px] object-contain"
                 priority
               />
             </div>
@@ -121,15 +121,15 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
           {/* Collapse button - desktop only */}
           <button
             onClick={toggleCollapsed}
-            className="hidden md:flex p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="hidden md:flex p-1.5 rounded-lg hover:bg-gray-50 transition-colors"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+            {collapsed ? <ChevronRight className="h-4 w-4 text-gray-500" /> : <ChevronLeft className="h-4 w-4 text-gray-500" />}
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-2 py-4 space-y-1">
+        <nav className="flex-1 px-2 py-2 space-y-0.5">
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
@@ -140,15 +140,15 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
+                  'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-sm',
                   isActive
-                    ? 'bg-gray-100 text-gray-900 border-l-3 border-gray-900'
+                    ? 'bg-gradient-to-r from-duma-primary/10 to-duma-secondary/10 text-duma-primary border-l-2 border-duma-primary'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                   collapsed && 'justify-center px-2'
                 )}
                 title={collapsed ? item.label : undefined}
               >
-                <Icon className="h-5 w-5 flex-shrink-0" />
+                <Icon className="h-4 w-4 flex-shrink-0" />
                 {!collapsed && <span className="font-medium">{item.label}</span>}
               </Link>
             )
@@ -159,41 +159,41 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
         {!collapsed && <ActivityLog />}
 
         {/* Bottom section */}
-        <div className={cn('p-4 border-t border-gray-200', collapsed && 'px-2')}>
-          <div className="space-y-3">
+        <div className={cn('p-3 border-t border-gray-100', collapsed && 'px-2')}>
+          <div className="space-y-2">
             {!collapsed ? (
               <>
-                <div className="flex items-center gap-3 px-2">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium">
+                <div className="flex items-center gap-2 px-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-duma-primary to-duma-secondary flex items-center justify-center text-white font-medium text-xs">
                     {initials}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-600 truncate">{userEmail}</p>
+                    <p className="text-xs text-gray-600 truncate">{userEmail}</p>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   onClick={handleLogout}
-                  className="w-full justify-start text-gray-600 hover:text-gray-900"
+                  className="w-full justify-start text-gray-600 hover:text-duma-primary hover:bg-duma-primary/5 text-xs py-1.5 h-auto"
                 >
-                  <LogOut className="h-4 w-4 mr-2" />
+                  <LogOut className="h-3.5 w-3.5 mr-2" />
                   Logout
                 </Button>
               </>
             ) : (
-              <div className="flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-2">
                 <div
-                  className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-gradient-to-br from-duma-primary to-duma-secondary flex items-center justify-center text-white font-medium text-xs cursor-pointer"
                   title={userEmail}
                 >
                   {initials}
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-duma-primary/5 hover:text-duma-primary rounded-lg transition-colors"
                   title="Logout"
                 >
-                  <LogOut className="h-4 w-4 text-gray-600" />
+                  <LogOut className="h-3.5 w-3.5 text-gray-600" />
                 </button>
               </div>
             )}

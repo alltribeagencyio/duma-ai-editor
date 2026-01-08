@@ -77,15 +77,15 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
 
       {/* Top header bar */}
       <header
-        className={`fixed top-0 right-0 h-16 md:h-20 lg:h-24 bg-white border-b border-gray-200 z-40 transition-all duration-300 ${
-          sidebarCollapsed ? 'left-0 md:left-20' : 'left-0 md:left-80'
+        className={`fixed top-0 right-0 h-14 bg-white border-b border-gray-100 z-40 transition-all duration-300 ${
+          sidebarCollapsed ? 'left-0 md:left-16' : 'left-0 md:left-64'
         }`}
       >
-        <div className="h-full px-4 md:px-6 lg:px-8 flex items-center justify-between">
+        <div className="h-full px-4 md:px-5 flex items-center justify-between">
           {title && (
-            <div className="py-2 flex-1 min-w-0 pr-4">
-              <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 leading-tight truncate">{title}</h1>
-              {subtitle && <p className="text-xs md:text-sm text-gray-600 mt-1 md:mt-1.5 truncate">{subtitle}</p>}
+            <div className="flex-1 min-w-0 pr-4">
+              <h1 className="text-base md:text-lg font-semibold text-gray-900 leading-tight truncate">{title}</h1>
+              {subtitle && <p className="text-xs text-gray-500 mt-0.5 truncate">{subtitle}</p>}
             </div>
           )}
           <div className={`relative flex-shrink-0 ${!title ? 'ml-auto' : ''}`}>
@@ -95,11 +95,11 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
       </header>
 
       <main
-        className={`min-h-screen pt-16 md:pt-20 lg:pt-[106px] transition-all duration-300 ${
-          sidebarCollapsed ? 'md:pl-20' : 'md:pl-80'
+        className={`min-h-screen pt-14 transition-all duration-300 ${
+          sidebarCollapsed ? 'md:pl-16' : 'md:pl-64'
         }`}
       >
-        <div className="px-4 md:px-6 lg:px-8 py-4 md:py-5">{children}</div>
+        <div className="px-4 md:px-5 py-4">{children}</div>
       </main>
     </div>
   )

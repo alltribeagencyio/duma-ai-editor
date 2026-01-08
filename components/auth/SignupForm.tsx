@@ -183,7 +183,7 @@ export function SignupForm() {
 
             <p className="text-center text-sm text-gray-600">
               Already have an account?{' '}
-              <Link href="/login" className="text-gray-900 hover:underline font-medium">
+              <Link href="/login" className="text-duma-primary hover:text-duma-primary-dark font-medium transition-colors">
                 Sign in
               </Link>
             </p>
