@@ -157,20 +157,20 @@ export function PromptsClient() {
           <div className="flex gap-2">
           <button
             onClick={() => setShowCustom(true)}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-4 py-2 rounded-lg transition-all ${
               showCustom
-                ? 'bg-gray-900 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                ? 'bg-gradient-to-r from-duma-primary to-duma-secondary text-white shadow-sm'
+                : 'bg-white text-gray-600 hover:bg-duma-primary/5 border border-gray-100'
             }`}
           >
             Custom Prompts ({customPrompts.length})
           </button>
           <button
             onClick={() => setShowCustom(false)}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-4 py-2 rounded-lg transition-all ${
               !showCustom
-                ? 'bg-gray-900 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                ? 'bg-gradient-to-r from-duma-primary to-duma-secondary text-white shadow-sm'
+                : 'bg-white text-gray-600 hover:bg-duma-primary/5 border border-gray-100'
             }`}
           >
             Preset Prompts ({presetPrompts.length})
@@ -179,7 +179,6 @@ export function PromptsClient() {
           {showCustom && (
             <Button
               onClick={() => setIsCreating(true)}
-              className="bg-gray-900 hover:bg-gray-800 text-white"
             >
               <Plus className="h-4 w-4 mr-2" />
               New Prompt
@@ -189,7 +188,7 @@ export function PromptsClient() {
 
         {/* Create/Edit Form */}
         {(isCreating || editingId) && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+          <div className="bg-white rounded-lg border border-gray-100 p-6 mb-6 shadow-sm">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               {isCreating ? 'Create New Prompt' : 'Edit Prompt'}
             </h3>
@@ -202,7 +201,7 @@ export function PromptsClient() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-duma-primary/20 focus:border-duma-primary transition-colors"
                   placeholder="My Custom Prompt"
                 />
               </div>
@@ -214,7 +213,7 @@ export function PromptsClient() {
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-duma-primary/20 focus:border-duma-primary transition-colors"
                   placeholder="Brief description of what this prompt does"
                 />
               </div>
@@ -225,7 +224,7 @@ export function PromptsClient() {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-duma-primary/20 focus:border-duma-primary transition-colors"
                 >
                   <option value="background">Background</option>
                   <option value="enhancement">Enhancement</option>
@@ -241,7 +240,7 @@ export function PromptsClient() {
                   value={formData.prompt}
                   onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-duma-primary/20 focus:border-duma-primary transition-colors"
                   placeholder="Enter your prompt instructions..."
                 />
               </div>
@@ -249,7 +248,6 @@ export function PromptsClient() {
                 <Button
                   onClick={() => (isCreating ? handleCreate() : handleUpdate(editingId!))}
                   disabled={!formData.name || !formData.prompt}
-                  className="bg-gray-900 hover:bg-gray-800 text-white"
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {isCreating ? 'Create' : 'Save'}
@@ -257,7 +255,6 @@ export function PromptsClient() {
                 <Button
                   onClick={cancelEditing}
                   variant="outline"
-                  className="border-gray-300"
                 >
                   <X className="h-4 w-4 mr-2" />
                   Cancel
@@ -270,10 +267,10 @@ export function PromptsClient() {
         {/* Prompts List */}
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
           </div>
         ) : prompts.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+          <div className="text-center py-12 bg-white rounded-lg border border-gray-100">
             <p className="text-gray-600">
               {showCustom
                 ? 'No custom prompts yet. Create your first one!'
@@ -285,13 +282,13 @@ export function PromptsClient() {
             {prompts.map((prompt) => (
               <div
                 key={prompt.id}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:border-gray-300 transition-colors"
+                className="bg-white rounded-lg border border-gray-100 p-6 hover:border-duma-primary/20 transition-all hover:shadow-sm"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">{prompt.name}</h3>
-                      <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
+                      <span className="text-xs px-2 py-1 bg-duma-primary/10 text-duma-primary rounded">
                         {prompt.category}
                       </span>
                     </div>
@@ -306,10 +303,10 @@ export function PromptsClient() {
                     <div className="flex gap-2 ml-4">
                       <button
                         onClick={() => startEditing(prompt)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 hover:bg-duma-primary/5 rounded-lg transition-colors"
                         title="Edit"
                       >
-                        <Edit2 className="h-4 w-4 text-gray-600" />
+                        <Edit2 className="h-4 w-4 text-duma-primary" />
                       </button>
                       <button
                         onClick={() => handleDelete(prompt.id)}

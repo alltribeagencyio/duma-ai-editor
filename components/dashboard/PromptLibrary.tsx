@@ -36,25 +36,25 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
   }, {} as Record<string, Prompt[]>)
 
   const categoryGradients: Record<string, string> = {
-    background: 'from-gray-100 to-gray-200',
-    enhancement: 'from-blue-50 to-blue-100',
-    focus: 'from-amber-50 to-orange-100',
-    other: 'from-green-50 to-green-100',
+    background: 'from-duma-primary/5 to-duma-primary/10',
+    enhancement: 'from-duma-secondary/5 to-duma-secondary/10',
+    focus: 'from-duma-primary/10 to-duma-secondary/10',
+    other: 'from-gray-50 to-gray-100',
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-8">
+    <div className="bg-white rounded-lg border border-gray-100 p-8">
       <h2 className="text-xl font-semibold text-gray-900 mb-6">Prompt Library</h2>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-200 mb-6">
+      <div className="flex gap-2 border-b border-gray-100 mb-6">
         <button
           onClick={() => setActiveTab('presets')}
           className={cn(
             'px-4 py-2 font-medium transition-colors',
             activeTab === 'presets'
-              ? 'text-gray-900 border-b-2 border-gray-900'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-duma-primary border-b-2 border-duma-primary'
+              : 'text-gray-600 hover:text-duma-primary'
           )}
         >
           Pro Presets
@@ -64,8 +64,8 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
           className={cn(
             'px-4 py-2 font-medium transition-colors',
             activeTab === 'library'
-              ? 'text-gray-900 border-b-2 border-gray-900'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-duma-primary border-b-2 border-duma-primary'
+              : 'text-gray-600 hover:text-duma-primary'
           )}
         >
           My Library ({myPrompts.length})
@@ -85,17 +85,17 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
                   <div
                     key={preset.id}
                     className={cn(
-                      'bg-gradient-to-br p-6 rounded-lg border border-gray-200 hover:border-gray-300 transition-all group cursor-pointer',
-                      categoryGradients[preset.category] || 'from-gray-100 to-gray-200'
+                      'bg-gradient-to-br p-6 rounded-lg border border-gray-100 hover:border-duma-primary/30 transition-all group cursor-pointer hover:shadow-sm',
+                      categoryGradients[preset.category] || 'from-gray-50 to-gray-100'
                     )}
                     onClick={() => onUsePrompt(preset.prompt)}
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <Sparkles className="h-5 w-5 text-gray-600" />
+                      <Sparkles className="h-5 w-5 text-duma-primary" />
                     </div>
                     <h4 className="text-base font-semibold text-gray-900 mb-2">{preset.name}</h4>
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{preset.description}</p>
-                    <button className="w-full px-4 py-2 rounded text-sm font-medium transition-colors bg-gray-900 text-white hover:bg-gray-800">
+                    <button className="w-full px-4 py-2 rounded-lg text-sm font-medium transition-all bg-gradient-to-r from-duma-primary to-duma-secondary text-white hover:from-duma-primary-dark hover:to-duma-secondary-dark shadow-sm hover:shadow-md">
                       Use this Prompt
                     </button>
                   </div>
@@ -120,7 +120,7 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
               placeholder="Search your prompts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-duma-primary/20 focus:border-duma-primary transition-colors"
             />
           </div>
 
@@ -136,12 +136,12 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
               {filteredPrompts.map((prompt, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-duma-primary/5 transition-colors group"
                 >
                   <p className="text-sm text-gray-900 flex-1 pr-4">{prompt}</p>
                   <button
                     onClick={() => onUsePrompt(prompt)}
-                    className="px-3 py-1 text-xs bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors opacity-0 group-hover:opacity-100"
+                    className="px-3 py-1 text-xs bg-gradient-to-r from-duma-primary to-duma-secondary text-white rounded-lg hover:from-duma-primary-dark hover:to-duma-secondary-dark transition-all opacity-0 group-hover:opacity-100 shadow-sm"
                   >
                     Use
                   </button>
