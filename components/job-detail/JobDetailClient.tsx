@@ -171,7 +171,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
               <Button
                 onClick={handleRetry}
                 disabled={isRetrying}
-                className="bg-gray-900 hover:bg-gray-800 text-white"
+                className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100"
               >
                 {isRetrying ? (
                   <>

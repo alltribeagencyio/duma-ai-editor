@@ -112,7 +112,7 @@ export function SubscriptionCard({ profile }: SubscriptionCardProps) {
             <div className="text-sm text-blue-600 mb-2">
               Finish onboarding to unlock all features and get your practice credits
             </div>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+            <Button size="sm" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
               Continue Setup
             </Button>
           </div>
@@ -126,7 +126,7 @@ export function SubscriptionCard({ profile }: SubscriptionCardProps) {
             <div className="text-sm text-purple-600 mb-2">
               Get more credits and premium features
             </div>
-            <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+            <Button size="sm" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
               View Plans
             </Button>
           </div>

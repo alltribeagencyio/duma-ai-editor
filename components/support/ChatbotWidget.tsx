@@ -158,7 +158,7 @@ export function ChatbotWidget() {
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isLoading}
             size="sm"
-            className="bg-gradient-to-r from-duma-primary to-duma-secondary text-white"
+            className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100"
           >
             <Send className="h-4 w-4" />
           </Button>

@@ -30,8 +30,8 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
                   <div
                     className={cn(
                       'w-10 h-10 rounded-full flex items-center justify-center font-medium transition-all duration-200',
-                      isCompleted && 'bg-gradient-to-r from-duma-primary to-duma-secondary text-white shadow-sm',
-                      isCurrent && 'border-2 border-duma-primary text-duma-primary bg-white',
+                      isCompleted && 'bg-purple-600 text-white shadow-sm',
+                      isCurrent && 'border-2 border-purple-600 text-purple-600 bg-white',
                       isUpcoming && 'border-2 border-gray-200 text-gray-400 bg-white'
                     )}
                   >
@@ -44,7 +44,7 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
                   <span
                     className={cn(
                       'mt-2 text-sm font-medium',
-                      (isCompleted || isCurrent) && 'text-duma-primary',
+                      (isCompleted || isCurrent) && 'text-purple-600',
                       isUpcoming && 'text-gray-400'
                     )}
                   >
@@ -57,7 +57,7 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
                   <div
                     className={cn(
                       'flex-1 h-0.5 mx-4 transition-all duration-200',
-                      isCompleted ? 'bg-gradient-to-r from-duma-primary to-duma-secondary' : 'bg-gray-200'
+                      isCompleted ? 'bg-purple-600' : 'bg-gray-200'
                     )}
                   />
                 )}

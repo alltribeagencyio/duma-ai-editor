@@ -126,7 +126,7 @@ export function ProfileClient() {
               setError(null)
               fetchProfile()
             }}
-            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
+            className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 border border-purple-100"
           >
             Retry
           </button>

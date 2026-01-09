@@ -320,7 +320,7 @@ export function WebhookManagement() {
 
       {/* Header */}
       <div className="flex items-center justify-end">
-        <Button onClick={handleCreate} className="bg-gradient-to-r from-duma-primary to-duma-secondary text-white">
+        <Button onClick={handleCreate} className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
           <Plus className="h-4 w-4 mr-2" />
           Add Webhook
         </Button>

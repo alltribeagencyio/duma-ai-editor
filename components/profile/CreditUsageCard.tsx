@@ -93,7 +93,7 @@ export function CreditUsageCard({ profile }: CreditUsageCardProps) {
             </div>
             <Button
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100"
               onClick={() => window.location.href = '/onboarding'}
             >
               Continue Setup
@@ -113,7 +113,7 @@ export function CreditUsageCard({ profile }: CreditUsageCardProps) {
             {profile.subscriptionTier === 'free' && (
               <Button
                 size="sm"
-                className="bg-orange-600 hover:bg-orange-700"
+                className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100"
                 onClick={() => window.location.href = '/subscription'}
               >
                 Upgrade Plan

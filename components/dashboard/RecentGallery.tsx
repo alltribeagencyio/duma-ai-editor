@@ -60,7 +60,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <p className="text-gray-600 mb-4">No recent edits yet</p>
           <Link href="/new">
-            <Button className="bg-gray-900 hover:bg-gray-800 text-white">
+            <Button className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
               Start Your First Edit
             </Button>
           </Link>
@@ -130,7 +130,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
               {/* Action Buttons */}
               <div className="p-4">
                 <Link href={`/jobs/${edit.id}`}>
-                  <button className="w-full text-xs px-4 py-2.5 bg-gradient-to-r from-duma-primary to-duma-secondary text-white rounded-lg hover:from-duma-primary-dark hover:to-duma-secondary-dark transition-all font-medium shadow-sm">
+                  <button className="w-full text-xs px-4 py-2.5 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-all font-medium border border-purple-100">
                     View Job
                   </button>
                 </Link>

@@ -95,7 +95,7 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
                     </div>
                     <h4 className="text-base font-semibold text-gray-900 mb-2">{preset.name}</h4>
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{preset.description}</p>
-                    <button className="w-full px-4 py-2 rounded-lg text-sm font-medium transition-all bg-gradient-to-r from-duma-primary to-duma-secondary text-white hover:from-duma-primary-dark hover:to-duma-secondary-dark shadow-sm hover:shadow-md">
+                    <button className="w-full px-4 py-2 rounded-lg text-sm font-medium transition-all bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
                       Use this Prompt
                     </button>
                   </div>
