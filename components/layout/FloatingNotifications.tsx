@@ -97,7 +97,7 @@ export const FloatingNotifications = memo(function FloatingNotifications({ userI
 
   return (
     <>
-      {/* Top notification button */}
+      {/* Top notification button - 44px touch target */}
       <button
         onClick={() => {
           setIsOpen(!isOpen)
@@ -105,38 +105,41 @@ export const FloatingNotifications = memo(function FloatingNotifications({ userI
             clearNotifications()
           }
         }}
-        className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        className="relative p-2.5 hover:bg-gray-100 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+        aria-label="Notifications"
       >
         <Bell className="h-5 w-5 text-gray-600" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+          <span className="absolute top-1 right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
-      {/* Notification panel */}
+      {/* Notification panel - responsive width */}
       <div
         className={cn(
-          'absolute top-12 right-0 z-50 w-96 bg-white shadow-2xl rounded-lg border border-gray-200 transition-all duration-300',
+          'absolute top-12 right-0 z-50 w-screen max-w-md bg-white shadow-2xl rounded-lg border border-gray-200 transition-all duration-300',
+          'md:w-96',
           isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         )}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-          <h3 className="font-semibold text-gray-900">Notifications</h3>
+          <h3 className="font-semibold text-gray-900 text-sm md:text-base">Notifications</h3>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-1 hover:bg-gray-200 rounded transition-colors"
+            className="p-1.5 hover:bg-gray-200 rounded transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
+            aria-label="Close notifications"
           >
             <X className="h-4 w-4 text-gray-600" />
           </button>
         </div>
 
-        {/* Notifications list */}
-        <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        {/* Notifications list - Apple-style scrolling */}
+        <div className="max-h-[60vh] md:max-h-96 overflow-y-auto overscroll-contain">
           {notifications.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-gray-500">
+            <div className="px-4 py-12 text-center text-sm text-gray-500">
               No notifications yet
             </div>
           ) : (
@@ -146,7 +149,7 @@ export const FloatingNotifications = memo(function FloatingNotifications({ userI
                 href={`/jobs/${notification.jobId}`}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  'block px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors',
+                  'block px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 cursor-pointer transition-colors',
                   index !== notifications.length - 1 && 'border-b border-gray-100'
                 )}
               >
@@ -166,7 +169,7 @@ export const FloatingNotifications = memo(function FloatingNotifications({ userI
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-30 bg-black/20"
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
         />
       )}
     </>

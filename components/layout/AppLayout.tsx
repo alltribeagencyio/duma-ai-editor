@@ -80,17 +80,18 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
         onCollapsedChange={setSidebarCollapsed}
       />
 
-      {/* Top header bar */}
+      {/* Top header bar - z-30 to be below sidebar z-50 */}
       <header
-        className={`fixed top-0 right-0 h-16 bg-white border-b border-gray-100 z-40 ${mounted ? 'transition-all duration-300' : ''} ${
+        className={`fixed top-0 right-0 h-14 md:h-16 bg-white border-b border-gray-100 z-30 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'left-0 md:left-16' : 'left-0 md:left-64'
         }`}
       >
-        <div className="h-full px-5 md:px-6 flex items-center justify-between">
+        {/* Add padding-left on mobile to avoid hamburger overlap */}
+        <div className="h-full pl-16 pr-4 md:px-6 flex items-center justify-between">
           {title && (
-            <div className="flex-1 min-w-0 pr-4">
-              <h1 className="text-lg font-semibold text-gray-900 leading-tight truncate">{title}</h1>
-              {subtitle && <p className="text-sm text-gray-500 mt-0.5 truncate">{subtitle}</p>}
+            <div className="flex-1 min-w-0 pr-3 md:pr-4">
+              <h1 className="text-base md:text-lg font-semibold text-gray-900 leading-tight truncate">{title}</h1>
+              {subtitle && <p className="text-xs md:text-sm text-gray-500 mt-0.5 truncate hidden sm:block">{subtitle}</p>}
             </div>
           )}
           <div className={`relative flex-shrink-0 ${!title ? 'ml-auto' : ''}`}>
@@ -100,11 +101,12 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
       </header>
 
       <main
-        className={`min-h-screen pt-16 ${mounted ? 'transition-all duration-300' : ''} ${
+        className={`min-h-screen pt-14 md:pt-16 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'md:pl-16' : 'md:pl-64'
         }`}
       >
-        <div className="px-5 md:px-6 py-6">{children}</div>
+        {/* Apple-inspired padding: tighter on mobile, generous on desktop */}
+        <div className="px-4 md:px-6 lg:px-8 py-4 md:py-6">{children}</div>
       </main>
     </div>
   )
