@@ -86,15 +86,15 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
           sidebarCollapsed ? 'left-0 md:left-16' : 'left-0 md:left-64'
         }`}
       >
-        {/* Add padding-left on mobile to avoid hamburger overlap */}
-        <div className="h-full pl-16 pr-4 md:px-6 flex items-center justify-between">
+        {/* Mobile: center title, Desktop: left align */}
+        <div className="h-full pl-16 pr-4 md:px-6 flex items-center md:justify-between">
           {title && (
-            <div className="flex-1 min-w-0 pr-3 md:pr-4">
+            <div className="flex-1 min-w-0 pr-3 md:pr-4 text-center md:text-left">
               <h1 className="text-base md:text-lg font-semibold text-gray-900 leading-tight truncate">{title}</h1>
               {subtitle && <p className="text-xs md:text-sm text-gray-500 mt-0.5 truncate hidden sm:block">{subtitle}</p>}
             </div>
           )}
-          <div className={`relative flex-shrink-0 ${!title ? 'ml-auto' : ''}`}>
+          <div className={`relative flex-shrink-0 ${!title ? 'ml-auto' : 'absolute right-4 md:relative md:right-0'}`}>
             {userId && <FloatingNotifications userId={userId} />}
           </div>
         </div>

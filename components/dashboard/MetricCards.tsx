@@ -68,29 +68,29 @@ export const MetricCards = memo(function MetricCards({
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">
       {metrics.map((metric) => {
         const Icon = metric.icon
         return (
           <div
             key={metric.label}
-            className="bg-white rounded-lg border border-gray-100 p-6 hover:border-duma-primary/20 transition-all hover:shadow-sm"
+            className="bg-white rounded-lg border border-gray-100 p-4 md:p-6 hover:border-duma-primary/20 transition-all hover:shadow-sm"
           >
             <div className="flex items-center justify-between mb-2">
-              <div className={`p-2 rounded-lg ${metric.bg}`}>
-                <Icon className={`h-5 w-5 ${metric.color}`} />
+              <div className={`p-1.5 md:p-2 rounded-lg ${metric.bg}`}>
+                <Icon className={`h-4 w-4 md:h-5 md:w-5 ${metric.color}`} />
               </div>
               {metric.pulse && (
-                <span className="relative flex h-3 w-3">
+                <span className="relative flex h-2 w-2 md:h-3 md:w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                  <span className="relative inline-flex rounded-full h-full w-full bg-green-500"></span>
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-600 mb-1">{metric.label}</p>
-            <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
+            <p className="text-xs md:text-sm text-gray-600 mb-1">{metric.label}</p>
+            <p className="text-lg md:text-2xl font-bold text-gray-900">{metric.value}</p>
             {metric.subtitle && (
-              <p className="text-xs text-gray-500 mt-1">{metric.subtitle}</p>
+              <p className="text-[10px] md:text-xs text-gray-500 mt-1">{metric.subtitle}</p>
             )}
           </div>
         )
