@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Loader2 } from 'lucide-react'
 import { useNewEditStore } from '@/lib/stores/newEditStore'
 import { createClient } from '@/lib/supabase/client'
 
@@ -72,9 +73,9 @@ export function Step3Review() {
 
       const { job } = await response.json()
 
-      // Reset form and redirect to dashboard
+      // Reset form and redirect to job details page
       reset()
-      router.push('/dashboard')
+      router.push(`/jobs/${job.id}`)
     } catch (err: any) {
       setError(err.message || 'Failed to submit job')
     } finally {
@@ -143,7 +144,8 @@ export function Step3Review() {
           className="w-full h-12 text-base"
           size="lg"
         >
-          {submitting ? 'Submitting...' : 'Submit for Editing'}
+          {submitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+          {submitting ? 'Creating your edit job...' : 'Submit for Editing'}
         </Button>
         <div className="flex justify-center">
           <Button variant="ghost" onClick={() => setStep(2)}>

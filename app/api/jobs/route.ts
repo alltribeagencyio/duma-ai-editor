@@ -124,6 +124,7 @@ export async function POST(req: NextRequest) {
     })
 
     console.log('📤 Selected webhook:', selectedWebhook)
+    console.log('📤 N8N_WEBHOOK_URL from env:', process.env.N8N_WEBHOOK_URL)
 
     // Create job in database
     const job = await prisma.job.create({
@@ -163,18 +164,22 @@ export async function POST(req: NextRequest) {
         callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhook/callback`,
       }
 
-      console.log('📤 Sending webhook payload:', JSON.stringify(webhookPayload, null, 2))
+      console.log('📤 Sending webhook to:', webhookUrl)
+      console.log('📤 Webhook payload:', JSON.stringify(webhookPayload, null, 2))
 
       try {
         const response = await fetch(webhookUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'DumaAI-ImageEditor/1.0',
+          },
           body: JSON.stringify(webhookPayload),
         })
 
         console.log('📤 Webhook response status:', response.status)
         const responseText = await response.text()
-        console.log('📤 Webhook response:', responseText)
+        console.log('📤 Webhook response body:', responseText)
 
         if (response.ok) {
           // Update job status to processing
@@ -185,13 +190,20 @@ export async function POST(req: NextRequest) {
           console.log('✅ Job status updated to processing')
         } else {
           console.error('❌ Webhook returned error status:', response.status)
+          console.error('❌ Response body:', responseText)
         }
       } catch (webhookError) {
         console.error('❌ Error sending webhook:', webhookError)
+        if (webhookError instanceof Error) {
+          console.error('❌ Error details:', webhookError.message)
+          console.error('❌ Error stack:', webhookError.stack)
+        }
         // Don't fail the whole request if webhook fails
       }
     } else {
-      console.log('⚠️  No webhook URL configured')
+      console.error('⚠️  No webhook URL configured! Please check:')
+      console.error('   - N8N_WEBHOOK_URL environment variable')
+      console.error('   - User webhook settings in admin panel')
     }
 
     return NextResponse.json({ job }, { status: 201 })

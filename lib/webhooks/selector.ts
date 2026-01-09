@@ -46,50 +46,25 @@ function meetsTierRequirement(userTier: string, tierRestriction: string | null):
  * Selects the appropriate webhook URL for a user
  *
  * Selection logic:
- * 1. Check for user-specific active webhooks
- * 2. Use the first active webhook (highest priority)
- * 3. Fallback to N8N_WEBHOOK_URL environment variable
+ * 1. Use N8N_WEBHOOK_URL environment variable (single webhook for all users)
+ *
+ * Note: User-specific webhooks are disabled for now
  */
 export async function selectWebhookForUser({
   userId,
   webhookType = 'image_processing',
 }: WebhookSelectionOptions): Promise<SelectedWebhook> {
   try {
-    console.log(`[Webhook Selector] Selecting webhook for user ${userId} (type: ${webhookType})`)
+    console.log(`[Webhook Selector] Using global webhook for all users`)
 
-    // Fetch active webhooks for user, ordered by priority (ascending)
-    const webhooks = await prisma.userWebhook.findMany({
-      where: {
-        userId,
-        webhookType,
-        isActive: true,
-      },
-      orderBy: {
-        priority: 'asc', // Lower priority number = higher priority
-      },
-    })
-
-    console.log(`[Webhook Selector] Found ${webhooks.length} active webhooks for user ${userId}`)
-
-    // Return first active webhook (highest priority)
-    if (webhooks.length > 0) {
-      const selected = webhooks[0]
-      console.log(
-        `[Webhook Selector] Selected webhook: ${selected.name} (${selected.id}) with priority ${selected.priority}`
-      )
-      return {
-        webhookUrl: selected.webhookUrl,
-        webhookId: selected.id,
-        webhookName: selected.name,
-      }
-    }
-
-    // Fallback to environment variable
-    console.log(`[Webhook Selector] No active user webhooks found, using fallback from env`)
+    // Use environment variable webhook (single webhook for all users)
     const webhookUrl = process.env.N8N_WEBHOOK_URL || ''
 
     if (!webhookUrl) {
-      console.warn('[Webhook Selector] N8N_WEBHOOK_URL environment variable is not set!')
+      console.error('[Webhook Selector] N8N_WEBHOOK_URL environment variable is not set!')
+      console.error('[Webhook Selector] Please add N8N_WEBHOOK_URL to your environment variables')
+    } else {
+      console.log('[Webhook Selector] Using webhook from N8N_WEBHOOK_URL:', webhookUrl)
     }
 
     return {
@@ -97,7 +72,6 @@ export async function selectWebhookForUser({
     }
   } catch (error) {
     console.error('[Webhook Selector] Error selecting webhook:', error)
-    console.log('[Webhook Selector] Falling back to environment variable webhook')
 
     // Safe fallback on error
     return {
