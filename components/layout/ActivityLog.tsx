@@ -26,7 +26,7 @@ export function ActivityLog() {
           const { jobs } = await response.json()
 
           const activityItems: ActivityItem[] = jobs
-            .slice(0, 3) // Only show last 3 activities
+            .slice(0, 7) // Fetch last 7 activities (scrollable to max 7)
             .map((job: any) => ({
               id: job.id,
               type: job.status,
@@ -76,60 +76,60 @@ export function ActivityLog() {
   const getIcon = (type: string) => {
     switch (type) {
       case 'pending':
-        return <Clock className="h-4 w-4 text-gray-400" />
+        return <Clock className="h-3.5 w-3.5 text-gray-400" />
       case 'processing':
-        return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
+        return <Loader2 className="h-3.5 w-3.5 text-blue-500 animate-spin" />
       case 'completed':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-3.5 w-3.5 text-green-500" />
       case 'failed':
-        return <XCircle className="h-4 w-4 text-red-500" />
+        return <XCircle className="h-3.5 w-3.5 text-red-500" />
       default:
-        return <Activity className="h-4 w-4 text-gray-400" />
+        return <Activity className="h-3.5 w-3.5 text-gray-400" />
     }
   }
 
   if (isLoading) {
     return (
-      <div className="px-4 py-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Activity className="h-5 w-5 text-gray-600" />
-          <h3 className="font-semibold text-gray-900">Activity Log</h3>
+      <div className="px-4 py-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Activity className="h-4 w-4 text-gray-600" />
+          <h3 className="text-sm font-semibold text-gray-900">Activity Log</h3>
         </div>
-        <div className="flex justify-center py-8">
-          <Loader2 className="h-6 w-6 text-gray-400 animate-spin" />
+        <div className="flex justify-center py-6">
+          <Loader2 className="h-5 w-5 text-gray-400 animate-spin" />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="px-4 py-6 border-t border-gray-200">
-      <div className="flex items-center gap-2 mb-4">
-        <Activity className="h-5 w-5 text-gray-600" />
-        <h3 className="font-semibold text-gray-900">Activity Log</h3>
+    <div className="px-4 py-4 border-t border-gray-200">
+      <div className="flex items-center gap-2 mb-3">
+        <Activity className="h-4 w-4 text-gray-600" />
+        <h3 className="text-sm font-semibold text-gray-900">Activity Log</h3>
       </div>
 
       {activities.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-4">No recent activity</p>
+        <p className="text-xs text-gray-500 text-center py-4">No recent activity</p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {activities.map((activity) => (
             <Link
               key={activity.id}
               href={`/jobs/${activity.jobId}`}
-              className="block p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
+              className="block p-2.5 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-2.5">
                 <div className="mt-0.5">{getIcon(activity.type)}</div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900 font-medium">
+                  <p className="text-xs text-gray-900 font-medium leading-snug">
                     {activity.message}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-[10px] text-gray-500 mt-0.5">
                     {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
                   </p>
                   {activity.errorMessage && (
-                    <p className="text-xs text-red-600 mt-1">
+                    <p className="text-[10px] text-red-600 mt-0.5">
                       Error: Job timed out
                     </p>
                   )}
