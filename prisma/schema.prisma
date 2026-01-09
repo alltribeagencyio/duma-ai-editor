@@ -18,7 +18,7 @@ model Job {
   productCategory  String?
   productSku       String?
   inputImages      String[]
-  outputData       Json?
+  outputData       String[]  @default([])
   phone            String?
   notifyByEmail    Boolean   @default(true)
   createdAt        DateTime  @default(now())
