@@ -32,6 +32,7 @@ export function Step3Review() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [userEmail, setUserEmail] = useState('')
+  const [uploadProgress, setUploadProgress] = useState(0)
 
   // Get user email
   useState(() => {
@@ -46,6 +47,7 @@ export function Step3Review() {
   const handleSubmit = async () => {
     setError('')
     setSubmitting(true)
+    setUploadProgress(0)
 
     try {
       const formData = new FormData()
@@ -62,22 +64,52 @@ export function Step3Review() {
         formData.append('images', image)
       })
 
-      const response = await fetch('/api/jobs', {
-        method: 'POST',
-        body: formData,
+      // Use XMLHttpRequest to track upload progress
+      const xhr = new XMLHttpRequest()
+
+      // Track upload progress
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100)
+          setUploadProgress(percentComplete)
+        }
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to create job')
-      }
+      // Handle completion
+      const uploadPromise = new Promise((resolve, reject) => {
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const response = JSON.parse(xhr.responseText)
+              resolve(response)
+            } catch (e) {
+              reject(new Error('Failed to parse response'))
+            }
+          } else {
+            reject(new Error('Failed to create job'))
+          }
+        })
 
-      const { job } = await response.json()
+        xhr.addEventListener('error', () => {
+          reject(new Error('Network error'))
+        })
+
+        xhr.addEventListener('abort', () => {
+          reject(new Error('Upload cancelled'))
+        })
+      })
+
+      xhr.open('POST', '/api/jobs')
+      xhr.send(formData)
+
+      const { job } = await uploadPromise as any
 
       // Reset form and redirect to job details page
       reset()
       router.push(`/jobs/${job.id}`)
     } catch (err: any) {
       setError(err.message || 'Failed to submit job')
+      setUploadProgress(0)
     } finally {
       setSubmitting(false)
     }
@@ -138,17 +170,35 @@ export function Step3Review() {
 
       {/* Submit */}
       <div className="space-y-4 pt-4">
-        <Button
-          onClick={handleSubmit}
-          disabled={submitting}
-          className="w-full h-12 text-base"
-          size="lg"
-        >
-          {submitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-          {submitting ? 'Creating your edit job...' : 'Submit for Editing'}
-        </Button>
+        <div className="space-y-3">
+          <Button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="w-full h-12 text-base"
+            size="lg"
+          >
+            {submitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+            {submitting ? 'Uploading images...' : 'Submit for Editing'}
+          </Button>
+
+          {/* Minimal Progress Bar */}
+          {submitting && uploadProgress > 0 && (
+            <div className="space-y-1.5">
+              <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-purple-600 transition-all duration-300 ease-out"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <p className="text-xs text-center text-gray-600">
+                {uploadProgress}% uploaded
+              </p>
+            </div>
+          )}
+        </div>
+
         <div className="flex justify-center">
-          <Button variant="ghost" onClick={() => setStep(2)}>
+          <Button variant="ghost" onClick={() => setStep(2)} disabled={submitting}>
             Back
           </Button>
         </div>
