@@ -106,39 +106,64 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
       title="Job Details"
       subtitle={`Status: ${job.status}`}
     >
-      <div className="max-w-6xl mx-auto">
-        {job.status === 'pending' && (
-          <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900 mb-4" />
-            <p className="text-gray-600">Waiting to process...</p>
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Show prompt always if available */}
+        {job.prompt && (
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <button
+              onClick={() => setShowPrompt(!showPrompt)}
+              className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+            >
+              <h3 className="text-lg font-semibold text-gray-900">
+                Prompt Used
+              </h3>
+              {showPrompt ? (
+                <ChevronUp className="h-5 w-5 text-gray-600" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-gray-600" />
+              )}
+            </button>
+
+            {showPrompt && (
+              <div className="px-6 pb-6 border-t border-gray-200">
+                <div className="pt-4">
+                  <p className="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100 whitespace-pre-wrap">
+                    {job.prompt}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {job.status === 'processing' && (
-          <>
-            {outputImages.length > 0 && (
-              <ImageGallery
-                imageUrls={outputImages}
-                totalImages={totalImages}
-                onSelectionChange={setSelectedUrls}
-              />
-            )}
+        {/* Edited Images Section - Always Show */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Edited Images</h3>
 
-            {outputImages.length === 0 && (
-              <div className="text-center py-12">
-                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900 mb-4" />
-                <p className="text-gray-600">Processing your images...</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Edited images will appear here as they&apos;re completed
-                </p>
-              </div>
-            )}
-          </>
-        )}
+          {(job.status === 'pending' || (job.status === 'processing' && outputImages.length === 0)) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({ length: totalImages || 1 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center"
+                >
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900 mb-3" />
+                  <p className="text-sm text-gray-500">Processing image {index + 1}...</p>
+                </div>
+              ))}
+            </div>
+          )}
 
-        {job.status === 'failed' && (
-          <>
-            <div className="text-center py-8 bg-white rounded-lg border border-red-200 mb-8">
+          {job.status === 'processing' && outputImages.length > 0 && (
+            <ImageGallery
+              imageUrls={outputImages}
+              totalImages={totalImages}
+              onSelectionChange={setSelectedUrls}
+            />
+          )}
+
+          {job.status === 'failed' && (
+            <div className="text-center py-8 bg-white rounded-lg border border-red-200">
               <p className="text-red-600 mb-2 font-semibold">Failed to process images</p>
               {job.errorMessage && (
                 <p className="text-sm text-gray-600 mb-4">{job.errorMessage}</p>
@@ -161,94 +186,52 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
                 )}
               </Button>
             </div>
+          )}
 
-            {/* Show original images for failed jobs */}
-            {job.inputImages && job.inputImages.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Original Images</h3>
-                <ImageGallery imageUrls={job.inputImages} />
-              </div>
-            )}
-          </>
-        )}
+          {job.status === 'completed' && outputImages.length > 0 && (
+            <ImageGallery
+              imageUrls={outputImages}
+              onSelectionChange={setSelectedUrls}
+              jobId={job.id}
+              jobStatus={job.status}
+              onReEdit={(imageUrl) => {
+                setSelectedImageForReEdit(imageUrl)
+                setReEditModalOpen(true)
+              }}
+            />
+          )}
 
-        {job.status === 'completed' && outputImages.length > 0 && (
-          <>
-            {/* Collapsible prompt section */}
-            {job.prompt && (
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden mb-6">
-                <button
-                  onClick={() => setShowPrompt(!showPrompt)}
-                  className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Prompt Used
-                  </h3>
-                  {showPrompt ? (
-                    <ChevronUp className="h-5 w-5 text-gray-600" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-gray-600" />
-                  )}
-                </button>
-
-                {showPrompt && (
-                  <div className="px-6 pb-6 border-t border-gray-200">
-                    <div className="pt-4">
-                      <p className="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100 whitespace-pre-wrap">
-                        {job.prompt}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Edited Images</h3>
-              <ImageGallery
-                imageUrls={outputImages}
-                onSelectionChange={setSelectedUrls}
-                jobId={job.id}
-                jobStatus={job.status}
-                onReEdit={(imageUrl) => {
-                  setSelectedImageForReEdit(imageUrl)
-                  setReEditModalOpen(true)
-                }}
-              />
+          {job.status === 'completed' && outputImages.length === 0 && (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <p className="text-gray-600">No edited images available</p>
             </div>
+          )}
+        </div>
 
-            {/* Collapsible original images panel */}
-            {job.inputImages && job.inputImages.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <button
-                  onClick={() => setShowOriginalImages(!showOriginalImages)}
-                  className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Original Images ({job.inputImages.length})
-                  </h3>
-                  {showOriginalImages ? (
-                    <ChevronUp className="h-5 w-5 text-gray-600" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-gray-600" />
-                  )}
-                </button>
+        {/* Original Images Section */}
+        {job.inputImages && job.inputImages.length > 0 && (
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <button
+              onClick={() => setShowOriginalImages(!showOriginalImages)}
+              className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+            >
+              <h3 className="text-lg font-semibold text-gray-900">
+                Original Images ({job.inputImages.length})
+              </h3>
+              {showOriginalImages ? (
+                <ChevronUp className="h-5 w-5 text-gray-600" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-gray-600" />
+              )}
+            </button>
 
-                {showOriginalImages && (
-                  <div className="px-6 pb-6 border-t border-gray-200">
-                    <div className="pt-4">
-                      <ImageGallery imageUrls={job.inputImages} />
-                    </div>
-                  </div>
-                )}
+            {showOriginalImages && (
+              <div className="px-6 pb-6 border-t border-gray-200">
+                <div className="pt-4">
+                  <ImageGallery imageUrls={job.inputImages} />
+                </div>
               </div>
             )}
-          </>
-        )}
-
-        {job.status === 'completed' && outputImages.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600">No edited images available</p>
           </div>
         )}
       </div>

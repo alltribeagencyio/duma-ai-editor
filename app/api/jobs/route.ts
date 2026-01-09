@@ -168,6 +168,10 @@ export async function POST(req: NextRequest) {
       console.log('📤 Webhook payload:', JSON.stringify(webhookPayload, null, 2))
 
       try {
+        // Create AbortController for timeout
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
         const response = await fetch(webhookUrl, {
           method: 'POST',
           headers: {
@@ -175,7 +179,10 @@ export async function POST(req: NextRequest) {
             'User-Agent': 'DumaAI-ImageEditor/1.0',
           },
           body: JSON.stringify(webhookPayload),
+          signal: controller.signal,
         })
+
+        clearTimeout(timeoutId)
 
         console.log('📤 Webhook response status:', response.status)
         const responseText = await response.text()
@@ -197,6 +204,11 @@ export async function POST(req: NextRequest) {
         if (webhookError instanceof Error) {
           console.error('❌ Error details:', webhookError.message)
           console.error('❌ Error stack:', webhookError.stack)
+
+          // Check if it was a timeout
+          if (webhookError.name === 'AbortError') {
+            console.error('❌ Webhook request timed out after 10 seconds')
+          }
         }
         // Don't fail the whole request if webhook fails
       }
