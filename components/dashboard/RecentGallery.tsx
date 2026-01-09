@@ -130,7 +130,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
               {/* Action Buttons */}
               <div className="p-4">
                 <Link href={`/jobs/${edit.id}`}>
-                  <button className="w-full text-xs px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium">
+                  <button className="w-full text-xs px-4 py-2.5 bg-gradient-to-r from-duma-primary to-duma-secondary text-white rounded-lg hover:from-duma-primary-dark hover:to-duma-secondary-dark transition-all font-medium shadow-sm">
                     View Job
                   </button>
                 </Link>
