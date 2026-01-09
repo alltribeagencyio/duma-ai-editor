@@ -8,7 +8,6 @@ import { Home, Plus, Clock, Settings, Menu, X, LogOut, FileText, ChevronLeft, Ch
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { ActivityLog } from './ActivityLog'
 import { cn } from '@/lib/utils'
 
 interface SidebarProps {
@@ -201,11 +200,8 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
           )}
         </nav>
 
-        {/* Activity Log - hide when collapsed */}
-        {!collapsed && <ActivityLog />}
-
-        {/* Bottom section */}
-        <div className={cn('p-3 border-t border-gray-100', collapsed && 'px-2')}>
+        {/* Bottom section - Logout (pinned to bottom, replaces Activity Log) */}
+        <div className={cn('mt-auto p-3 border-t border-gray-100', collapsed && 'px-2')}>
           <div className="space-y-2">
             {!collapsed ? (
               <>
