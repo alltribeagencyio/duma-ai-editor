@@ -78,8 +78,8 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
-        {recentEdits.map((edit, index) => {
+      <div className="grid grid-cols-2 gap-3 md:gap-4">
+        {recentEdits.slice(0, 4).map((edit, index) => {
           const editedImage = edit.editedImages[0]
 
           return (
@@ -90,7 +90,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
               onMouseLeave={() => setHoveredIndex(null)}
             >
               {/* Image Container */}
-              <div className="relative aspect-square bg-gray-100">
+              <div className="relative aspect-square bg-gray-100 min-h-[150px]">
                 {!imageErrors.has(editedImage) ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
