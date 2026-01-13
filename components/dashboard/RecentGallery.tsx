@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, memo, useCallback } from 'react'
-import { Download } from 'lucide-react'
+import { useState, memo, useCallback, useEffect } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
@@ -18,25 +18,14 @@ interface RecentGalleryProps {
 }
 
 export const RecentGallery = memo(function RecentGallery({ recentEdits }: RecentGalleryProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
-  const handleDownload = useCallback(async (imageUrl: string, index: number) => {
-    try {
-      const response = await fetch(imageUrl)
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `edited-image-${index + 1}.jpg`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-    } catch (error) {
-      console.error('Error downloading image:', error)
-    }
-  }, [])
+  // Limit to 16 most recent for desktop slider
+  const displayEdits = recentEdits.slice(0, 16)
+  const slidesPerView = 4
+  const totalSlides = Math.ceil(displayEdits.length / slidesPerView)
 
   const formatTimeAgo = useCallback((dateString: string) => {
     const date = new Date(dateString)
@@ -52,6 +41,25 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
     if (diffDays < 7) return `${diffDays}d ago`
     return date.toLocaleDateString()
   }, [])
+
+  // Autoplay functionality
+  useEffect(() => {
+    if (isPaused || displayEdits.length <= slidesPerView) return
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % totalSlides)
+    }, 3000) // Change slide every 3 seconds
+
+    return () => clearInterval(interval)
+  }, [isPaused, displayEdits.length, slidesPerView, totalSlides])
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides)
+  }, [totalSlides])
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides)
+  }, [totalSlides])
 
   if (recentEdits.length === 0) {
     return (
@@ -78,19 +86,18 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:gap-4">
+      {/* Mobile: 2x2 Grid */}
+      <div className="grid grid-cols-2 gap-3 md:hidden">
         {recentEdits.slice(0, 4).map((edit, index) => {
           const editedImage = edit.editedImages[0]
 
           return (
-            <div
+            <Link
               key={edit.id}
-              className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-gray-300 transition-all group"
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
+              href={`/jobs/${edit.id}`}
+              className="block group"
             >
-              {/* Image Container */}
-              <div className="relative aspect-square bg-gray-100 min-h-[150px]">
+              <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 hover:border-gray-300 transition-all min-h-[150px]">
                 {!imageErrors.has(editedImage) ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -106,18 +113,12 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
                   </div>
                 )}
 
-                {/* Hover Controls */}
-                {hoveredIndex === index && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2 transition-opacity">
-                    <button
-                      onClick={() => handleDownload(editedImage, index)}
-                      className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors"
-                      title="Download"
-                    >
-                      <Download className="h-4 w-4 text-gray-900" />
-                    </button>
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <span className="text-white text-xs font-medium">View Job</span>
                   </div>
-                )}
+                </div>
 
                 {/* Time Label */}
                 <div className="absolute top-2 right-2">
@@ -126,18 +127,112 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
                   </span>
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="p-4">
-                <Link href={`/jobs/${edit.id}`}>
-                  <button className="w-full text-xs px-4 py-2.5 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-all font-medium border border-purple-100">
-                    View Job
-                  </button>
-                </Link>
-              </div>
-            </div>
+            </Link>
           )
         })}
+      </div>
+
+      {/* Desktop: Carousel Slider */}
+      <div
+        className="hidden md:block relative"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <div className="overflow-hidden">
+          <div
+            className="flex transition-transform duration-500 ease-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {Array.from({ length: totalSlides }).map((_, slideIndex) => (
+              <div key={slideIndex} className="flex-shrink-0 w-full">
+                <div className="grid grid-cols-4 gap-4">
+                  {displayEdits
+                    .slice(slideIndex * slidesPerView, (slideIndex + 1) * slidesPerView)
+                    .map((edit, index) => {
+                      const editedImage = edit.editedImages[0]
+
+                      return (
+                        <Link
+                          key={edit.id}
+                          href={`/jobs/${edit.id}`}
+                          className="block group"
+                        >
+                          <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 hover:border-gray-300 transition-all">
+                            {!imageErrors.has(editedImage) ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={editedImage}
+                                alt={`Edit ${index + 1}`}
+                                crossOrigin="anonymous"
+                                className="w-full h-full object-cover"
+                                onError={() => setImageErrors(prev => new Set(prev).add(editedImage))}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                <span className="text-4xl">📷</span>
+                              </div>
+                            )}
+
+                            {/* Minimal overlay on hover */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                <span className="text-white text-sm font-medium tracking-wide">View Job</span>
+                              </div>
+                            </div>
+
+                            {/* Time Label */}
+                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <span className="text-xs px-2 py-1 bg-white/90 backdrop-blur-sm rounded text-gray-900 font-medium">
+                                {formatTimeAgo(edit.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      )
+                    })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Navigation Arrows */}
+        {totalSlides > 1 && (
+          <>
+            <button
+              onClick={prevSlide}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-all opacity-0 hover:opacity-100 group-hover:opacity-100"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="h-5 w-5 text-gray-700" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-all opacity-0 hover:opacity-100 group-hover:opacity-100"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="h-5 w-5 text-gray-700" />
+            </button>
+          </>
+        )}
+
+        {/* Slide Indicators */}
+        {totalSlides > 1 && (
+          <div className="flex justify-center gap-2 mt-4">
+            {Array.from({ length: totalSlides }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  index === currentSlide
+                    ? 'w-8 bg-purple-600'
+                    : 'w-1.5 bg-gray-300 hover:bg-gray-400'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
