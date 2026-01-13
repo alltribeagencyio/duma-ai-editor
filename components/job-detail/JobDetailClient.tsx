@@ -17,7 +17,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
   const [selectedUrls, setSelectedUrls] = useState<string[]>([])
   const [isRetrying, setIsRetrying] = useState(false)
   const [showOriginalImages, setShowOriginalImages] = useState(true)
-  const [showPrompt, setShowPrompt] = useState(true)
+  const [showPrompt, setShowPrompt] = useState(false) // Start collapsed for cleaner view
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined)
   const [reEditModalOpen, setReEditModalOpen] = useState(false)
   const [selectedImageForReEdit, setSelectedImageForReEdit] = useState<string>('')
@@ -112,16 +112,21 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <button
               onClick={() => setShowPrompt(!showPrompt)}
-              className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 hover:bg-gray-50 active:bg-gray-100 transition-colors group"
             >
-              <h3 className="text-lg font-semibold text-gray-900">
-                Prompt Used
-              </h3>
-              {showPrompt ? (
-                <ChevronUp className="h-5 w-5 text-gray-600" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-600" />
-              )}
+              <div className="flex items-center gap-2">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900">
+                  Prompt Used
+                </h3>
+                {!showPrompt && (
+                  <span className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded font-medium">
+                    Tap to view
+                  </span>
+                )}
+              </div>
+              <div className={`transition-transform duration-200 ${showPrompt ? 'rotate-180' : ''}`}>
+                <ChevronDown className="h-5 w-5 text-gray-600 group-hover:text-gray-900" />
+              </div>
             </button>
 
             {showPrompt && (
@@ -213,16 +218,21 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <button
               onClick={() => setShowOriginalImages(!showOriginalImages)}
-              className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between px-4 md:px-6 py-3 md:py-4 hover:bg-gray-50 active:bg-gray-100 transition-colors group"
             >
-              <h3 className="text-lg font-semibold text-gray-900">
-                Original Images ({job.inputImages.length})
-              </h3>
-              {showOriginalImages ? (
-                <ChevronUp className="h-5 w-5 text-gray-600" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-600" />
-              )}
+              <div className="flex items-center gap-2">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900">
+                  Original Images ({job.inputImages.length})
+                </h3>
+                {!showOriginalImages && (
+                  <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded font-medium">
+                    Tap to view
+                  </span>
+                )}
+              </div>
+              <div className={`transition-transform duration-200 ${showOriginalImages ? 'rotate-180' : ''}`}>
+                <ChevronDown className="h-5 w-5 text-gray-600 group-hover:text-gray-900" />
+              </div>
             </button>
 
             {showOriginalImages && (

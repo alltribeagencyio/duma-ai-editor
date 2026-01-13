@@ -80,12 +80,13 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
               <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3 tracking-wide">
                 {category}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Mobile: Horizontal scroll, Desktop: Grid */}
+              <div className="flex md:grid md:grid-cols-3 gap-3 md:gap-4 overflow-x-auto md:overflow-x-visible pb-2 -mx-8 px-8 md:mx-0 md:px-0 snap-x snap-mandatory md:snap-none scrollbar-hide">
                 {prompts.map((preset) => (
                   <div
                     key={preset.id}
                     className={cn(
-                      'bg-gradient-to-br p-6 rounded-lg border border-gray-100 hover:border-duma-primary/30 transition-all group cursor-pointer hover:shadow-sm',
+                      'bg-gradient-to-br p-6 rounded-lg border border-gray-100 hover:border-duma-primary/30 transition-all group cursor-pointer hover:shadow-sm min-w-[280px] md:min-w-0 snap-start flex-shrink-0 active:scale-95 md:active:scale-100',
                       categoryGradients[preset.category] || 'from-gray-50 to-gray-100'
                     )}
                     onClick={() => onUsePrompt(preset.prompt)}
