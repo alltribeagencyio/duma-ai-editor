@@ -14,6 +14,7 @@ interface JobDetailClientProps {
 
 export function JobDetailClient({ initialJob }: JobDetailClientProps) {
   const [job, setJob] = useState(initialJob)
+  const [reEditJobs, setReEditJobs] = useState<any[]>([])
   const [selectedUrls, setSelectedUrls] = useState<string[]>([])
   const [isRetrying, setIsRetrying] = useState(false)
   const [showOriginalImages, setShowOriginalImages] = useState(true)
@@ -32,6 +33,34 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
     }
     fetchUser()
   }, [])
+
+  // Fetch re-edit jobs (child jobs)
+  useEffect(() => {
+    const fetchReEdits = async () => {
+      try {
+        const response = await fetch(`/api/jobs/${job.id}/re-edits`)
+        if (response.ok) {
+          const { reEdits } = await response.json()
+          setReEditJobs(reEdits || [])
+        }
+      } catch (error) {
+        console.error('Error fetching re-edits:', error)
+      }
+    }
+
+    // Fetch initially and when job updates
+    fetchReEdits()
+
+    // Poll for re-edit updates if any are processing
+    const hasProcessingReEdits = reEditJobs.some(
+      (reEdit) => reEdit.status === 'pending' || reEdit.status === 'processing'
+    )
+
+    if (hasProcessingReEdits) {
+      const interval = setInterval(fetchReEdits, 3000)
+      return () => clearInterval(interval)
+    }
+  }, [job.id, job.status])
 
   useEffect(() => {
     // Only poll if job is pending or processing
@@ -143,7 +172,16 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
 
         {/* Edited Images Section - Always Show */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Edited Images</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              {reEditJobs.length > 0 ? 'Version 1 (Original Edit)' : 'Edited Images'}
+            </h3>
+            {reEditJobs.length > 0 && (
+              <span className="text-xs px-2 py-1 bg-purple-50 text-purple-700 rounded font-medium">
+                {reEditJobs.length + 1} Version{reEditJobs.length > 0 ? 's' : ''}
+              </span>
+            )}
+          </div>
 
           {(job.status === 'pending' || (job.status === 'processing' && outputImages.length === 0)) && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -242,6 +280,92 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Re-edit Versions Section */}
+        {reEditJobs.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+              <span className="text-sm font-medium text-gray-600">Edit History</span>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+            </div>
+
+            {reEditJobs.map((reEdit, index) => {
+              const reEditImages = Array.isArray(reEdit.outputData)
+                ? reEdit.outputData
+                : (reEdit.outputData?.images || [])
+
+              return (
+                <div key={reEdit.id} className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-base md:text-lg font-semibold text-gray-900">
+                        Version {index + 2}
+                      </h3>
+                      <p className="text-xs md:text-sm text-gray-600 mt-1">
+                        Created {new Date(reEdit.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded font-medium ${
+                      reEdit.status === 'completed' ? 'bg-green-50 text-green-700' :
+                      reEdit.status === 'processing' ? 'bg-blue-50 text-blue-700' :
+                      reEdit.status === 'failed' ? 'bg-red-50 text-red-700' :
+                      'bg-gray-50 text-gray-700'
+                    }`}>
+                      {reEdit.status}
+                    </span>
+                  </div>
+
+                  {/* Re-edit Prompt */}
+                  {reEdit.prompt && (
+                    <div className="mb-4">
+                      <p className="text-xs font-medium text-gray-600 mb-2">Prompt Used:</p>
+                      <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        {reEdit.prompt}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Re-edit Images */}
+                  {reEdit.status === 'completed' && reEditImages.length > 0 && (
+                    <ImageGallery
+                      imageUrls={reEditImages}
+                      jobId={reEdit.id}
+                      jobStatus={reEdit.status}
+                      onReEdit={(imageUrl) => {
+                        setSelectedImageForReEdit(imageUrl)
+                        setReEditModalOpen(true)
+                      }}
+                    />
+                  )}
+
+                  {(reEdit.status === 'pending' || reEdit.status === 'processing') && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {Array.from({ length: reEdit.inputImages?.length || 1 }).map((_, idx) => (
+                        <div
+                          key={idx}
+                          className="aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center"
+                        >
+                          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-purple-600 mb-3" />
+                          <p className="text-sm text-gray-500">Processing...</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {reEdit.status === 'failed' && (
+                    <div className="text-center py-8 bg-red-50 rounded-lg border border-red-200">
+                      <p className="text-red-600 text-sm font-semibold">Failed to process</p>
+                      {reEdit.errorMessage && (
+                        <p className="text-xs text-gray-600 mt-2">{reEdit.errorMessage}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
