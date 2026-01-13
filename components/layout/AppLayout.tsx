@@ -82,12 +82,12 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
 
       {/* Top header bar - z-30 to be below sidebar z-50 */}
       <header
-        className={`fixed top-0 right-0 h-14 md:h-16 bg-white border-b border-gray-100 z-30 ${mounted ? 'transition-all duration-300' : ''} ${
+        className={`fixed top-0 right-0 h-12 md:h-16 bg-white border-b border-gray-100 z-30 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'left-0 md:left-16' : 'left-0 md:left-64'
         }`}
       >
         {/* Mobile: center title, Desktop: left align */}
-        <div className="h-full pl-16 pr-4 md:px-6 flex items-center md:justify-between">
+        <div className="h-full pl-12 pr-4 md:px-6 flex items-center md:justify-between">
           {title && (
             <div className="flex-1 min-w-0 pr-3 md:pr-4 text-center md:text-left">
               <h1 className="text-base md:text-lg font-semibold text-gray-900 leading-tight truncate">{title}</h1>
@@ -101,12 +101,12 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
       </header>
 
       <main
-        className={`min-h-screen pt-14 md:pt-16 ${mounted ? 'transition-all duration-300' : ''} ${
+        className={`min-h-screen pt-12 md:pt-16 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'md:pl-16' : 'md:pl-64'
         }`}
       >
         {/* Apple-inspired padding: tighter on mobile, generous on desktop */}
-        <div className="px-4 md:px-6 lg:px-8 py-4 md:py-6">{children}</div>
+        <div className="px-3 md:px-6 lg:px-8 py-3 md:py-6">{children}</div>
       </main>
     </div>
   )

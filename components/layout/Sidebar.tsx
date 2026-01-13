@@ -90,13 +90,13 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
 
   return (
     <>
-      {/* Mobile menu button - 44x44px minimum touch target */}
+      {/* Mobile menu button - aligned with header */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-3 left-3 z-50 md:hidden p-3 rounded-lg bg-white border border-gray-200 shadow-sm min-w-[44px] min-h-[44px] flex items-center justify-center"
+        className="fixed top-2 left-2 z-50 md:hidden p-2 rounded-lg bg-white border border-gray-200 shadow-sm active:scale-95 transition-transform"
         aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
       >
-        {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
       {/* Mobile backdrop */}

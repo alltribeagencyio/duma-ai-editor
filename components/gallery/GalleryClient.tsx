@@ -138,7 +138,9 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
 
   const goToPage = (page: number) => {
     setCurrentPage(page)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Instant scroll on mobile for better performance, smooth on desktop
+    const isMobile = window.innerWidth < 768
+    window.scrollTo({ top: 0, behavior: isMobile ? 'auto' : 'smooth' })
   }
 
   const handleDownload = useCallback(async (imageUrl: string, index: number) => {
@@ -286,124 +288,165 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
         {/* Image Grid */}
         {!loading && currentImages.length > 0 && (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
               {currentImages.map((image, index) => (
-                <div
-                  key={image.id}
-                  className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 hover:border-gray-300 transition-all"
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                >
-                  {!imageErrors.has(image.imageUrl) ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={image.imageUrl}
-                      alt={image.productName || 'Edited image'}
-                      crossOrigin="anonymous"
-                      className="w-full h-full object-cover"
-                      onError={() => setImageErrors(prev => new Set(prev).add(image.imageUrl))}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <span className="text-4xl">📷</span>
-                    </div>
-                  )}
+                <div key={image.id} className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 active:border-purple-300 transition-all">
+                  {/* Image with link wrapper */}
+                  <Link href={`/jobs/${image.jobId}`} className="block w-full h-full">
+                    {!imageErrors.has(image.imageUrl) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={image.imageUrl}
+                        alt={image.productName || 'Edited image'}
+                        crossOrigin="anonymous"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                        onError={() => setImageErrors(prev => new Set(prev).add(image.imageUrl))}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <span className="text-4xl">📷</span>
+                      </div>
+                    )}
+                  </Link>
 
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      {/* Product Name or Date */}
+                  {/* Desktop: Hover overlay with actions */}
+                  <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-auto">
                       <p className="text-white text-sm font-medium mb-2 line-clamp-1">
                         {image.productName || formatDate(image.createdAt)}
                       </p>
-
-                      {/* Actions */}
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleDownload(image.imageUrl, index)}
-                          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors text-sm font-medium text-gray-900"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            handleDownload(image.imageUrl, index)
+                          }}
+                          className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white/90 backdrop-blur-sm rounded-md hover:bg-white transition-colors text-xs font-medium text-gray-900"
                         >
-                          <Download className="h-4 w-4" />
+                          <Download className="h-3.5 w-3.5" />
                           Download
                         </button>
                         <Link
                           href={`/jobs/${image.jobId}`}
-                          className="flex-1 flex items-center justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                          className="flex-1 flex items-center justify-center px-2 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-xs font-medium"
                         >
                           View Job
                         </Link>
                       </div>
                     </div>
                   </div>
+
+                  {/* Mobile: Bottom bar with download button */}
+                  <div className="md:hidden absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleDownload(image.imageUrl, index)
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white/90 backdrop-blur-sm rounded-md active:scale-95 transition-transform text-xs font-medium text-gray-900"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      Download
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination - Simplified for mobile */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between bg-white rounded-lg border border-gray-200 p-4">
-                <div className="text-sm text-gray-600">
-                  Page {currentPage} of {totalPages}
-                </div>
-
-                <div className="flex items-center gap-2">
+              <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
+                {/* Mobile: Simple prev/next with page count */}
+                <div className="flex md:hidden items-center justify-between">
                   <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-lg active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-transform font-medium"
                   >
                     <ChevronLeft className="h-4 w-4" />
+                    Prev
                   </button>
 
-                  <div className="flex gap-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                      // Show first page, last page, current page, and pages around current
-                      const showPage =
-                        page === 1 ||
-                        page === totalPages ||
-                        (page >= currentPage - 1 && page <= currentPage + 1)
-
-                      if (!showPage && page === currentPage - 2) {
-                        return (
-                          <span key={page} className="px-3 py-2 text-gray-400">
-                            ...
-                          </span>
-                        )
-                      }
-
-                      if (!showPage && page === currentPage + 2) {
-                        return (
-                          <span key={page} className="px-3 py-2 text-gray-400">
-                            ...
-                          </span>
-                        )
-                      }
-
-                      if (!showPage) return null
-
-                      return (
-                        <button
-                          key={page}
-                          onClick={() => goToPage(page)}
-                          className={`px-3 py-2 rounded-lg transition-colors ${
-                            currentPage === page
-                              ? 'bg-purple-50 text-purple-700 border border-purple-100'
-                              : 'border border-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      )
-                    })}
-                  </div>
+                  <span className="text-sm text-gray-600 font-medium">
+                    {currentPage} / {totalPages}
+                  </span>
 
                   <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-lg active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-transform font-medium"
                   >
+                    Next
                     <ChevronRight className="h-4 w-4" />
                   </button>
+                </div>
+
+                {/* Desktop: Full pagination */}
+                <div className="hidden md:flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    Page {currentPage} of {totalPages}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+
+                    <div className="flex gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                        const showPage =
+                          page === 1 ||
+                          page === totalPages ||
+                          (page >= currentPage - 1 && page <= currentPage + 1)
+
+                        if (!showPage && page === currentPage - 2) {
+                          return (
+                            <span key={page} className="px-3 py-2 text-gray-400">
+                              ...
+                            </span>
+                          )
+                        }
+
+                        if (!showPage && page === currentPage + 2) {
+                          return (
+                            <span key={page} className="px-3 py-2 text-gray-400">
+                              ...
+                            </span>
+                          )
+                        }
+
+                        if (!showPage) return null
+
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => goToPage(page)}
+                            className={`px-3 py-2 rounded-lg transition-colors ${
+                              currentPage === page
+                                ? 'bg-purple-50 text-purple-700 border border-purple-100'
+                                : 'border border-gray-300 hover:bg-gray-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
