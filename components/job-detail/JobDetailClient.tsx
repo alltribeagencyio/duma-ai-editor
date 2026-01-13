@@ -170,85 +170,190 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
           </div>
         )}
 
-        {/* Edited Images Section - Always Show */}
+        {/* All Versions Section - Side by Side */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {reEditJobs.length > 0 ? 'Version 1 (Original Edit)' : 'Edited Images'}
-            </h3>
-            {reEditJobs.length > 0 && (
-              <span className="text-xs px-2 py-1 bg-purple-50 text-purple-700 rounded font-medium">
-                {reEditJobs.length + 1} Version{reEditJobs.length > 0 ? 's' : ''}
-              </span>
-            )}
+            <h3 className="text-lg font-semibold text-gray-900">Edit Versions</h3>
+            <span className="text-xs px-2 py-1 bg-purple-50 text-purple-700 rounded font-medium">
+              {reEditJobs.length + 1} Version{reEditJobs.length > 0 ? 's' : ''}
+            </span>
           </div>
 
-          {(job.status === 'pending' || (job.status === 'processing' && outputImages.length === 0)) && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Array.from({ length: totalImages || 1 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center"
-                >
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900 mb-3" />
-                  <p className="text-sm text-gray-500">Processing image {index + 1}...</p>
+          {/* Horizontal scroll container for all versions */}
+          <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-x-auto md:overflow-x-visible pb-4 -mx-3 px-3 md:mx-0 md:px-0 snap-x snap-mandatory md:snap-none scrollbar-hide">
+            {/* Version 1 - Original Edit */}
+            <div className="min-w-[280px] md:min-w-0 snap-start flex-shrink-0 bg-white rounded-lg border border-gray-200 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h4 className="font-semibold text-gray-900">Version 1</h4>
+                  <p className="text-xs text-gray-600 mt-1">Original Edit</p>
                 </div>
-              ))}
-            </div>
-          )}
+                <span className={`text-xs px-2 py-1 rounded font-medium ${
+                  job.status === 'completed' ? 'bg-green-50 text-green-700' :
+                  job.status === 'processing' ? 'bg-blue-50 text-blue-700' :
+                  job.status === 'failed' ? 'bg-red-50 text-red-700' :
+                  'bg-gray-50 text-gray-700'
+                }`}>
+                  {job.status}
+                </span>
+              </div>
 
-          {job.status === 'processing' && outputImages.length > 0 && (
-            <ImageGallery
-              imageUrls={outputImages}
-              totalImages={totalImages}
-              onSelectionChange={setSelectedUrls}
-            />
-          )}
-
-          {job.status === 'failed' && (
-            <div className="text-center py-8 bg-white rounded-lg border border-red-200">
-              <p className="text-red-600 mb-2 font-semibold">Failed to process images</p>
-              {job.errorMessage && (
-                <p className="text-sm text-gray-600 mb-4">{job.errorMessage}</p>
+              {(job.status === 'pending' || (job.status === 'processing' && outputImages.length === 0)) && (
+                <div className="aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center mb-3">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900 mb-3" />
+                  <p className="text-sm text-gray-500">Processing...</p>
+                </div>
               )}
-              <Button
-                onClick={handleRetry}
-                disabled={isRetrying}
-                className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100"
-              >
-                {isRetrying ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Retrying...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Retry Job
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
 
-          {job.status === 'completed' && outputImages.length > 0 && (
-            <ImageGallery
-              imageUrls={outputImages}
-              onSelectionChange={setSelectedUrls}
-              jobId={job.id}
-              jobStatus={job.status}
-              onReEdit={(imageUrl) => {
-                setSelectedImageForReEdit(imageUrl)
-                setReEditModalOpen(true)
-              }}
-            />
-          )}
+              {job.status === 'processing' && outputImages.length > 0 && (
+                <div className="mb-3">
+                  <ImageGallery
+                    imageUrls={outputImages}
+                    totalImages={totalImages}
+                    onSelectionChange={setSelectedUrls}
+                  />
+                </div>
+              )}
 
-          {job.status === 'completed' && outputImages.length === 0 && (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-600">No edited images available</p>
+              {job.status === 'failed' && (
+                <div className="text-center py-8 bg-red-50 rounded-lg border border-red-200 mb-3">
+                  <p className="text-red-600 text-sm font-semibold">Failed</p>
+                  {job.errorMessage && (
+                    <p className="text-xs text-gray-600 mt-2">{job.errorMessage}</p>
+                  )}
+                  <Button
+                    onClick={handleRetry}
+                    disabled={isRetrying}
+                    className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100 mt-3 text-xs h-8"
+                  >
+                    {isRetrying ? (
+                      <>
+                        <RefreshCw className="h-3 w-3 mr-2 animate-spin" />
+                        Retrying...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-3 w-3 mr-2" />
+                        Retry
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {job.status === 'completed' && outputImages.length > 0 && (
+                <>
+                  <div className="mb-3">
+                    <ImageGallery
+                      imageUrls={outputImages}
+                      onSelectionChange={setSelectedUrls}
+                      jobId={job.id}
+                      jobStatus={job.status}
+                      onReEdit={(imageUrl) => {
+                        setSelectedImageForReEdit(imageUrl)
+                        setReEditModalOpen(true)
+                      }}
+                    />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setSelectedImageForReEdit(outputImages[0])
+                      setReEditModalOpen(true)
+                    }}
+                    className="w-full bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100 text-xs h-8"
+                  >
+                    Re-edit this version
+                  </Button>
+                </>
+              )}
+
+              {job.status === 'completed' && outputImages.length === 0 && (
+                <div className="text-center py-8 bg-gray-50 rounded-lg">
+                  <p className="text-gray-600 text-sm">No images</p>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* All Re-edit Versions */}
+            {reEditJobs.map((reEdit, index) => {
+              const reEditImages = Array.isArray(reEdit.outputData)
+                ? reEdit.outputData
+                : (reEdit.outputData?.images || [])
+
+              return (
+                <div key={reEdit.id} className="min-w-[280px] md:min-w-0 snap-start flex-shrink-0 bg-white rounded-lg border border-gray-200 p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Version {index + 2}</h4>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {new Date(reEdit.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded font-medium ${
+                      reEdit.status === 'completed' ? 'bg-green-50 text-green-700' :
+                      reEdit.status === 'processing' ? 'bg-blue-50 text-blue-700' :
+                      reEdit.status === 'failed' ? 'bg-red-50 text-red-700' :
+                      'bg-gray-50 text-gray-700'
+                    }`}>
+                      {reEdit.status}
+                    </span>
+                  </div>
+
+                  {/* Re-edit Prompt */}
+                  {reEdit.prompt && (
+                    <div className="mb-3">
+                      <p className="text-xs font-medium text-gray-600 mb-1">Prompt:</p>
+                      <p className="text-xs text-gray-700 bg-gray-50 p-2 rounded border border-gray-100 line-clamp-3">
+                        {reEdit.prompt}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Re-edit Images */}
+                  {reEdit.status === 'completed' && reEditImages.length > 0 && (
+                    <>
+                      <div className="mb-3">
+                        <ImageGallery
+                          imageUrls={reEditImages}
+                          jobId={reEdit.id}
+                          jobStatus={reEdit.status}
+                          onReEdit={(imageUrl) => {
+                            setSelectedImageForReEdit(imageUrl)
+                            setReEditModalOpen(true)
+                          }}
+                        />
+                      </div>
+                      <Button
+                        onClick={() => {
+                          setSelectedImageForReEdit(reEditImages[0])
+                          setReEditModalOpen(true)
+                        }}
+                        className="w-full bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100 text-xs h-8"
+                      >
+                        Re-edit this version
+                      </Button>
+                    </>
+                  )}
+
+                  {(reEdit.status === 'pending' || reEdit.status === 'processing') && (
+                    <div className="aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-purple-600 mb-3" />
+                      <p className="text-sm text-gray-500">Processing...</p>
+                    </div>
+                  )}
+
+                  {reEdit.status === 'failed' && (
+                    <div className="text-center py-8 bg-red-50 rounded-lg border border-red-200">
+                      <p className="text-red-600 text-sm font-semibold">Failed</p>
+                      {reEdit.errorMessage && (
+                        <p className="text-xs text-gray-600 mt-2">{reEdit.errorMessage}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
 
         {/* Original Images Section */}
