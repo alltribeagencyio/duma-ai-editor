@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
 import { selectWebhookForUser } from '@/lib/webhooks/selector'
+import { pricingService } from '@/lib/pricing'
 
 // POST /api/jobs/[id]/re-edit - Create a re-edit job from an existing completed job
 export async function POST(
@@ -38,25 +39,20 @@ export async function POST(
       )
     }
 
-    // Get user profile to check credits
-    const userProfile = await prisma.user.findUnique({
-      where: { id: user.id }
-    })
+    // Check if user has sufficient credits using new pricing service
+    const hasSufficientCredits = await pricingService.checkSufficientCredits(user.id, 1)
 
-    if (!userProfile) {
+    if (!hasSufficientCredits) {
+      // Get user credit info for detailed error message
+      const creditInfo = await pricingService.getUserCreditInfo(user.id)
+
       return NextResponse.json(
-        { error: 'User profile not found' },
-        { status: 404 }
-      )
-    }
-
-    // Check if user has enough credits
-    const totalCredits = userProfile.monthlyCredits + userProfile.practiceCredits
-    const availableCredits = totalCredits - userProfile.creditsUsed
-
-    if (availableCredits < 1) {
-      return NextResponse.json(
-        { error: 'Insufficient credits for re-editing' },
+        {
+          error: 'Insufficient credits for re-editing',
+          creditBalance: creditInfo.creditBalance,
+          ratePerImage: creditInfo.ratePerImage,
+          imagesAvailable: creditInfo.imagesAvailable
+        },
         { status: 400 }
       )
     }

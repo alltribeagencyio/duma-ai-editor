@@ -82,10 +82,18 @@ model User {
   subscriptionStatus     String    @default("active")
   subscriptionId         String?
   planId                 String?
+
+  // Pay-as-you-go credits system
+  pricingPlan            String    @default("personal") // personal, business
+  creditBalance          Float     @default(0) // Current available credits in USD
+  creditsUsed            Int       @default(0) // Total credits/images processed
+  hasCompletedInitialPurchase Boolean @default(false) // Track if min purchase completed
+
+  // Legacy fields (kept for backward compatibility)
   monthlyCredits         Int       @default(10)
   practiceCredits        Int       @default(0)
-  creditsUsed            Int       @default(0)
   creditsReset           DateTime? @db.Timestamptz(6)
+
   brandName              String?
   brandIndustry          String?
   brandAesthetic         String?
@@ -109,6 +117,7 @@ model User {
 
   @@index([isAdmin])
   @@index([isSuperAdmin])
+  @@index([pricingPlan])
 }
 
 model BrandPrompt {
@@ -141,6 +150,47 @@ model CreditUsage {
 
   @@index([userId])
   @@index([type])
+  @@index([createdAt])
+}
+
+model PricingConfig {
+  id                    String    @id @default(uuid())
+  plan                  String    @unique // personal, business
+  displayName           String
+  ratePerImage          Float // Cost per image in USD
+  minimumInitialPurchase Float // Minimum first purchase in USD
+  minimumTopUp          Float // Minimum subsequent purchase in USD
+  description           String?
+  features              String[] // Array of feature descriptions
+  isActive              Boolean   @default(true)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([plan])
+  @@index([isActive])
+}
+
+model CreditTransaction {
+  id                    String    @id @default(uuid())
+  userId                String
+  type                  String // purchase, deduction, refund, bonus
+  amount                Float // Amount in USD
+  creditsAdded          Float? // Credits added (for purchases)
+  creditsDeducted       Float? // Credits deducted (for usage)
+  balanceBefore         Float
+  balanceAfter          Float
+  pricingPlan           String? // Plan at time of transaction
+  ratePerImage          Float? // Rate at time of transaction
+  paymentId             String? // Link to Payment model
+  jobId                 String? // Link to Job if deduction
+  description           String?
+  metadata              Json?
+  createdAt             DateTime  @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([paymentId])
+  @@index([jobId])
   @@index([createdAt])
 }
 
@@ -197,10 +247,13 @@ model Payment {
   subscriptionId        String?
   paystackReference     String    @unique
   paystackTransactionId String?
-  amount                Int
-  currency              String?   @default("NGN")
+  amount                Int // Amount in smallest currency unit (kobo, cents)
+  amountUSD             Float? // Amount in USD
+  currency              String?   @default("USD")
   status                String
-  type                  String
+  type                  String // subscription, credit_purchase, setup_fee, etc.
+  pricingPlan           String? // personal, business
+  creditsAllocated      Float? // Credits allocated from this payment
   description           String?
   metadata              Json?
   paidAt                DateTime? @db.Timestamptz(6)
@@ -210,6 +263,7 @@ model Payment {
   @@index([paystackReference])
   @@index([status])
   @@index([type])
+  @@index([pricingPlan])
 }
 
 model UserWebhook {

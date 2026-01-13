@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { paystackService } from '@/lib/paystack'
+import { pricingService } from '@/lib/pricing'
 
 // POST /api/webhooks/paystack - Handle Paystack webhooks
 export async function POST(req: NextRequest) {
@@ -81,13 +82,33 @@ async function handleChargeSuccess(data: any) {
     })
 
     // Handle different payment types
-    if (payment.type.includes('subscription')) {
+    if (payment.type === 'credit_purchase') {
+      await handleCreditPurchasePayment(payment, data)
+    } else if (payment.type.includes('subscription')) {
       await handleSubscriptionPayment(payment, data)
     }
 
     console.log('✅ Charge success processed for:', reference)
   } catch (error) {
     console.error('Error handling charge success:', error)
+  }
+}
+
+async function handleCreditPurchasePayment(payment: any, chargeData: any) {
+  try {
+    console.log('💳 Processing credit purchase payment:', payment.id)
+
+    // Allocate credits to user
+    const result = await pricingService.allocateCredits(
+      payment.userId,
+      payment.amountUSD!,
+      payment.pricingPlan as 'personal' | 'business',
+      payment.id
+    )
+
+    console.log(`✅ Credit purchase processed: ${result.creditsAdded} credits added to user ${payment.userId}`)
+  } catch (error) {
+    console.error('Error handling credit purchase payment:', error)
   }
 }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
+import { pricingService } from '@/lib/pricing'
 
 // POST /api/webhook/callback - Receive n8n results
 export async function POST(req: NextRequest) {
@@ -52,32 +53,52 @@ export async function POST(req: NextRequest) {
 
     // CRITICAL FIX: Deduct credits ONLY on successful completion if not already deducted
     if (status === 'completed' && !existingJob.creditDeducted) {
-      const creditsCost = existingJob.creditsCost || 1
+      const numberOfImages = outputImages?.length || existingJob.creditsCost || 1
 
-      console.log('💳 Deducting credits:', creditsCost, 'from user:', existingJob.userId)
+      console.log('💳 Deducting credits for', numberOfImages, 'images from user:', existingJob.userId)
 
-      // Deduct credits from user
-      await prisma.user.update({
-        where: { id: existingJob.userId },
-        data: {
-          creditsUsed: {
-            increment: creditsCost,
+      try {
+        // Use new pricing service for credit deduction
+        const deductionResult = await pricingService.deductCredits(
+          existingJob.userId,
+          numberOfImages,
+          existingJob.id
+        )
+
+        console.log(`✅ Credits deducted: $${deductionResult.costUSD.toFixed(2)} (${numberOfImages} images)`)
+
+        // Legacy credit usage log (kept for backward compatibility)
+        await prisma.creditUsage.create({
+          data: {
+            userId: existingJob.userId,
+            jobId: existingJob.id,
+            amount: numberOfImages,
+            type: existingJob.isReEdit ? 're_edit' : 'new_job',
+            description: `Job ${existingJob.id} completed successfully - $${deductionResult.costUSD.toFixed(2)}`,
           },
-        },
-      })
+        })
+      } catch (error: any) {
+        console.error('❌ Error deducting credits:', error)
 
-      // Log credit usage
-      await prisma.creditUsage.create({
-        data: {
-          userId: existingJob.userId,
-          jobId: existingJob.id,
-          amount: creditsCost,
-          type: existingJob.isReEdit ? 're_edit' : 'new_job',
-          description: `Job ${existingJob.id} completed successfully`,
-        },
-      })
+        // If insufficient credits, mark job as failed
+        if (error.message === 'Insufficient credits') {
+          await prisma.job.update({
+            where: { id: jobId },
+            data: {
+              status: 'failed',
+              errorMessage: 'Insufficient credits to complete job'
+            }
+          })
 
-      console.log('✅ Credits deducted and logged')
+          return NextResponse.json(
+            { error: 'Insufficient credits' },
+            { status: 400 }
+          )
+        }
+
+        // For other errors, still mark job as completed but log the error
+        console.error('⚠️ Job completed but credit deduction failed')
+      }
     } else if (status === 'completed' && existingJob.creditDeducted) {
       console.log('ℹ️ Credits already deducted for this job, skipping')
     } else if (status === 'failed') {
