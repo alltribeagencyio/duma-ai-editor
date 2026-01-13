@@ -4,7 +4,7 @@ import { useState, useEffect, memo, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, Plus, Clock, Settings, Menu, X, LogOut, FileText, ChevronLeft, ChevronRight, User, BarChart3, CreditCard, HelpCircle } from 'lucide-react'
+import { Home, Plus, Clock, Settings, Menu, X, LogOut, FileText, ChevronLeft, ChevronRight, User, BarChart3, CreditCard, HelpCircle, Images } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -65,6 +65,7 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
   const menuItems = useMemo(() => [
     { icon: Home, label: 'Dashboard', href: '/dashboard' },
     { icon: Plus, label: 'New Edit', href: '/new' },
+    { icon: Images, label: 'Gallery', href: '/gallery' },
     { icon: FileText, label: 'Prompts', href: '/prompts' },
     { icon: Clock, label: 'History', href: '/history' },
     // { icon: BarChart3, label: 'Analytics', href: '/analytics' }, // Hidden for MVP
