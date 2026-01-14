@@ -46,14 +46,13 @@ export async function POST(req: NextRequest) {
 
     console.log('📝 Updating job:', jobId, 'to status:', status)
 
-    // Prepare output data
-    const outputData = outputImages
-      ? { images: outputImages, timestamp: new Date().toISOString() }
-      : Prisma.JsonNull
+    // Prepare output data - outputData is String[] per schema
+    const outputData = outputImages || []
 
     // CRITICAL FIX: Deduct credits ONLY on successful completion if not already deducted
     if (status === 'completed' && !existingJob.creditDeducted) {
-      const numberOfImages = outputImages?.length || existingJob.creditsCost || 1
+      // Determine number of images: use outputImages count, or fallback to inputImages count
+      const numberOfImages = outputImages?.length || existingJob.inputImages?.length || 1
 
       console.log('💳 Deducting credits for', numberOfImages, 'images from user:', existingJob.userId)
 
