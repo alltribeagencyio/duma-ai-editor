@@ -63,85 +63,146 @@ export function CreditUsageCard() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Credit Balance</CardTitle>
-        <CardDescription>Pay-as-you-go credits</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Main Balance Display */}
-        <div className="text-center py-6">
-          <div className="text-4xl font-bold text-gray-900 mb-2">
-            ${creditInfo.creditBalance.toFixed(2)}
+    <>
+      {/* Main Balance Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Credit Balance</CardTitle>
+          <CardDescription>Pay-as-you-go credits</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Main Balance Display */}
+          <div className="text-center py-6">
+            <div className="text-4xl font-bold text-gray-900 mb-2">
+              ${creditInfo.creditBalance.toFixed(2)}
+            </div>
+            <div className="text-sm text-gray-600">
+              ~{creditInfo.imagesAvailable} images available
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {creditInfo.pricingPlan === 'personal' ? 'Personal' : 'Business'} Plan · ${creditInfo.ratePerImage}/image
+            </div>
           </div>
-          <div className="text-sm text-gray-600">
-            ~{creditInfo.imagesAvailable} images available
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            {creditInfo.pricingPlan === 'personal' ? 'Personal' : 'Business'} Plan · ${creditInfo.ratePerImage}/image
-          </div>
-        </div>
 
-        {/* Low Credit Warning */}
-        {getLowCreditWarning() && (
-          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <div className="text-sm font-medium text-gray-900 mb-2">
-              Credits Running Low
-            </div>
-            <div className="text-sm text-gray-600 mb-3">
-              You have less than 5 images remaining. Top up now to continue editing.
-            </div>
+          {/* Stats Row */}
+          <div className="flex items-center justify-between text-sm pt-4 border-t">
+            <span className="text-gray-600">Images Processed</span>
+            <span className="font-medium">{creditInfo.totalImagesProcessed}</span>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="grid grid-cols-2 gap-3">
             <Button
               asChild
-              size="sm"
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              variant="outline"
             >
               <Link href="/credits">Add Credits</Link>
             </Button>
-          </div>
-        )}
-
-        {/* First Purchase Prompt */}
-        {!creditInfo.hasCompletedInitialPurchase && (
-          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <div className="text-sm font-medium text-gray-900 mb-2">
-              Get Started
-            </div>
-            <div className="text-sm text-gray-600 mb-3">
-              Purchase your first credits and start editing images. From just $2 for Personal plan or $20 for Business.
-            </div>
             <Button
               asChild
-              size="sm"
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              variant="outline"
             >
-              <Link href="/credits">Purchase Credits</Link>
+              <Link href="/credits/transactions">History</Link>
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Action Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Low Credit Warning or First Purchase */}
+        {getLowCreditWarning() ? (
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                Credits Running Low
+              </div>
+              <div className="text-sm text-gray-600 mb-4">
+                You have less than 5 images remaining. Top up now to continue editing.
+              </div>
+              <Button
+                asChild
+                className="w-full bg-purple-600 hover:bg-purple-700"
+              >
+                <Link href="/credits">Add Credits</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : !creditInfo.hasCompletedInitialPurchase ? (
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                Get Started
+              </div>
+              <div className="text-sm text-gray-600 mb-4">
+                Purchase your first credits and start editing images. From just $2 for Personal plan or $20 for Business.
+              </div>
+              <Button
+                asChild
+                className="w-full bg-purple-600 hover:bg-purple-700"
+              >
+                <Link href="/credits">Purchase Credits</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                Add Credits
+              </div>
+              <div className="text-sm text-gray-600 mb-4">
+                Top up your balance to continue editing images. Credits never expire.
+              </div>
+              <Button
+                asChild
+                className="w-full bg-purple-600 hover:bg-purple-700"
+              >
+                <Link href="/credits">Add Credits</Link>
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
-        {/* Stats Row */}
-        <div className="flex items-center justify-between text-sm pt-4 border-t">
-          <span className="text-gray-600">Images Processed</span>
-          <span className="font-medium">{creditInfo.totalImagesProcessed}</span>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            asChild
-            variant="outline"
-          >
-            <Link href="/credits">Add Credits</Link>
-          </Button>
-          <Button
-            asChild
-            variant="outline"
-          >
-            <Link href="/credits/transactions">History</Link>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        {/* Upgrade Plan Card */}
+        {creditInfo.pricingPlan === 'personal' ? (
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                Upgrade Your Plan
+              </div>
+              <div className="text-sm text-gray-600 mb-4">
+                Switch to Business plan and save 7%. Pay only $0.35 per image instead of $0.375.
+              </div>
+              <Button
+                asChild
+                variant="outline"
+                className="w-full"
+              >
+                <Link href="/credits">Upgrade Plan</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                Business Plan
+              </div>
+              <div className="text-sm text-gray-600 mb-4">
+                You're on the Business plan with the best rate of $0.35 per image.
+              </div>
+              <Button
+                asChild
+                variant="outline"
+                className="w-full"
+              >
+                <Link href="/credits/transactions">View History</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </>
   )
 }
