@@ -17,8 +17,8 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
   const [reEditJobs, setReEditJobs] = useState<any[]>([])
   const [selectedUrls, setSelectedUrls] = useState<string[]>([])
   const [isRetrying, setIsRetrying] = useState(false)
-  const [showOriginalImages, setShowOriginalImages] = useState(true)
-  const [showPrompt, setShowPrompt] = useState(false) // Start collapsed for cleaner view
+  const [showOriginalImages, setShowOriginalImages] = useState(false)
+  const [showPrompt, setShowPrompt] = useState(false)
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined)
   const [reEditModalOpen, setReEditModalOpen] = useState(false)
   const [selectedImageForReEdit, setSelectedImageForReEdit] = useState<string>('')
@@ -140,7 +140,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <button
             onClick={() => setShowOriginalImages(!showOriginalImages)}
-            className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+            className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 active:bg-gray-100 transition-colors group"
           >
             <div className="flex items-center gap-3">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -149,8 +149,19 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
               <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded font-medium">
                 {job.inputImages?.length || 0} images · {reEditJobs.length + 1} prompt{reEditJobs.length > 0 ? 's' : ''}
               </span>
+              {!showOriginalImages && (
+                <span className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded font-medium">
+                  Click to view
+                </span>
+              )}
             </div>
-            <ChevronDown className={`h-5 w-5 text-gray-600 transition-transform ${showOriginalImages ? 'rotate-180' : ''}`} />
+            <div className="flex items-center gap-2">
+              {showOriginalImages ? (
+                <ChevronUp className="h-6 w-6 text-gray-600 group-hover:text-gray-900 transition-colors" />
+              ) : (
+                <ChevronDown className="h-6 w-6 text-purple-600 group-hover:text-purple-700 transition-colors" />
+              )}
+            </div>
           </button>
 
           {showOriginalImages && (
