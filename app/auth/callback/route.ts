@@ -32,10 +32,13 @@ export async function GET(req: NextRequest) {
               fullName: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || '',
               subscriptionTier: 'free',
               subscriptionStatus: 'active',
-              monthlyCredits: 10,
+              pricingPlan: 'personal',
+              creditBalance: 0,
+              hasCompletedInitialPurchase: false,
+              monthlyCredits: 0,
               practiceCredits: 0,
               creditsUsed: 0,
-              hasCompletedOnboarding: false,
+              hasCompletedOnboarding: true,
               notificationsEmail: true,
               notificationsWhatsApp: false,
               setupFeesPaid: false
@@ -48,15 +51,8 @@ export async function GET(req: NextRequest) {
           // Continue with redirect even if DB operation fails
         }
 
-        // Check if user needs onboarding
-        const userProfile = await prisma.user.findUnique({
-          where: { id: data.user.id },
-          select: { hasCompletedOnboarding: true }
-        })
-
-        // Redirect to onboarding if not completed, otherwise to dashboard
-        const redirectTo = userProfile?.hasCompletedOnboarding ? '/dashboard' : '/onboarding'
-        return NextResponse.redirect(new URL(redirectTo, requestUrl.origin))
+        // Redirect to dashboard
+        return NextResponse.redirect(new URL('/dashboard', requestUrl.origin))
       }
     } catch (error) {
       console.error('Session exchange error:', error)
