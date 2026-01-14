@@ -293,6 +293,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
                 onSelectionChange={setSelectedUrls}
                 jobId={job.id}
                 jobStatus={job.status}
+                enableExpand={true}
                 onReEdit={(imageUrl) => {
                   setSelectedImageForReEdit(imageUrl)
                   setReEditModalOpen(true)
@@ -357,6 +358,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
                     imageUrls={reEditImages}
                     jobId={reEdit.id}
                     jobStatus={reEdit.status}
+                    enableExpand={true}
                     onReEdit={(imageUrl) => {
                       setSelectedImageForReEdit(imageUrl)
                       setReEditModalOpen(true)
