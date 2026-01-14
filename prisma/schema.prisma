@@ -90,7 +90,7 @@ model User {
   hasCompletedInitialPurchase Boolean @default(false) // Track if min purchase completed
 
   // Legacy fields (kept for backward compatibility)
-  monthlyCredits         Int       @default(10)
+  monthlyCredits         Int       @default(0)
   practiceCredits        Int       @default(0)
   creditsReset           DateTime? @db.Timestamptz(6)
 

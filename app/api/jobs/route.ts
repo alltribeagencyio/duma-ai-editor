@@ -73,16 +73,30 @@ export async function POST(req: NextRequest) {
     const productCategory = formData.get('productCategory') as string | null
     const productSku = formData.get('productSku') as string | null
     const images = formData.getAll('images') as File[]
+    const imageUrlsJson = formData.get('imageUrls') as string | null
 
-    if (!prompt || !promptType || images.length === 0) {
+    // Parse image URLs if provided
+    let imageUrls: string[] = []
+    if (imageUrlsJson) {
+      try {
+        imageUrls = JSON.parse(imageUrlsJson)
+      } catch (e) {
+        console.error('Failed to parse imageUrls:', e)
+      }
+    }
+
+    // Must have at least one image (file or URL)
+    if (!prompt || !promptType || (images.length === 0 && imageUrls.length === 0)) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields or no images provided' },
         { status: 400 }
       )
     }
 
-    // Upload images to Supabase Storage
+    // Collect all input image URLs
     const inputImageUrls: string[] = []
+
+    // Upload file images to Supabase Storage
     for (let i = 0; i < images.length; i++) {
       const file = images[i]
       let uploadData: Buffer | File = file
@@ -116,6 +130,9 @@ export async function POST(req: NextRequest) {
 
       inputImageUrls.push(publicUrl)
     }
+
+    // Add URL images directly (no upload needed)
+    inputImageUrls.push(...imageUrls)
 
     // Select appropriate webhook for user
     const selectedWebhook = await selectWebhookForUser({

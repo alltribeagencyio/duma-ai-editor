@@ -3,6 +3,7 @@ import { create } from 'zustand'
 interface NewEditStore {
   step: 1 | 2 | 3
   images: File[]
+  imageUrls: string[]
   prompt: string
   promptType: 'preset' | 'custom'
   presetId: string | null
@@ -18,7 +19,9 @@ interface NewEditStore {
   nextStep: () => void
   prevStep: () => void
   setImages: (images: File[]) => void
+  setImageUrls: (urls: string[]) => void
   removeImage: (index: number) => void
+  removeImageUrl: (index: number) => void
   setPrompt: (prompt: string) => void
   setPromptType: (type: 'preset' | 'custom') => void
   setPreset: (id: string, name: string, prompt: string) => void
@@ -33,6 +36,7 @@ interface NewEditStore {
 const initialState = {
   step: 1 as 1 | 2 | 3,
   images: [],
+  imageUrls: [],
   prompt: '',
   promptType: 'preset' as 'preset' | 'custom',
   presetId: null,
@@ -61,9 +65,16 @@ export const useNewEditStore = create<NewEditStore>((set) => ({
 
   setImages: (images) => set({ images }),
 
+  setImageUrls: (imageUrls) => set({ imageUrls }),
+
   removeImage: (index) =>
     set((state) => ({
       images: state.images.filter((_, i) => i !== index),
+    })),
+
+  removeImageUrl: (index) =>
+    set((state) => ({
+      imageUrls: state.imageUrls.filter((_, i) => i !== index),
     })),
 
   setPrompt: (prompt) => set({ prompt }),

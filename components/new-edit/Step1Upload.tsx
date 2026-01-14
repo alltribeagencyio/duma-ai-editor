@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Upload, X, AlertCircle, Camera } from 'lucide-react'
+import { Upload, X, AlertCircle, Camera, Link as LinkIcon } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useNewEditStore } from '@/lib/stores/newEditStore'
@@ -11,8 +11,11 @@ import { cn } from '@/lib/utils'
 export function Step1Upload() {
   const {
     images,
+    imageUrls,
     setImages,
+    setImageUrls,
     removeImage,
+    removeImageUrl,
     nextStep,
     productName,
     productCategory,
@@ -24,6 +27,9 @@ export function Step1Upload() {
   const cameraInputRef = useRef<HTMLInputElement>(null)
   const [pricingPlan, setPricingPlan] = useState<string>('personal')
   const [isLoadingPlan, setIsLoadingPlan] = useState(true)
+  const [urlInput, setUrlInput] = useState('')
+  const [urlError, setUrlError] = useState('')
+  const [isValidatingUrl, setIsValidatingUrl] = useState(false)
 
   // Fetch user's pricing plan
   useEffect(() => {
@@ -83,8 +89,72 @@ export function Step1Upload() {
     }
   }
 
-  const hasErrors = fileRejections.length > 0
-  const canProceed = images.length > 0
+  const validateImageUrl = (url: string): boolean => {
+    try {
+      const urlObj = new URL(url)
+      // Must be http or https
+      if (!['http:', 'https:'].includes(urlObj.protocol)) {
+        return false
+      }
+      // Check if URL ends with common image extensions
+      const pathname = urlObj.pathname.toLowerCase()
+      const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.heic', '.heif']
+      return validExtensions.some(ext => pathname.endsWith(ext))
+    } catch {
+      return false
+    }
+  }
+
+  const handleAddUrl = async () => {
+    if (!urlInput.trim()) return
+
+    setUrlError('')
+    setIsValidatingUrl(true)
+
+    try {
+      // Basic URL validation
+      if (!validateImageUrl(urlInput)) {
+        setUrlError('Please enter a valid image URL (must end with .jpg, .png, .webp, etc.)')
+        setIsValidatingUrl(false)
+        return
+      }
+
+      // Check if we haven't exceeded limit
+      const totalImages = images.length + imageUrls.length
+      if (totalImages >= 10) {
+        setUrlError('Maximum 10 images allowed')
+        setIsValidatingUrl(false)
+        return
+      }
+
+      // Verify URL is accessible by fetching headers
+      const response = await fetch(urlInput, { method: 'HEAD' })
+      if (!response.ok) {
+        setUrlError('Could not access image at this URL. Please check the URL and try again.')
+        setIsValidatingUrl(false)
+        return
+      }
+
+      // Check content type
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.startsWith('image/')) {
+        setUrlError('URL does not point to an image')
+        setIsValidatingUrl(false)
+        return
+      }
+
+      // Add URL to list
+      setImageUrls([...imageUrls, urlInput.trim()])
+      setUrlInput('')
+    } catch (error) {
+      setUrlError('Failed to validate URL. Please check the URL and try again.')
+    } finally {
+      setIsValidatingUrl(false)
+    }
+  }
+
+  const hasErrors = fileRejections.length > 0 || !!urlError
+  const canProceed = images.length > 0 || imageUrls.length > 0
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -177,8 +247,46 @@ export function Step1Upload() {
         </button>
       </div>
 
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">or add image by URL</span>
+        </div>
+      </div>
+
+      {/* URL Input */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <input
+              type="url"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleAddUrl()}
+              placeholder="https://example.com/image.jpg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              disabled={isValidatingUrl}
+            />
+          </div>
+          <Button
+            onClick={handleAddUrl}
+            disabled={isValidatingUrl || !urlInput.trim()}
+            className="flex items-center gap-2 whitespace-nowrap"
+          >
+            <LinkIcon className="h-4 w-4" />
+            {isValidatingUrl ? 'Validating...' : 'Add URL'}
+          </Button>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">
+          Enter a direct link to an image (must end with .jpg, .png, .webp, etc.)
+        </p>
+      </div>
+
       {/* Error messages */}
-      {hasErrors && (
+      {fileRejections.length > 0 && (
         <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
           <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-red-600">
@@ -194,12 +302,23 @@ export function Step1Upload() {
         </div>
       )}
 
+      {/* URL Error */}
+      {urlError && (
+        <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
+          <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-red-600">
+            <p className="font-medium">{urlError}</p>
+          </div>
+        </div>
+      )}
+
       {/* Image previews */}
-      {images.length > 0 && (
+      {(images.length > 0 || imageUrls.length > 0) && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+          {/* File uploads */}
           {images.map((image, index) => (
             <div
-              key={index}
+              key={`file-${index}`}
               className="relative aspect-square rounded-lg border border-gray-200 overflow-hidden group"
             >
               <Image
@@ -212,6 +331,30 @@ export function Step1Upload() {
                 onClick={() => removeImage(index)}
                 className="absolute top-1 right-1 md:top-2 md:right-2 w-8 h-8 md:w-6 md:h-6 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
                 aria-label={`Remove image ${index + 1}`}
+              >
+                <X className="h-5 w-5 md:h-4 md:w-4 text-gray-600" />
+              </button>
+            </div>
+          ))}
+          {/* URL images */}
+          {imageUrls.map((url, index) => (
+            <div
+              key={`url-${index}`}
+              className="relative aspect-square rounded-lg border border-gray-200 overflow-hidden group"
+            >
+              <Image
+                src={url}
+                alt={`URL Preview ${index + 1}`}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute top-1 left-1 md:top-2 md:left-2 px-2 py-1 bg-blue-500 text-white text-xs rounded">
+                URL
+              </div>
+              <button
+                onClick={() => removeImageUrl(index)}
+                className="absolute top-1 right-1 md:top-2 md:right-2 w-8 h-8 md:w-6 md:h-6 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+                aria-label={`Remove URL image ${index + 1}`}
               >
                 <X className="h-5 w-5 md:h-4 md:w-4 text-gray-600" />
               </button>

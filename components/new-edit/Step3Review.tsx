@@ -14,6 +14,7 @@ export function Step3Review() {
   const router = useRouter()
   const {
     images,
+    imageUrls,
     prompt,
     promptType,
     presetId,
@@ -63,6 +64,11 @@ export function Step3Review() {
       images.forEach((image) => {
         formData.append('images', image)
       })
+
+      // Add image URLs as JSON array
+      if (imageUrls.length > 0) {
+        formData.append('imageUrls', JSON.stringify(imageUrls))
+      }
 
       // Use XMLHttpRequest to track upload progress
       const xhr = new XMLHttpRequest()
