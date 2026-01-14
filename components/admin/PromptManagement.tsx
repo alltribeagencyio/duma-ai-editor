@@ -25,7 +25,19 @@ export function PromptManagement() {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [selectedPrompt, setSelectedPrompt] = useState<PromptPreset | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    prompt: '',
+    category: '',
+    icon: '✨',
+    order: 0,
+    isActive: true
+  })
 
   useEffect(() => {
     fetchPrompts()
@@ -33,7 +45,7 @@ export function PromptManagement() {
 
   const fetchPrompts = async () => {
     try {
-      const response = await fetch('/api/prompts/presets')
+      const response = await fetch('/api/admin/prompts/preset')
       if (response.ok) {
         const data = await response.json()
         setPrompts(data.prompts)
@@ -46,10 +58,143 @@ export function PromptManagement() {
     }
   }
 
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      description: '',
+      prompt: '',
+      category: '',
+      icon: '✨',
+      order: 0,
+      isActive: true
+    })
+  }
+
+  const openCreateModal = () => {
+    resetForm()
+    setShowCreateModal(true)
+  }
+
+  const openEditModal = (prompt: PromptPreset) => {
+    setFormData({
+      name: prompt.name,
+      description: prompt.description,
+      prompt: prompt.prompt,
+      category: prompt.category,
+      icon: prompt.icon,
+      order: prompt.order,
+      isActive: prompt.isActive
+    })
+    setSelectedPrompt(prompt)
+    setShowEditModal(true)
+  }
+
+  const handleCreate = async () => {
+    if (!formData.name || !formData.prompt || !formData.category) {
+      showToast('error', 'Error', 'Please fill in all required fields')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const response = await fetch('/api/admin/prompts/preset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+
+      if (response.ok) {
+        showToast('success', 'Success', 'Prompt created successfully')
+        setShowCreateModal(false)
+        resetForm()
+        await fetchPrompts() // Refresh the list
+      } else {
+        const error = await response.json()
+        showToast('error', 'Error', error.error || 'Failed to create prompt')
+      }
+    } catch (error) {
+      console.error('Error creating prompt:', error)
+      showToast('error', 'Error', 'Failed to create prompt')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleUpdate = async () => {
+    if (!selectedPrompt) return
+
+    if (!formData.name || !formData.prompt || !formData.category) {
+      showToast('error', 'Error', 'Please fill in all required fields')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const response = await fetch(`/api/admin/prompts/preset/${selectedPrompt.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+
+      if (response.ok) {
+        showToast('success', 'Success', 'Prompt updated successfully')
+        setShowEditModal(false)
+        setSelectedPrompt(null)
+        resetForm()
+        await fetchPrompts() // Refresh the list
+      } else {
+        const error = await response.json()
+        showToast('error', 'Error', error.error || 'Failed to update prompt')
+      }
+    } catch (error) {
+      console.error('Error updating prompt:', error)
+      showToast('error', 'Error', 'Failed to update prompt')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!selectedPrompt) return
+
+    setIsSubmitting(true)
+    try {
+      const response = await fetch(`/api/admin/prompts/preset/${selectedPrompt.id}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        showToast('success', 'Success', 'Prompt deleted successfully')
+        setShowDeleteConfirm(false)
+        setSelectedPrompt(null)
+        await fetchPrompts() // Refresh the list
+      } else {
+        const error = await response.json()
+        showToast('error', 'Error', error.error || 'Failed to delete prompt')
+      }
+    } catch (error) {
+      console.error('Error deleting prompt:', error)
+      showToast('error', 'Error', 'Failed to delete prompt')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   const togglePromptStatus = async (promptId: string, currentStatus: boolean) => {
     try {
-      // This would need a corresponding API endpoint
-      showToast('info', 'Coming Soon', 'Prompt toggle functionality will be available soon')
+      const response = await fetch(`/api/admin/prompts/preset/${promptId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !currentStatus })
+      })
+
+      if (response.ok) {
+        showToast('success', 'Success', `Prompt ${!currentStatus ? 'activated' : 'deactivated'}`)
+        await fetchPrompts() // Refresh the list
+      } else {
+        const error = await response.json()
+        showToast('error', 'Error', error.error || 'Failed to toggle prompt status')
+      }
     } catch (error) {
       console.error('Error toggling prompt:', error)
       showToast('error', 'Error', 'Failed to toggle prompt status')
@@ -81,7 +226,7 @@ export function PromptManagement() {
               Manage preset prompts available to all users
             </CardDescription>
           </div>
-          <Button onClick={() => showToast('info', 'Coming Soon', 'Create prompt functionality will be available soon')}>
+          <Button onClick={openCreateModal}>
             <Plus className="h-4 w-4 mr-2" />
             Create Prompt
           </Button>
@@ -166,11 +311,8 @@ export function PromptManagement() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => {
-                              setSelectedPrompt(prompt)
-                              setShowEditModal(true)
-                            }}
-                            title="View Details"
+                            onClick={() => openEditModal(prompt)}
+                            title="Edit Prompt"
                           >
                             <Edit className="h-3 w-3" />
                           </Button>
@@ -185,6 +327,18 @@ export function PromptManagement() {
                             ) : (
                               <Eye className="h-3 w-3" />
                             )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedPrompt(prompt)
+                              setShowDeleteConfirm(true)
+                            }}
+                            title="Delete Prompt"
+                            className="text-red-600 hover:text-red-700 hover:border-red-300"
+                          >
+                            <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
                       </td>
@@ -206,71 +360,177 @@ export function PromptManagement() {
             Prompt Management Info
           </div>
           <div className="text-sm text-blue-700">
-            Prompts are fetched from the database in real-time. Any changes made to prompts in the database
-            will automatically reflect on the user side when they refresh or load the prompt selection screen.
-            Full CRUD functionality for prompts coming soon!
+            Create, edit, and delete preset prompts. Changes reflect instantly on the user side.
+            Active prompts are visible to all users when creating jobs.
           </div>
         </div>
       </CardContent>
 
-      {/* View/Edit Modal */}
-      {showEditModal && selectedPrompt && (
+      {/* Create Modal */}
+      {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Prompt Details</h3>
-              <button
-                onClick={() => {
-                  setShowEditModal(false)
-                  setSelectedPrompt(null)
-                }}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <Edit className="h-5 w-5" />
-              </button>
-            </div>
+            <h3 className="text-lg font-semibold">Create New Prompt</h3>
 
             <div className="space-y-4">
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-1">Name</div>
-                <div className="text-base text-gray-900">{selectedPrompt.name}</div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Name *</label>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g., White Background"
+                />
               </div>
 
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-1">Category</div>
-                <Badge variant={getCategoryColor(selectedPrompt.category) as any}>
-                  {selectedPrompt.category}
-                </Badge>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Category *</label>
+                <Input
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  placeholder="e.g., Background, Enhancement, Focus"
+                />
               </div>
 
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-1">Description</div>
-                <div className="text-base text-gray-900">{selectedPrompt.description}</div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Description</label>
+                <Input
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Brief description of the prompt"
+                />
               </div>
 
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-1">Prompt Text</div>
-                <div className="p-3 bg-gray-50 rounded-lg text-sm text-gray-900 whitespace-pre-wrap">
-                  {selectedPrompt.prompt}
-                </div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Prompt Text *</label>
+                <textarea
+                  value={formData.prompt}
+                  onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
+                  placeholder="The actual prompt text that will be used"
+                  className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg text-sm"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">Icon</div>
-                  <div className="text-base text-gray-900">{selectedPrompt.icon}</div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">Icon</label>
+                  <Input
+                    value={formData.icon}
+                    onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                    placeholder="✨"
+                  />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">Display Order</div>
-                  <div className="text-base text-gray-900">{selectedPrompt.order}</div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">Display Order</label>
+                  <Input
+                    type="number"
+                    value={formData.order}
+                    onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                  />
                 </div>
               </div>
 
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={formData.isActive}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+                />
+                <label className="text-sm font-medium text-gray-700">Active (Visible to users)</label>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-4 border-t">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateModal(false)
+                  resetForm()
+                }}
+                disabled={isSubmitting}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={handleCreate}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Creating...' : 'Create Prompt'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && selectedPrompt && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold">Edit Prompt</h3>
+
+            <div className="space-y-4">
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-1">Status</div>
-                <div className={`text-base ${selectedPrompt.isActive ? 'text-green-600' : 'text-gray-400'}`}>
-                  {selectedPrompt.isActive ? 'Active (Visible to users)' : 'Inactive (Hidden from users)'}
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Name *</label>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g., White Background"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Category *</label>
+                <Input
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  placeholder="e.g., Background, Enhancement, Focus"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Description</label>
+                <Input
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Brief description of the prompt"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Prompt Text *</label>
+                <textarea
+                  value={formData.prompt}
+                  onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
+                  placeholder="The actual prompt text that will be used"
+                  className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">Icon</label>
+                  <Input
+                    value={formData.icon}
+                    onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                    placeholder="✨"
+                  />
                 </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">Display Order</label>
+                  <Input
+                    type="number"
+                    value={formData.order}
+                    onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={formData.isActive}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+                />
+                <label className="text-sm font-medium text-gray-700">Active (Visible to users)</label>
               </div>
             </div>
 
@@ -280,16 +540,59 @@ export function PromptManagement() {
                 onClick={() => {
                   setShowEditModal(false)
                   setSelectedPrompt(null)
+                  resetForm()
                 }}
+                disabled={isSubmitting}
                 className="flex-1"
               >
-                Close
+                Cancel
               </Button>
               <Button
                 className="flex-1"
-                onClick={() => showToast('info', 'Coming Soon', 'Edit functionality will be available soon')}
+                onClick={handleUpdate}
+                disabled={isSubmitting}
               >
-                Edit Prompt
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && selectedPrompt && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-red-100 rounded-full">
+                <Trash2 className="h-5 w-5 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">Delete Prompt</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Are you sure you want to delete <strong>{selectedPrompt.name}</strong>? This action cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-4 border-t">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteConfirm(false)
+                  setSelectedPrompt(null)
+                }}
+                disabled={isSubmitting}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1 bg-red-600 hover:bg-red-700"
+                onClick={handleDelete}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Deleting...' : 'Delete Prompt'}
               </Button>
             </div>
           </div>
