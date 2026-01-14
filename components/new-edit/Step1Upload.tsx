@@ -157,11 +157,11 @@ export function Step1Upload() {
   const canProceed = images.length > 0 || imageUrls.length > 0
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
       {/* Product Information - Only visible for business users */}
       {!isLoadingPlan && pricingPlan === 'business' && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Information</h3>
+        <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
+          <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">Product Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -207,20 +207,20 @@ export function Step1Upload() {
       <div
         {...getRootProps()}
         className={cn(
-          'border-2 border-dashed rounded-xl p-6 md:p-10 lg:p-12 transition-all duration-200 cursor-pointer',
+          'border-2 border-dashed rounded-xl p-6 md:p-10 transition-all duration-200 cursor-pointer',
           isDragActive
             ? 'border-gray-900 bg-gray-100'
             : 'border-gray-300 bg-white hover:border-gray-400 hover:bg-gray-50'
         )}
       >
         <input {...getInputProps()} />
-        <div className="flex flex-col items-center justify-center text-center space-y-4">
-          <Upload className="h-12 w-12 text-gray-400" />
+        <div className="flex flex-col items-center justify-center text-center space-y-3 md:space-y-4">
+          <Upload className="h-10 w-10 md:h-12 md:w-12 text-gray-400" />
           <div>
-            <p className="text-base text-gray-900 font-medium">
+            <p className="text-sm md:text-base text-gray-900 font-medium">
               Drag images here or click to browse
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-xs md:text-sm text-gray-600 mt-1">
               JPG, PNG, WEBP, HEIC up to 5MB • Max 10 images
             </p>
           </div>
@@ -258,8 +258,8 @@ export function Step1Upload() {
       </div>
 
       {/* URL Input */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="flex gap-2">
+      <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-1">
             <input
               type="url"
@@ -274,10 +274,10 @@ export function Step1Upload() {
           <Button
             onClick={handleAddUrl}
             disabled={isValidatingUrl || !urlInput.trim()}
-            className="flex items-center gap-2 whitespace-nowrap"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto"
           >
             <LinkIcon className="h-4 w-4" />
-            {isValidatingUrl ? 'Validating...' : 'Add URL'}
+            <span>{isValidatingUrl ? 'Validating...' : 'Add URL'}</span>
           </Button>
         </div>
         <p className="text-xs text-gray-500 mt-2">
@@ -368,7 +368,9 @@ export function Step1Upload() {
         <Button
           onClick={nextStep}
           disabled={!canProceed}
+          variant="default"
           size="lg"
+          className="w-full sm:w-auto"
         >
           Next
         </Button>

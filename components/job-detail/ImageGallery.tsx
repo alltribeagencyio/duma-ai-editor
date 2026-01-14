@@ -9,8 +9,14 @@ const ImageLightbox = dynamic(
   { ssr: false }
 )
 
+interface ImageWithVersion {
+  url: string
+  version?: number
+  isReEdit?: boolean
+}
+
 interface ImageGalleryProps {
-  imageUrls: string[]
+  imageUrls: string[] | ImageWithVersion[]
   totalImages?: number
   onSelectionChange?: (selectedUrls: string[]) => void
   jobId?: string
@@ -26,8 +32,16 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
   const [expandedImage, setExpandedImage] = useState<string | null>(null)
 
+  // Normalize imageUrls to always be ImageWithVersion format
+  const normalizedImages: ImageWithVersion[] = imageUrls.map((item) => {
+    if (typeof item === 'string') {
+      return { url: item }
+    }
+    return item
+  })
+
   // Show checkboxes only when there are multiple images
-  const showCheckboxes = imageUrls.length > 1
+  const showCheckboxes = normalizedImages.length > 1
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index)
@@ -80,24 +94,33 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-6 relative">
         {/* Completed images */}
-        {imageUrls.map((url, index) => {
-          const isExpanded = enableExpand && expandedImage === url
+        {normalizedImages.map((image, index) => {
+          const isExpanded = enableExpand && expandedImage === image.url
           return (
             <div
-              key={url}
+              key={`${image.url}-${index}`}
               className={`relative rounded-lg border border-gray-200 overflow-hidden group transition-all duration-300 ${
                 isExpanded ? 'col-span-2 row-span-2 z-50' : 'aspect-square'
               }`}
             >
+              {/* Version Tag - only show if it's a re-edit */}
+              {image.isReEdit && image.version && (
+                <div className="absolute top-2 right-2 z-10">
+                  <span className="px-2 py-1 bg-purple-600 text-white text-xs font-medium rounded shadow-md">
+                    Re-edit V{image.version}
+                  </span>
+                </div>
+              )}
+
               {/* Checkbox - only show when multiple images */}
               {showCheckboxes && (
                 <div className="absolute top-2 left-2 z-10">
                   <input
                     type="checkbox"
-                    checked={selectedImages.has(url)}
+                    checked={selectedImages.has(image.url)}
                     onChange={(e) => {
                       e.stopPropagation()
-                      toggleSelection(url)
+                      toggleSelection(image.url)
                     }}
                     className="h-5 w-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
                   />
@@ -108,14 +131,14 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                 className="w-full h-full cursor-pointer relative"
                 onClick={() => openLightbox(index)}
               >
-                {!imageErrors.has(url) ? (
+                {!imageErrors.has(image.url) ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={url}
+                    src={image.url}
                     alt={`Edited image ${index + 1}`}
                     crossOrigin="anonymous"
                     className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                    onError={() => setImageErrors(prev => new Set(prev).add(url))}
+                    onError={() => setImageErrors(prev => new Set(prev).add(image.url))}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
@@ -133,7 +156,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        setExpandedImage(url)
+                        setExpandedImage(image.url)
                       }}
                       className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
                       title="Expand image"
@@ -156,7 +179,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      downloadImage(url, index)
+                      downloadImage(image.url, index)
                     }}
                     className={`p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all ${
                       isExpanded ? 'scale-110' : ''
@@ -170,7 +193,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        onReEdit(url)
+                        onReEdit(image.url)
                       }}
                       className={`p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all ${
                         isExpanded ? 'scale-110' : ''
@@ -201,7 +224,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
       </div>
 
       <ImageLightbox
-        images={imageUrls}
+        images={normalizedImages.map(img => img.url)}
         isOpen={lightboxOpen}
         currentIndex={lightboxIndex}
         onClose={() => setLightboxOpen(false)}

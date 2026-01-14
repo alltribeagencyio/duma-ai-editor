@@ -85,14 +85,14 @@ export function Step2Prompt() {
   const canProceed = promptType === 'preset' ? !!presetId : prompt.length > 0
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
       {/* Toggle */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-lg md:text-xl font-semibold text-gray-900">
             Choose an editing style
           </h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-xs md:text-sm text-gray-600 mt-1">
             {promptType === 'preset'
               ? 'Select from popular presets'
               : 'Describe your custom editing needs'}
@@ -100,7 +100,7 @@ export function Step2Prompt() {
         </div>
         <button
           onClick={handleToggleCustom}
-          className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+          className="text-xs md:text-sm text-gray-600 hover:text-gray-900 font-medium whitespace-nowrap self-start sm:self-auto"
         >
           {promptType === 'preset' ? 'Use custom prompt instead' : 'Use preset instead'}
         </button>
@@ -244,11 +244,11 @@ export function Step2Prompt() {
       )}
 
       {/* Navigation buttons */}
-      <div className="flex items-center justify-between pt-4">
-        <Button variant="ghost" onClick={prevStep}>
+      <div className="flex items-center justify-between gap-3 pt-4">
+        <Button variant="ghost" onClick={prevStep} className="w-auto">
           Back
         </Button>
-        <Button onClick={nextStep} disabled={!canProceed} size="lg">
+        <Button onClick={nextStep} disabled={!canProceed} variant="default" size="lg" className="w-full sm:w-auto">
           Next
         </Button>
       </div>

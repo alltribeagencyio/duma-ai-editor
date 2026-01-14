@@ -122,22 +122,22 @@ export function Step3Review() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
       {error && (
-        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg">
+        <div className="p-3 text-xs md:text-sm text-red-600 bg-red-50 rounded-lg">
           {error}
         </div>
       )}
 
       {/* Review Images */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Your Images</h2>
-          <Button variant="ghost" onClick={() => setStep(1)}>
+          <h2 className="text-lg md:text-xl font-semibold text-gray-900">Your Images</h2>
+          <Button variant="ghost" onClick={() => setStep(1)} size="sm">
             Edit
           </Button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {images.map((image, index) => (
             <div
               key={index}
@@ -155,17 +155,17 @@ export function Step3Review() {
       </div>
 
       {/* Review Prompt */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-lg md:text-xl font-semibold text-gray-900">
             Editing Instructions
           </h2>
-          <Button variant="ghost" onClick={() => setStep(2)}>
+          <Button variant="ghost" onClick={() => setStep(2)} size="sm">
             Edit
           </Button>
         </div>
-        <div className="bg-gray-50 rounded-lg p-4">
-          <p className="text-gray-700">
+        <div className="bg-gray-50 rounded-lg p-3 md:p-4">
+          <p className="text-sm md:text-base text-gray-700">
             {promptType === 'preset' && presetName && (
               <span className="font-medium">{presetName}: </span>
             )}
@@ -175,15 +175,16 @@ export function Step3Review() {
       </div>
 
       {/* Submit */}
-      <div className="space-y-4 pt-4">
+      <div className="space-y-3 md:space-y-4 pt-4">
         <div className="space-y-3">
           <Button
             onClick={handleSubmit}
             disabled={submitting}
-            className="w-full h-12 text-base"
+            variant="default"
+            className="w-full h-11 md:h-12 text-sm md:text-base"
             size="lg"
           >
-            {submitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+            {submitting && <Loader2 className="mr-2 h-4 w-4 md:h-5 md:w-5 animate-spin" />}
             {submitting ? 'Uploading images...' : 'Submit for Editing'}
           </Button>
 

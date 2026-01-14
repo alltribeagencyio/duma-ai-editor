@@ -25,7 +25,8 @@
       "Bash(curl:*)",
       "Bash(dir:*)",
       "Bash(node fix_credit_deductions.js:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
