@@ -23,6 +23,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
+  const [expandedImage, setExpandedImage] = useState<string | null>(null)
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index)
@@ -67,82 +68,144 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
     <>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-6">
         {/* Completed images */}
-        {imageUrls.map((url, index) => (
-          <div
-            key={url}
-            className="relative aspect-square rounded-lg border border-gray-200 overflow-hidden group"
-          >
-            {/* Checkbox */}
-            <div className="absolute top-2 left-2 z-10">
-              <input
-                type="checkbox"
-                checked={selectedImages.has(url)}
-                onChange={(e) => {
-                  e.stopPropagation()
-                  toggleSelection(url)
-                }}
-                className="h-5 w-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
-              />
-            </div>
-
+        {imageUrls.map((url, index) => {
+          const isExpanded = expandedImage === url
+          return (
             <div
-              className="w-full h-full cursor-pointer relative"
-              onClick={() => openLightbox(index)}
+              key={url}
+              className={`relative rounded-lg border border-gray-200 overflow-hidden group transition-all duration-300 ${
+                isExpanded ? 'col-span-2 row-span-2' : 'aspect-square'
+              }`}
             >
-              {!imageErrors.has(url) ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={url}
-                  alt={`Edited image ${index + 1}`}
-                  crossOrigin="anonymous"
-                  className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                  onError={() => setImageErrors(prev => new Set(prev).add(url))}
+              {/* Checkbox */}
+              <div className="absolute top-2 left-2 z-10">
+                <input
+                  type="checkbox"
+                  checked={selectedImages.has(url)}
+                  onChange={(e) => {
+                    e.stopPropagation()
+                    toggleSelection(url)
+                  }}
+                  className="h-5 w-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
                 />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-                  <span className="text-4xl">📷</span>
+              </div>
+
+              <div
+                className="w-full h-full cursor-pointer relative"
+                onClick={() => {
+                  if (isExpanded) {
+                    setExpandedImage(null)
+                  } else {
+                    setExpandedImage(url)
+                  }
+                }}
+              >
+                {!imageErrors.has(url) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={url}
+                    alt={`Edited image ${index + 1}`}
+                    crossOrigin="anonymous"
+                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                    onError={() => setImageErrors(prev => new Set(prev).add(url))}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                    <span className="text-4xl">📷</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Overlay on hover - only when not expanded */}
+              {!isExpanded && (
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      openLightbox(index)
+                    }}
+                    className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                    title="View full size"
+                  >
+                    <ZoomIn className="h-5 w-5 text-white" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      downloadImage(url, index)
+                    }}
+                    className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                    title="Download"
+                  >
+                    <Download className="h-5 w-5 text-white" />
+                  </button>
+                  {/* Re-edit button - only show for completed jobs */}
+                  {jobStatus === 'completed' && onReEdit && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onReEdit(url)
+                      }}
+                      className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                      title="Re-edit this image"
+                    >
+                      <Edit3 className="h-5 w-5 text-white" />
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Action bar at bottom when expanded or on hover */}
+              {(isExpanded || true) && (
+                <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent transition-opacity duration-200 ${
+                  isExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                }`}>
+                  <div className="flex items-center justify-center gap-4 p-4">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        openLightbox(index)
+                      }}
+                      className={`p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all ${
+                        isExpanded ? 'scale-110' : ''
+                      }`}
+                      title="View full size"
+                    >
+                      <ZoomIn className="h-5 w-5 text-white" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        downloadImage(url, index)
+                      }}
+                      className={`p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all ${
+                        isExpanded ? 'scale-110' : ''
+                      }`}
+                      title="Download"
+                    >
+                      <Download className="h-5 w-5 text-white" />
+                    </button>
+                    {/* Re-edit button - only show for completed jobs */}
+                    {jobStatus === 'completed' && onReEdit && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onReEdit(url)
+                        }}
+                        className={`p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all ${
+                          isExpanded ? 'scale-110' : ''
+                        }`}
+                        title="Re-edit this image"
+                      >
+                        <Edit3 className="h-5 w-5 text-white" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
-
-            {/* Overlay on hover */}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  openLightbox(index)
-                }}
-                className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-                title="View full size"
-              >
-                <ZoomIn className="h-5 w-5 text-white" />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  downloadImage(url, index)
-                }}
-                className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-                title="Download"
-              >
-                <Download className="h-5 w-5 text-white" />
-              </button>
-              {/* Re-edit button - only show for completed jobs */}
-              {jobStatus === 'completed' && onReEdit && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onReEdit(url)
-                  }}
-                  className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-                  title="Re-edit this image"
-                >
-                  <Edit3 className="h-5 w-5 text-white" />
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          )
+        })}
 
         {/* Loading placeholders for images being processed */}
         {loadingPlaceholders.map((_, index) => (
