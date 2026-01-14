@@ -32,7 +32,7 @@ export function HistoryClient() {
     <AppLayout
       userEmail={userEmail}
       title="History"
-      subtitle="View and manage all your editing jobs"
+      subtitle="View and manage all your edits"
     >
       <div className="w-full max-w-screen-2xl mx-auto">
         <EnhancedJobList />

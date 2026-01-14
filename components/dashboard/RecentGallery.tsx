@@ -116,7 +116,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <div className="absolute bottom-3 left-3 right-3">
-                    <span className="text-white text-xs font-medium">View Job</span>
+                    <span className="text-white text-xs font-medium">View Edit</span>
                   </div>
                 </div>
 
@@ -176,7 +176,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
                             {/* Minimal overlay on hover */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300">
                               <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                                <span className="text-white text-sm font-medium tracking-wide">View Job</span>
+                                <span className="text-white text-sm font-medium tracking-wide">View Edit</span>
                               </div>
                             </div>
 

@@ -132,7 +132,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
   return (
     <AppLayout
       userEmail={userEmail}
-      title="Job Details"
+      title="Edit Details"
       subtitle={`Status: ${job.status}`}
     >
       <div className="max-w-6xl mx-auto space-y-8">
