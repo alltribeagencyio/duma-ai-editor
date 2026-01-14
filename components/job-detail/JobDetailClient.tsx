@@ -107,11 +107,11 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
   const totalImages = job.inputImages?.length || 0
 
   // Consolidate all edited images from all versions into one array with tags
-  const allEditedImages = []
+  const allEditedImages: Array<{ url: string; version: number; isReEdit: boolean }> = []
 
   // Add Version 1 images (no tag for first edit as per user requirement)
   if (job.status === 'completed' && outputImages.length > 0) {
-    outputImages.forEach(url => {
+    outputImages.forEach((url: string) => {
       allEditedImages.push({ url, version: 1, isReEdit: false })
     })
   }
@@ -123,7 +123,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
       : (reEdit.outputData?.images || [])
 
     if (reEdit.status === 'completed' && reEditImages.length > 0) {
-      reEditImages.forEach(url => {
+      reEditImages.forEach((url: string) => {
         allEditedImages.push({ url, version: index + 2, isReEdit: true })
       })
     }
