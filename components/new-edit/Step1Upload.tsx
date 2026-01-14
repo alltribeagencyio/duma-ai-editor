@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Upload, X, AlertCircle, Camera } from 'lucide-react'
 import Image from 'next/image'
@@ -22,6 +22,26 @@ export function Step1Upload() {
     setProductSku,
   } = useNewEditStore()
   const cameraInputRef = useRef<HTMLInputElement>(null)
+  const [pricingPlan, setPricingPlan] = useState<string>('personal')
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true)
+
+  // Fetch user's pricing plan
+  useEffect(() => {
+    const fetchPricingPlan = async () => {
+      try {
+        const response = await fetch('/api/user/profile')
+        if (response.ok) {
+          const { user } = await response.json()
+          setPricingPlan(user.pricingPlan || 'personal')
+        }
+      } catch (error) {
+        console.error('Error fetching pricing plan:', error)
+      } finally {
+        setIsLoadingPlan(false)
+      }
+    }
+    fetchPricingPlan()
+  }, [])
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -68,48 +88,50 @@ export function Step1Upload() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Product Information */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Product Name
-            </label>
-            <input
-              type="text"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              placeholder="e.g., Classic T-Shirt"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Category
-            </label>
-            <input
-              type="text"
-              value={productCategory}
-              onChange={(e) => setProductCategory(e.target.value)}
-              placeholder="e.g., Apparel"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              SKU
-            </label>
-            <input
-              type="text"
-              value={productSku}
-              onChange={(e) => setProductSku(e.target.value)}
-              placeholder="e.g., TSH-001-BLK"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-            />
+      {/* Product Information - Only visible for business users */}
+      {!isLoadingPlan && pricingPlan === 'business' && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Product Name
+              </label>
+              <input
+                type="text"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                placeholder="e.g., Classic T-Shirt"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Category
+              </label>
+              <input
+                type="text"
+                value={productCategory}
+                onChange={(e) => setProductCategory(e.target.value)}
+                placeholder="e.g., Apparel"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                SKU
+              </label>
+              <input
+                type="text"
+                value={productSku}
+                onChange={(e) => setProductSku(e.target.value)}
+                placeholder="e.g., TSH-001-BLK"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Dropzone */}
       <div

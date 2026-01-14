@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Download, Search, Calendar, X, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react'
+import { Download, Search, Calendar, X, ChevronLeft, ChevronRight, ArrowUpDown, Eye } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface GalleryImage {
   id: string
@@ -21,6 +22,7 @@ interface GalleryClientProps {
 type SortOption = 'date-desc' | 'date-asc' | 'name-asc' | 'name-desc'
 
 export function GalleryClient({ userEmail }: GalleryClientProps) {
+  const router = useRouter()
   const [images, setImages] = useState<GalleryImage[]>([])
   const [filteredImages, setFilteredImages] = useState<GalleryImage[]>([])
   const [loading, setLoading] = useState(true)
@@ -28,6 +30,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
   const [selectedDate, setSelectedDate] = useState('')
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [selectedImageId, setSelectedImageId] = useState<string | null>(null)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -289,45 +292,109 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
         {!loading && currentImages.length > 0 && (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
-              {currentImages.map((image, index) => (
-                <div key={image.id} className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 active:border-purple-300 transition-all">
-                  {/* Image with link wrapper */}
-                  <Link href={`/jobs/${image.jobId}`} className="block w-full h-full">
-                    {!imageErrors.has(image.imageUrl) ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={image.imageUrl}
-                        alt={image.productName || 'Edited image'}
-                        crossOrigin="anonymous"
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        decoding="async"
-                        onError={() => setImageErrors(prev => new Set(prev).add(image.imageUrl))}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <span className="text-4xl">📷</span>
+              {currentImages.map((image, index) => {
+                const isSelected = selectedImageId === image.id
+
+                return (
+                  <div key={image.id} className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 active:border-purple-300 transition-all">
+                    {/* Image - clickable on desktop (Link), tappable on mobile (toggles actions) */}
+                    <div
+                      className="block w-full h-full cursor-pointer md:cursor-default"
+                      onClick={(e) => {
+                        // Mobile behavior: toggle action buttons
+                        if (window.innerWidth < 768) {
+                          e.preventDefault()
+                          setSelectedImageId(isSelected ? null : image.id)
+                        }
+                      }}
+                    >
+                      <Link href={`/jobs/${image.jobId}`} className="hidden md:block w-full h-full">
+                        {!imageErrors.has(image.imageUrl) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={image.imageUrl}
+                            alt={image.productName || 'Edited image'}
+                            crossOrigin="anonymous"
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                            onError={() => setImageErrors(prev => new Set(prev).add(image.imageUrl))}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            <span className="text-4xl">📷</span>
+                          </div>
+                        )}
+                      </Link>
+
+                      {/* Mobile: Image without Link wrapper */}
+                      <div className="md:hidden w-full h-full">
+                        {!imageErrors.has(image.imageUrl) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={image.imageUrl}
+                            alt={image.productName || 'Edited image'}
+                            crossOrigin="anonymous"
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                            onError={() => setImageErrors(prev => new Set(prev).add(image.imageUrl))}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            <span className="text-4xl">📷</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Desktop: Hover overlay with download icon */}
+                    <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                      <div className="absolute bottom-3 right-3 pointer-events-auto">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            handleDownload(image.imageUrl, index)
+                          }}
+                          className="p-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors shadow-sm"
+                          title="Download"
+                        >
+                          <Download className="h-4 w-4 text-gray-900" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Mobile: Action buttons (show when selected) */}
+                    {isSelected && (
+                      <div className="md:hidden absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                        <div className="flex items-center justify-center gap-6">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDownload(image.imageUrl, index)
+                              setSelectedImageId(null)
+                            }}
+                            className="p-3 bg-white/20 hover:bg-white/30 active:bg-white/40 rounded-lg transition-all"
+                            title="Download"
+                          >
+                            <Download className="h-5 w-5 text-white" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              router.push(`/jobs/${image.jobId}`)
+                            }}
+                            className="p-3 bg-white/20 hover:bg-white/30 active:bg-white/40 rounded-lg transition-all"
+                            title="View Details"
+                          >
+                            <Eye className="h-5 w-5 text-white" />
+                          </button>
+                        </div>
                       </div>
                     )}
-                  </Link>
-
-                  {/* Hover overlay with download icon */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                    <div className="absolute bottom-3 right-3 pointer-events-auto">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          handleDownload(image.imageUrl, index)
-                        }}
-                        className="p-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors shadow-sm"
-                        title="Download"
-                      >
-                        <Download className="h-4 w-4 text-gray-900" />
-                      </button>
-                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             {/* Pagination - Simplified for mobile */}
