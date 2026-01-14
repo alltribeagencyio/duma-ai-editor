@@ -16,6 +16,8 @@ interface User {
   subscriptionStatus: string
   monthlyCredits: number
   creditsUsed: number
+  creditBalance: number
+  pricingPlan: string
   isAdmin: boolean
   createdAt: string
 }
@@ -26,6 +28,7 @@ export function UserManagement() {
   const [loading, setLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showCreditsModal, setShowCreditsModal] = useState(false)
+  const [showPlanModal, setShowPlanModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [createForm, setCreateForm] = useState({
     email: '',
@@ -38,6 +41,7 @@ export function UserManagement() {
     action: 'add',
     amount: 0
   })
+  const [selectedPlan, setSelectedPlan] = useState<string>('personal')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -160,6 +164,46 @@ export function UserManagement() {
     setShowCreditsModal(true)
   }
 
+  const openPlanModal = (user: User) => {
+    setSelectedUser(user)
+    setSelectedPlan(user.pricingPlan)
+    setShowPlanModal(true)
+  }
+
+  const handleChangePlan = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedUser) return
+
+    setSubmitting(true)
+
+    try {
+      const response = await fetch('/api/admin/users/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: selectedUser.id,
+          pricingPlan: selectedPlan
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showToast('success', 'Plan Updated', `Pricing plan changed to ${selectedPlan}`)
+        setShowPlanModal(false)
+        setSelectedUser(null)
+        fetchUsers()
+      } else {
+        showToast('error', 'Update Failed', data.error || 'Failed to update plan')
+      }
+    } catch (error) {
+      console.error('Error changing plan:', error)
+      showToast('error', 'Error', 'An unexpected error occurred')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <>
       <Card>
@@ -197,9 +241,9 @@ export function UserManagement() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plan</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pricing Plan</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Credits</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Credit Balance</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
@@ -232,8 +276,8 @@ export function UserManagement() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge variant={getTierColor(user.subscriptionTier) as any}>
-                          {user.subscriptionTier}
+                        <Badge variant={user.pricingPlan === 'business' ? 'processing' : 'secondary'}>
+                          {user.pricingPlan}
                         </Badge>
                       </td>
                       <td className="px-4 py-3">
@@ -243,8 +287,8 @@ export function UserManagement() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="text-sm">
-                          <div>{user.creditsUsed} / {user.monthlyCredits}</div>
-                          <div className="text-xs text-gray-500">used</div>
+                          <div>${user.creditBalance.toFixed(2)}</div>
+                          <div className="text-xs text-gray-500">{user.creditsUsed} images processed</div>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">
@@ -255,10 +299,20 @@ export function UserManagement() {
                           <Button
                             size="sm"
                             variant="outline"
+                            onClick={() => openPlanModal(user)}
+                            title="Change Plan"
+                          >
+                            <Edit className="h-3 w-3 mr-1" />
+                            Plan
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => openCreditsModal(user)}
                             title="Manage Credits"
                           >
-                            <Edit className="h-3 w-3" />
+                            <Edit className="h-3 w-3 mr-1" />
+                            Credits
                           </Button>
                         </div>
                       </td>
@@ -370,6 +424,74 @@ export function UserManagement() {
               </Button>
               <Button type="submit" className="flex-1" disabled={submitting}>
                 {submitting ? 'Creating...' : 'Create User'}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
+
+    {/* Change Plan Modal */}
+    {showPlanModal && selectedUser && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">Change Pricing Plan</h3>
+            <button
+              onClick={() => {
+                setShowPlanModal(false)
+                setSelectedUser(null)
+              }}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <XCircle className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-4">
+            <div className="text-sm text-gray-600">User</div>
+            <div className="font-medium">{selectedUser.fullName || selectedUser.email}</div>
+            <div className="text-sm text-gray-500 mt-2">
+              Current Plan: <span className="font-medium capitalize">{selectedUser.pricingPlan}</span>
+            </div>
+            <div className="text-sm text-gray-500">
+              Credit Balance: <span className="font-medium">${selectedUser.creditBalance.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <form onSubmit={handleChangePlan} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                New Pricing Plan
+              </label>
+              <select
+                value={selectedPlan}
+                onChange={(e) => setSelectedPlan(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="personal">Personal ($0.375 per image)</option>
+                <option value="business">Business ($0.35 per image)</option>
+              </select>
+              <p className="text-xs text-gray-500 mt-2">
+                Changing the plan will affect future image processing costs.
+              </p>
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowPlanModal(false)
+                  setSelectedUser(null)
+                }}
+                className="flex-1"
+                disabled={submitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1" disabled={submitting}>
+                {submitting ? 'Updating...' : 'Change Plan'}
               </Button>
             </div>
           </form>

@@ -33,6 +33,8 @@ export async function GET() {
         subscriptionStatus: true,
         monthlyCredits: true,
         creditsUsed: true,
+        creditBalance: true,
+        pricingPlan: true,
         isAdmin: true,
         createdAt: true,
       },
