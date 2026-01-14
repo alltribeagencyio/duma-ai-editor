@@ -22,7 +22,8 @@
       "Bash(done)",
       "Bash(node check_tables.js:*)",
       "Bash(node verify_schema.js:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

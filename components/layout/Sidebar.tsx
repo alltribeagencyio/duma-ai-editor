@@ -62,17 +62,26 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
     onCollapsedChange(newValue)
   }, [collapsed, onCollapsedChange])
 
-  const menuItems = useMemo(() => [
-    { icon: Home, label: 'Dashboard', href: '/dashboard' },
-    { icon: Plus, label: 'New Edit', href: '/new' },
-    { icon: Images, label: 'Gallery', href: '/gallery' },
-    { icon: FileText, label: 'Prompts', href: '/prompts' },
-    { icon: Clock, label: 'History', href: '/history' },
-    // { icon: BarChart3, label: 'Analytics', href: '/analytics' }, // Hidden for MVP
-    // { icon: CreditCard, label: 'Subscription', href: '/subscription' }, // Hidden for MVP - manual billing
-    { icon: User, label: 'Profile', href: '/profile' },
-    { icon: HelpCircle, label: 'Help', href: '/help' },
-  ], [])
+  const menuItems = useMemo(() => {
+    const items = [
+      { icon: Home, label: 'Dashboard', href: '/dashboard' },
+      { icon: Plus, label: 'New Edit', href: '/new' },
+      { icon: Images, label: 'Gallery', href: '/gallery' },
+      { icon: FileText, label: 'Prompts', href: '/prompts' },
+      { icon: Clock, label: 'History', href: '/history' },
+      // { icon: BarChart3, label: 'Analytics', href: '/analytics' }, // Hidden for MVP
+      // { icon: CreditCard, label: 'Subscription', href: '/subscription' }, // Hidden for MVP - manual billing
+      { icon: User, label: 'Profile', href: '/profile' },
+      { icon: HelpCircle, label: 'Help', href: '/help' },
+    ]
+
+    // Hide Help link for admin users
+    if (isAdmin) {
+      return items.filter(item => item.href !== '/help')
+    }
+
+    return items
+  }, [isAdmin])
 
   const handleLogout = useCallback(async () => {
     const supabase = createClient()
