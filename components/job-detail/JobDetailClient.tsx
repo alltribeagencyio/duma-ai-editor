@@ -149,13 +149,13 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
               <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded font-medium">
                 {job.inputImages?.length || 0} images · {reEditJobs.length + 1} prompt{reEditJobs.length > 0 ? 's' : ''}
               </span>
+            </div>
+            <div className="flex items-center gap-2">
               {!showOriginalImages && (
                 <span className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded font-medium">
                   Click to view
                 </span>
               )}
-            </div>
-            <div className="flex items-center gap-2">
               {showOriginalImages ? (
                 <ChevronUp className="h-6 w-6 text-gray-600 group-hover:text-gray-900 transition-colors" />
               ) : (
