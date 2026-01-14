@@ -171,6 +171,7 @@ class PaystackService {
     callback_url?: string
     plan?: string
     channels?: string[]
+    metadata?: Record<string, any>
   }) {
     try {
       const result = await this.request('/transaction/initialize', 'POST', data)
