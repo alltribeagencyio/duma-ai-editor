@@ -190,7 +190,7 @@ export function CreditUsageCard() {
                 Business Plan
               </div>
               <div className="text-sm text-gray-600 mb-4">
-                You're on the Business plan with the best rate of $0.35 per image.
+                You&apos;re on the Business plan with the best rate of $0.35 per image.
               </div>
               <Button
                 asChild
