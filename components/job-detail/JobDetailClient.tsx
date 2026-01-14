@@ -140,69 +140,69 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <button
             onClick={() => setShowOriginalImages(!showOriginalImages)}
-            className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 active:bg-gray-100 transition-colors group"
+            className="w-full flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50 active:bg-gray-100 transition-colors group gap-2 sm:gap-0"
           >
-            <div className="flex items-center gap-3">
-              <h3 className="text-lg font-semibold text-gray-900">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                 Original Images & Prompts
               </h3>
-              <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded font-medium">
+              <span className="text-xs px-2 py-0.5 sm:py-1 bg-gray-100 text-gray-700 rounded font-medium whitespace-nowrap">
                 {job.inputImages?.length || 0} images · {reEditJobs.length + 1} prompt{reEditJobs.length > 0 ? 's' : ''}
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 self-end sm:self-auto">
               {!showOriginalImages && (
-                <span className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded font-medium">
+                <span className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded font-medium hidden sm:inline-block">
                   Click to view
                 </span>
               )}
               {showOriginalImages ? (
-                <ChevronUp className="h-6 w-6 text-gray-600 group-hover:text-gray-900 transition-colors" />
+                <ChevronUp className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600 group-hover:text-gray-900 transition-colors" />
               ) : (
-                <ChevronDown className="h-6 w-6 text-purple-600 group-hover:text-purple-700 transition-colors" />
+                <ChevronDown className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600 group-hover:text-purple-700 transition-colors" />
               )}
             </div>
           </button>
 
           {showOriginalImages && (
-            <div className="px-6 pb-6 border-t border-gray-200">
+            <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-200">
               {/* Original Images */}
               {job.inputImages && job.inputImages.length > 0 && (
-                <div className="pt-4">
+                <div className="pt-3 sm:pt-4">
                   <h4 className="text-sm font-medium text-gray-700 mb-3">Original Images</h4>
                   <ImageGallery imageUrls={job.inputImages} />
                 </div>
               )}
 
               {/* Prompt Thread */}
-              <div className="pt-6 space-y-3">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">Prompt History</h4>
+              <div className="pt-4 sm:pt-6 space-y-2 sm:space-y-3">
+                <h4 className="text-sm font-medium text-gray-700 mb-2 sm:mb-3">Prompt History</h4>
 
                 {/* Version 1 Prompt */}
                 {job.prompt && (
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
                       <span className="text-xs px-2 py-0.5 bg-purple-600 text-white rounded font-medium">
                         Version 1
                       </span>
                       <span className="text-xs text-gray-600">
-                        {new Date(job.createdAt).toLocaleString()}
+                        {new Date(job.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-800 whitespace-pre-wrap">{job.prompt}</p>
+                    <p className="text-sm text-gray-800 whitespace-pre-wrap break-words">{job.prompt}</p>
                   </div>
                 )}
 
                 {/* Re-edit Prompts */}
                 {reEditJobs.map((reEdit, index) => (
                   reEdit.prompt && (
-                    <div key={reEdit.id} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                      <div className="flex items-center gap-2 mb-2">
+                    <div key={reEdit.id} className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
                         <span className="text-xs px-2 py-0.5 bg-purple-600 text-white rounded font-medium">
                           Version {index + 2}
                         </span>
                         <span className="text-xs text-gray-600">
-                          {new Date(reEdit.createdAt).toLocaleString()}
+                          {new Date(reEdit.createdAt).toLocaleDateString()}
                         </span>
                         <span className={`text-xs px-2 py-0.5 rounded font-medium ${
                           reEdit.status === 'completed' ? 'bg-green-100 text-green-700' :
@@ -213,7 +213,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
                           {reEdit.status}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-800 whitespace-pre-wrap">{reEdit.prompt}</p>
+                      <p className="text-sm text-gray-800 whitespace-pre-wrap break-words">{reEdit.prompt}</p>
                     </div>
                   )
                 ))}

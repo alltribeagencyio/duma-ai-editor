@@ -26,6 +26,9 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
   const [expandedImage, setExpandedImage] = useState<string | null>(null)
 
+  // Show checkboxes only when there are multiple images
+  const showCheckboxes = imageUrls.length > 1
+
   const openLightbox = (index: number) => {
     setLightboxIndex(index)
     setLightboxOpen(true)
@@ -86,30 +89,24 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                 isExpanded ? 'col-span-2 row-span-2 z-50' : 'aspect-square'
               }`}
             >
-              {/* Checkbox */}
-              <div className="absolute top-2 left-2 z-10">
-                <input
-                  type="checkbox"
-                  checked={selectedImages.has(url)}
-                  onChange={(e) => {
-                    e.stopPropagation()
-                    toggleSelection(url)
-                  }}
-                  className="h-5 w-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
-                />
-              </div>
+              {/* Checkbox - only show when multiple images */}
+              {showCheckboxes && (
+                <div className="absolute top-2 left-2 z-10">
+                  <input
+                    type="checkbox"
+                    checked={selectedImages.has(url)}
+                    onChange={(e) => {
+                      e.stopPropagation()
+                      toggleSelection(url)
+                    }}
+                    className="h-5 w-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
+                  />
+                </div>
+              )}
 
               <div
                 className="w-full h-full cursor-pointer relative"
-                onClick={() => {
-                  if (enableExpand) {
-                    if (isExpanded) {
-                      setExpandedImage(null)
-                    } else {
-                      setExpandedImage(url)
-                    }
-                  }
-                }}
+                onClick={() => openLightbox(index)}
               >
                 {!imageErrors.has(url) ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -132,18 +129,30 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                 isExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
               }`}>
                 <div className="flex items-center justify-center gap-4 p-4">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      openLightbox(index)
-                    }}
-                    className={`p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all ${
-                      isExpanded ? 'scale-110' : ''
-                    }`}
-                    title="View full size"
-                  >
-                    <ZoomIn className="h-5 w-5 text-white" />
-                  </button>
+                  {enableExpand && !isExpanded && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setExpandedImage(url)
+                      }}
+                      className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
+                      title="Expand image"
+                    >
+                      <ZoomIn className="h-5 w-5 text-white" />
+                    </button>
+                  )}
+                  {isExpanded && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setExpandedImage(null)
+                      }}
+                      className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all scale-110"
+                      title="Collapse image"
+                    >
+                      <ZoomIn className="h-5 w-5 text-white" />
+                    </button>
+                  )}
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
