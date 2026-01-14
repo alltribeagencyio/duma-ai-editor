@@ -26,7 +26,9 @@
       "Bash(dir:*)",
       "Bash(node fix_credit_deductions.js:*)",
       "Bash(node -e:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(node scripts/check_legacy_credits.js:*)",
+      "Bash(node scripts/migrate_legacy_credits.js:*)"
     ],
     "deny": [],
     "ask": []
