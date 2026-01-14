@@ -340,7 +340,8 @@ export function CreditPurchaseClient() {
               <Button
                 onClick={handlePurchase}
                 disabled={isPurchasing || !purchaseAmount || parseFloat(purchaseAmount) < getMinimumAmount()}
-                className="w-full bg-purple-600 hover:bg-purple-700 h-12 text-lg"
+                size="lg"
+                className="w-full text-base"
               >
                 {isPurchasing ? (
                   <>

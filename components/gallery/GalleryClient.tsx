@@ -330,7 +330,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                         </button>
                         <Link
                           href={`/jobs/${image.jobId}`}
-                          className="flex-1 flex items-center justify-center px-2 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-xs font-medium"
+                          className="flex-1 flex items-center justify-center px-2 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 active:bg-purple-800 transition-colors text-xs font-medium shadow-sm"
                         >
                           View Job
                         </Link>

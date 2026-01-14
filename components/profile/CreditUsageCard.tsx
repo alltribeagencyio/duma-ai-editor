@@ -122,7 +122,7 @@ export function CreditUsageCard() {
               </div>
               <Button
                 asChild
-                className="w-full bg-purple-600 hover:bg-purple-700"
+                className="w-full"
               >
                 <Link href="/credits">Add Credits</Link>
               </Button>
@@ -139,7 +139,7 @@ export function CreditUsageCard() {
               </div>
               <Button
                 asChild
-                className="w-full bg-purple-600 hover:bg-purple-700"
+                className="w-full"
               >
                 <Link href="/credits">Purchase Credits</Link>
               </Button>
@@ -156,7 +156,7 @@ export function CreditUsageCard() {
               </div>
               <Button
                 asChild
-                className="w-full bg-purple-600 hover:bg-purple-700"
+                className="w-full"
               >
                 <Link href="/credits">Add Credits</Link>
               </Button>

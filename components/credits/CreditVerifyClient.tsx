@@ -126,7 +126,7 @@ export function CreditVerifyClient() {
               <div className="flex gap-3">
                 <Button
                   asChild
-                  className="flex-1 bg-purple-600 hover:bg-purple-700"
+                  className="flex-1"
                 >
                   <Link href="/new-edit">Start Editing</Link>
                 </Button>
@@ -170,7 +170,7 @@ export function CreditVerifyClient() {
               <div className="flex gap-3">
                 <Button
                   asChild
-                  className="flex-1 bg-purple-600 hover:bg-purple-700"
+                  className="flex-1"
                 >
                   <Link href="/credits">Try Again</Link>
                 </Button>
