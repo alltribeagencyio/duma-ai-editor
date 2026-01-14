@@ -311,45 +311,20 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                     )}
                   </Link>
 
-                  {/* Desktop: Hover overlay with actions */}
-                  <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                    <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-auto">
-                      <p className="text-white text-sm font-medium mb-2 line-clamp-1">
-                        {image.productName || formatDate(image.createdAt)}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault()
-                            handleDownload(image.imageUrl, index)
-                          }}
-                          className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white/90 backdrop-blur-sm rounded-md hover:bg-white transition-colors text-xs font-medium text-gray-900"
-                        >
-                          <Download className="h-3.5 w-3.5" />
-                          Download
-                        </button>
-                        <Link
-                          href={`/jobs/${image.jobId}`}
-                          className="flex-1 flex items-center justify-center px-2 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 active:bg-purple-800 transition-colors text-xs font-medium shadow-sm"
-                        >
-                          View Edit
-                        </Link>
-                      </div>
+                  {/* Hover overlay with download icon */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    <div className="absolute bottom-3 right-3 pointer-events-auto">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handleDownload(image.imageUrl, index)
+                        }}
+                        className="p-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors shadow-sm"
+                        title="Download"
+                      >
+                        <Download className="h-4 w-4 text-gray-900" />
+                      </button>
                     </div>
-                  </div>
-
-                  {/* Mobile: Bottom bar with download button */}
-                  <div className="md:hidden absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        handleDownload(image.imageUrl, index)
-                      }}
-                      className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white/90 backdrop-blur-sm rounded-md active:scale-95 transition-transform text-xs font-medium text-gray-900"
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                      Download
-                    </button>
                   </div>
                 </div>
               ))}

@@ -66,7 +66,15 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-6">
+      {/* Backdrop for expanded image - click to collapse */}
+      {expandedImage && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={() => setExpandedImage(null)}
+        />
+      )}
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-6 relative">
         {/* Completed images */}
         {imageUrls.map((url, index) => {
           const isExpanded = expandedImage === url
@@ -74,7 +82,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
             <div
               key={url}
               className={`relative rounded-lg border border-gray-200 overflow-hidden group transition-all duration-300 ${
-                isExpanded ? 'col-span-2 row-span-2' : 'aspect-square'
+                isExpanded ? 'col-span-2 row-span-2 z-50' : 'aspect-square'
               }`}
             >
               {/* Checkbox */}
