@@ -160,6 +160,7 @@ export function DashboardClient() {
           creditsRemaining={userProfile ? (userProfile.monthlyCredits + userProfile.practiceCredits - userProfile.creditsUsed) : 0}
           creditsUsed={userProfile?.creditsUsed || 0}
           storageUsed={storageUsed}
+          timeSaved={timeSaved}
           engineStatus={engineStatus}
         />
 

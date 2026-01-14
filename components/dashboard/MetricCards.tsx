@@ -9,6 +9,7 @@ interface MetricCardsProps {
   creditsUsed: number
   storageUsed: number // in MB
   engineStatus: 'ready' | 'busy' | 'offline'
+  timeSaved?: number // in minutes
 }
 
 export const MetricCards = memo(function MetricCards({
@@ -17,6 +18,7 @@ export const MetricCards = memo(function MetricCards({
   creditsUsed,
   storageUsed,
   engineStatus,
+  timeSaved = 0,
 }: MetricCardsProps) {
   const statusConfig = {
     ready: { color: 'text-green-500', bg: 'bg-green-50', text: 'Ready' },
@@ -36,34 +38,38 @@ export const MetricCards = memo(function MetricCards({
     subtitle?: string
   }> = [
     {
-      label: 'Total Enhanced',
-      value: totalEnhanced.toLocaleString(),
-      icon: Check,
-      color: 'text-duma-secondary',
-      bg: 'bg-duma-secondary/10',
-    },
-    {
       label: 'Credits Remaining',
       value: creditsRemaining.toLocaleString(),
-      subtitle: `${creditsUsed} credits used`,
+      subtitle: `${creditsUsed} used this month`,
       icon: Coins,
-      color: 'text-duma-primary',
-      bg: 'bg-duma-primary/10',
+      color: 'text-purple-600',
+      bg: 'bg-purple-50',
+    },
+    {
+      label: 'Images Enhanced',
+      value: totalEnhanced.toLocaleString(),
+      subtitle: 'Total processed',
+      icon: Check,
+      color: 'text-green-600',
+      bg: 'bg-green-50',
+    },
+    {
+      label: 'Time Saved',
+      value: timeSaved >= 60
+        ? `${Math.floor(timeSaved / 60)}h ${timeSaved % 60}m`
+        : `${timeSaved}m`,
+      subtitle: 'vs manual editing',
+      icon: Zap,
+      color: 'text-blue-600',
+      bg: 'bg-blue-50',
     },
     {
       label: 'Storage Used',
       value: `${storageUsed.toFixed(1)} MB`,
+      subtitle: 'Cloud storage',
       icon: HardDrive,
       color: 'text-orange-600',
       bg: 'bg-orange-50',
-    },
-    {
-      label: 'Engine Status',
-      value: status.text,
-      icon: Zap,
-      color: status.color,
-      bg: status.bg,
-      pulse: engineStatus === 'ready',
     },
   ]
 
