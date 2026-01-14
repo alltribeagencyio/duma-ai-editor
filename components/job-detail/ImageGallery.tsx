@@ -92,7 +92,11 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
         />
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-6 relative">
+      <div className={`grid gap-3 md:gap-4 p-4 md:p-6 relative ${
+        normalizedImages.length === 1
+          ? 'grid-cols-1 max-w-md mx-auto'
+          : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+      }`}>
         {/* Completed images */}
         {normalizedImages.map((image, index) => {
           const isExpanded = enableExpand && expandedImage === image.url

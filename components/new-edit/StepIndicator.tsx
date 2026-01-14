@@ -8,9 +8,9 @@ interface StepIndicatorProps {
 }
 
 const steps = [
-  { number: 1, label: 'Upload' },
-  { number: 2, label: 'Prompt' },
-  { number: 3, label: 'Review & Submit' },
+  { number: 1, label: 'Upload', mobileLabel: 'Upload' },
+  { number: 2, label: 'Prompt', mobileLabel: 'Prompt' },
+  { number: 3, label: 'Review & Submit', mobileLabel: 'Review' },
 ]
 
 export function StepIndicator({ currentStep }: StepIndicatorProps) {
@@ -48,7 +48,8 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
                       isUpcoming && 'text-gray-400'
                     )}
                   >
-                    {step.label}
+                    <span className="hidden sm:inline">{step.label}</span>
+                    <span className="inline sm:hidden">{step.mobileLabel}</span>
                   </span>
                 </div>
 
