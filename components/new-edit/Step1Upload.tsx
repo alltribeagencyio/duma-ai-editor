@@ -342,11 +342,11 @@ export function Step1Upload() {
               key={`url-${index}`}
               className="relative aspect-square rounded-lg border border-gray-200 overflow-hidden group"
             >
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={url}
                 alt={`URL Preview ${index + 1}`}
-                fill
-                className="object-cover"
+                className="w-full h-full object-cover"
               />
               <div className="absolute top-1 left-1 md:top-2 md:left-2 px-2 py-1 bg-blue-500 text-white text-xs rounded">
                 URL
