@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, ExternalLink, Clock } from 'lucide-react'
+import { Search, ExternalLink, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+import { TicketDetailModal } from './TicketDetailModal'
 
 interface SupportTicket {
   id: string
@@ -26,8 +27,14 @@ export function SupportTickets() {
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(false)
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const fetchTickets = async () => {
+    setIsLoading(true)
     try {
       const params = new URLSearchParams()
       if (statusFilter !== 'all') {
@@ -36,11 +43,15 @@ export function SupportTickets() {
       if (categoryFilter !== 'all') {
         params.append('category', categoryFilter)
       }
+      params.append('sortBy', sortBy)
+      params.append('page', page.toString())
+      params.append('limit', '10')
 
       const response = await fetch(`/api/admin/support/tickets?${params}`)
       if (response.ok) {
-        const { tickets } = await response.json()
-        setTickets(tickets)
+        const data = await response.json()
+        setTickets(data.tickets)
+        setHasMore(data.hasMore)
       }
     } catch (error) {
       console.error('Error fetching tickets:', error)
@@ -51,7 +62,21 @@ export function SupportTickets() {
 
   useEffect(() => {
     fetchTickets()
-  }, [statusFilter, categoryFilter])
+  }, [statusFilter, categoryFilter, sortBy, page])
+
+  const handleViewDetails = (ticketId: string) => {
+    setSelectedTicketId(ticketId)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedTicketId(null)
+  }
+
+  const handleTicketUpdate = () => {
+    fetchTickets()
+  }
 
   const filteredTickets = tickets.filter(
     (ticket) =>
@@ -103,41 +128,53 @@ export function SupportTickets() {
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search tickets..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search tickets..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={(value) => { setStatusFilter(value); setPage(1); }}>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                  <SelectItem value="resolved">Resolved</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={categoryFilter} onValueChange={(value) => { setCategoryFilter(value); setPage(1); }}>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="general">General</SelectItem>
+                  <SelectItem value="technical">Technical</SelectItem>
+                  <SelectItem value="billing">Billing</SelectItem>
+                  <SelectItem value="feature">Feature Request</SelectItem>
+                  <SelectItem value="bug">Bug Report</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={sortBy} onValueChange={(value) => { setSortBy(value); setPage(1); }}>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="createdAt">Latest First</SelectItem>
+                  <SelectItem value="status">By Status</SelectItem>
+                  <SelectItem value="priority">By Priority</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="open">Open</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-                <SelectItem value="resolved">Resolved</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="general">General</SelectItem>
-                <SelectItem value="technical">Technical</SelectItem>
-                <SelectItem value="billing">Billing</SelectItem>
-                <SelectItem value="feature">Feature Request</SelectItem>
-                <SelectItem value="bug">Bug Report</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </CardContent>
       </Card>
@@ -182,7 +219,12 @@ export function SupportTickets() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-700 line-clamp-2">{ticket.message}</p>
-                <Button variant="outline" size="sm" className="mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => handleViewDetails(ticket.id)}
+                >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   View Details
                 </Button>
@@ -191,6 +233,47 @@ export function SupportTickets() {
           ))
         )}
       </div>
+
+      {/* Pagination */}
+      {filteredTickets.length > 0 && (
+        <Card>
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Page {page}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1 || isLoading}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => p + 1)}
+                  disabled={!hasMore || isLoading}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Ticket Detail Modal */}
+      <TicketDetailModal
+        ticketId={selectedTicketId}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onUpdate={handleTicketUpdate}
+      />
     </div>
   )
 }

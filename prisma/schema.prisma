@@ -329,6 +329,10 @@ model SupportTicket {
   priority        String    @default("normal")
   status          String    @default("open")
   assignedTo      String?
+  response        String?
+  respondedAt     DateTime?
+  respondedBy     String?
+  resolvedBy      String?
   n8nExecutionId  String?
   internalNotes   String?
   createdAt       DateTime  @default(now())
