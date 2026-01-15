@@ -296,7 +296,13 @@ export function ReEditModal({ isOpen, onClose, imageUrl, jobId, onSuccess }: ReE
                   placeholder="Describe how you'd like to edit this image..."
                   rows={4}
                   className="resize-none"
+                  maxLength={1500}
                 />
+                <div className="flex justify-end">
+                  <span className="text-sm text-gray-500">
+                    {customPrompt.length} / 1500
+                  </span>
+                </div>
               </div>
             )}
 

@@ -228,16 +228,16 @@ export function Step2Prompt() {
             value={customPrompt}
             onChange={(e) => handleCustomPromptChange(e.target.value)}
             className="min-h-[120px]"
-            maxLength={500}
+            maxLength={1500}
           />
           <div className="flex justify-end">
             <span
               className={cn(
                 'text-sm',
-                customPrompt.length > 500 ? 'text-red-600' : 'text-gray-500'
+                customPrompt.length > 1500 ? 'text-red-600' : 'text-gray-500'
               )}
             >
-              {customPrompt.length} / 500
+              {customPrompt.length} / 1500
             </span>
           </div>
         </div>
