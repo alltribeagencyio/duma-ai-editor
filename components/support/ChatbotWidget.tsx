@@ -92,7 +92,7 @@ export function ChatbotWidget() {
   }
 
   return (
-    <div className="fixed inset-2 md:bottom-6 md:right-6 md:inset-auto md:w-96 md:h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200 h-full">
+    <div className="fixed bottom-2 top-16 left-2 right-2 md:bottom-6 md:right-6 md:top-auto md:left-auto md:w-96 md:h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200 h-full">
       {/* Header */}
       <div className="bg-gradient-to-r from-duma-primary to-duma-secondary text-white p-4 rounded-t-lg flex items-center justify-between">
         <div className="flex items-center gap-3">

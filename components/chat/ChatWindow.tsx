@@ -99,7 +99,7 @@ export function ChatWindow({ onClose }: ChatWindowProps) {
   }
 
   return (
-    <div className="fixed inset-2 md:bottom-6 md:right-6 md:inset-auto md:w-full md:max-w-md z-50">
+    <div className="fixed bottom-2 top-16 left-2 right-2 md:bottom-6 md:right-6 md:top-auto md:left-auto md:w-full md:max-w-md z-50">
       <div className="bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col h-full md:h-[600px] md:max-h-[80vh]">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-lg">

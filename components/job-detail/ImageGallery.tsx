@@ -115,7 +115,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
             <div
               key={`${image.url}-${index}`}
               className={`relative rounded-lg border border-gray-200 overflow-hidden group transition-all duration-300 ${
-                isExpanded ? 'fixed inset-4 md:inset-8 z-50 max-w-none max-h-none' : 'aspect-square'
+                isExpanded ? 'fixed inset-4 md:inset-8 z-50 max-w-none max-h-none pointer-events-none' : 'aspect-square'
               }`}
             >
               {/* Close button for expanded image - prominent on mobile */}
@@ -231,7 +231,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
 
               {/* Action bar for expanded image - at bottom with larger buttons */}
               {isExpanded && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 pointer-events-auto">
                   <div className="flex items-center justify-center gap-6">
                     <button
                       onClick={(e) => {
