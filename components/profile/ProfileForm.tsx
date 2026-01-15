@@ -36,9 +36,10 @@ interface ProfileFormProps {
   profile: UserProfile
   onUpdate: (data: Partial<UserProfile>) => Promise<void>
   isSaving: boolean
+  pricingPlan: string
 }
 
-export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
+export function ProfileForm({ profile, onUpdate, isSaving, pricingPlan }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: profile.fullName || '',
     phone: profile.phone || '',
@@ -139,11 +140,13 @@ export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
             </div>
           </div>
 
-          <Separator />
+          {/* Brand Information - Only for Business Plan */}
+          {pricingPlan === 'business' && (
+            <>
+              <Separator />
 
-          {/* Brand Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Brand Information</h3>
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Brand Information</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -262,7 +265,9 @@ export function ProfileForm({ profile, onUpdate, isSaving }: ProfileFormProps) {
             </div>
           </div>
 
-          <Separator />
+              <Separator />
+            </>
+          )}
 
           {/* Notification Settings */}
           <div className="space-y-4">

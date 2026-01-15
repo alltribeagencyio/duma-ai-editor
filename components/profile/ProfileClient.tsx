@@ -30,6 +30,7 @@ interface UserProfile {
   timezone: string
   hasCompletedOnboarding: boolean
   setupFeesPaid: boolean
+  pricingPlan?: string
 }
 
 export function ProfileClient() {
@@ -150,6 +151,7 @@ export function ProfileClient() {
           profile={profile}
           onUpdate={handleProfileUpdate}
           isSaving={isSaving}
+          pricingPlan={profile.pricingPlan || 'personal'}
         />
       </div>
     </AppLayout>
