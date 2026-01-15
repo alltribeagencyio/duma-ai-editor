@@ -115,33 +115,35 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
             <div
               key={`${image.url}-${index}`}
               className={`relative rounded-lg border border-gray-200 overflow-hidden group transition-all duration-300 ${
-                isExpanded ? 'fixed inset-4 md:inset-8 z-50 max-w-none max-h-none pointer-events-none' : 'aspect-square'
+                isExpanded ? 'fixed inset-4 md:inset-8 z-50 max-w-none max-h-none' : 'aspect-square'
               }`}
             >
               {/* Close button for expanded image - prominent on mobile */}
               {isExpanded && (
-                <div className="absolute top-0 right-0 z-[70] pointer-events-auto">
-                  {/* Larger touch target area */}
-                  <button
-                    type="button"
-                    onPointerDown={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      closeExpandedImage()
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      closeExpandedImage()
-                    }}
-                    className="m-2 p-4 md:p-3 bg-black/95 hover:bg-black active:bg-red-600 rounded-full transition-all shadow-2xl min-w-[64px] min-h-[64px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
-                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
-                    title="Close"
-                    aria-label="Close expanded image"
-                  >
-                    <X className="h-8 w-8 md:h-6 md:w-6 text-white pointer-events-none" strokeWidth={3} />
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onPointerDown={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    closeExpandedImage()
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    closeExpandedImage()
+                  }}
+                  onTouchStart={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    closeExpandedImage()
+                  }}
+                  className="absolute top-2 right-2 z-[70] p-5 md:p-4 bg-black/95 hover:bg-black active:bg-red-600 rounded-full transition-all shadow-2xl min-w-[72px] min-h-[72px] md:min-w-[64px] md:min-h-[64px] flex items-center justify-center"
+                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+                  title="Close"
+                  aria-label="Close expanded image"
+                >
+                  <X className="h-9 w-9 md:h-7 md:w-7 text-white pointer-events-none" strokeWidth={3} />
+                </button>
               )}
 
               {/* Version Tag - only show if it's a re-edit */}
@@ -231,7 +233,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
 
               {/* Action bar for expanded image - at bottom with larger buttons */}
               {isExpanded && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 pointer-events-auto">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
                   <div className="flex items-center justify-center gap-6">
                     <button
                       onClick={(e) => {
