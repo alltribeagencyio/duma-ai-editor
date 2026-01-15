@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Book, MessageCircle, Mail, HelpCircle, ChevronDown, ChevronUp, Ticket } from 'lucide-react'
+import { Search, Book, MessageCircle, HelpCircle, ChevronDown, ChevronUp, Ticket } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -109,7 +109,7 @@ export function HelpCenter() {
       </Card>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <CardHeader>
             <Book className="h-8 w-8 text-blue-600 mb-2" />
@@ -142,16 +142,6 @@ export function HelpCenter() {
             <CardTitle className="text-lg">Create Ticket</CardTitle>
             <CardDescription>
               Submit a detailed support request
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.location.href = 'mailto:support@duma-ai.com'}>
-          <CardHeader>
-            <Mail className="h-8 w-8 text-purple-600 mb-2" />
-            <CardTitle className="text-lg">Email Support</CardTitle>
-            <CardDescription>
-              support@duma-ai.com
             </CardDescription>
           </CardHeader>
         </Card>
@@ -242,10 +232,6 @@ export function HelpCenter() {
             <Button variant="outline" className="flex-1" onClick={() => window.dispatchEvent(new CustomEvent('openSupportTicket'))}>
               <Ticket className="h-4 w-4 mr-2" />
               Create Support Ticket
-            </Button>
-            <Button variant="outline" className="flex-1" onClick={() => window.location.href = 'mailto:support@duma-ai.com'}>
-              <Mail className="h-4 w-4 mr-2" />
-              Email Support
             </Button>
           </div>
         </CardContent>
