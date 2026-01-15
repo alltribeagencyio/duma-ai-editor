@@ -319,15 +319,15 @@ model WorkflowLog {
 }
 
 model SupportTicket {
-  id              String    @id @default(uuid())
+  id              String                @id @default(uuid())
   userId          String
   userEmail       String
   userName        String?
   subject         String
   message         String
   category        String
-  priority        String    @default("normal")
-  status          String    @default("open")
+  priority        String                @default("normal")
+  status          String                @default("open")
   assignedTo      String?
   response        String?
   respondedAt     DateTime?
@@ -335,13 +335,33 @@ model SupportTicket {
   resolvedBy      String?
   n8nExecutionId  String?
   internalNotes   String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
   resolvedAt      DateTime?
+  messages        SupportTicketMessage[]
 
   @@index([userId])
   @@index([status])
   @@index([category])
+  @@index([createdAt])
+}
+
+model SupportTicketMessage {
+  id            String        @id @default(uuid())
+  ticketId      String
+  ticket        SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId      String
+  senderEmail   String
+  senderName    String?
+  senderRole    String        @default("user") // user, admin, system
+  message       String
+  isInternal    Boolean       @default(false) // Internal notes not visible to user
+  attachments   String[]      @default([])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([ticketId])
+  @@index([senderId])
   @@index([createdAt])
 }
 
