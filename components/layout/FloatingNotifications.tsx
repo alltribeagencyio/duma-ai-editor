@@ -119,8 +119,7 @@ export const FloatingNotifications = memo(function FloatingNotifications({ userI
       {/* Notification panel - responsive width */}
       <div
         className={cn(
-          'absolute top-12 right-0 z-50 w-screen max-w-md bg-white shadow-2xl rounded-lg border border-gray-200 transition-all duration-300',
-          'md:w-96',
+          'fixed md:absolute top-16 md:top-12 right-2 md:right-0 left-2 md:left-auto z-50 md:w-96 bg-white shadow-2xl rounded-lg border border-gray-200 transition-all duration-300',
           isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         )}
       >
@@ -137,7 +136,7 @@ export const FloatingNotifications = memo(function FloatingNotifications({ userI
         </div>
 
         {/* Notifications list - Apple-style scrolling */}
-        <div className="max-h-[60vh] md:max-h-96 overflow-y-auto overscroll-contain">
+        <div className="max-h-[calc(100vh-200px)] md:max-h-96 overflow-y-auto overscroll-contain">
           {notifications.length === 0 ? (
             <div className="px-4 py-12 text-center text-sm text-gray-500">
               No notifications yet

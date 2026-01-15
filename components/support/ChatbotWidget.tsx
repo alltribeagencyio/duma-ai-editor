@@ -83,15 +83,16 @@ export function ChatbotWidget() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-duma-primary to-duma-secondary text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center z-50"
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-14 h-14 md:w-16 md:h-16 bg-gradient-to-r from-duma-primary to-duma-secondary text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center z-50"
+        aria-label="Open chat assistant"
       >
-        <MessageCircle className="h-6 w-6" />
+        <MessageCircle className="h-6 w-6 md:h-7 md:w-7" />
       </button>
     )
   }
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200">
+    <div className="fixed inset-2 md:bottom-6 md:right-6 md:inset-auto md:w-96 md:h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200 h-full">
       {/* Header */}
       <div className="bg-gradient-to-r from-duma-primary to-duma-secondary text-white p-4 rounded-t-lg flex items-center justify-between">
         <div className="flex items-center gap-3">
