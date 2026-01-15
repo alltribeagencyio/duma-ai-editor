@@ -50,6 +50,25 @@ export function DashboardClient() {
     }
 
     checkAuth()
+
+    // Refresh data when page becomes visible (handles tab switching)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchData()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    // Refresh data every 30 seconds to catch credit updates
+    const intervalId = setInterval(() => {
+      fetchData()
+    }, 30000)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      clearInterval(intervalId)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

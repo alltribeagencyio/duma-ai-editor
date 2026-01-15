@@ -21,6 +21,25 @@ export function CreditUsageCard() {
 
   useEffect(() => {
     fetchCreditInfo()
+
+    // Refresh data when page becomes visible
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchCreditInfo()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    // Refresh every 30 seconds to catch credit updates
+    const intervalId = setInterval(() => {
+      fetchCreditInfo()
+    }, 30000)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      clearInterval(intervalId)
+    }
   }, [])
 
   const fetchCreditInfo = async () => {

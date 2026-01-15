@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Download, ZoomIn, Loader2, Edit3, X } from 'lucide-react'
+import { Download, Loader2, Edit3, X } from 'lucide-react'
 
 const ImageLightbox = dynamic(
   () => import('./ImageLightbox').then(mod => ({ default: mod.ImageLightbox })),
@@ -88,7 +88,14 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
       {enableExpand && expandedImage && (
         <div
           className="fixed inset-0 bg-black/80 z-40"
-          onClick={() => setExpandedImage(null)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setExpandedImage(null)
+          }}
+          onTouchEnd={(e) => {
+            e.stopPropagation()
+            setExpandedImage(null)
+          }}
           role="button"
           aria-label="Close expanded image"
         />
@@ -113,14 +120,20 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
               {isExpanded && (
                 <button
                   onClick={(e) => {
+                    e.preventDefault()
                     e.stopPropagation()
                     setExpandedImage(null)
                   }}
-                  className="absolute top-2 right-2 z-20 p-2 bg-black/80 hover:bg-black rounded-full transition-all shadow-lg"
+                  onTouchEnd={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setExpandedImage(null)
+                  }}
+                  className="absolute top-2 right-2 z-[60] p-3 md:p-2 bg-black/90 hover:bg-black active:bg-black rounded-full transition-all shadow-lg touch-manipulation"
                   title="Close"
                   aria-label="Close expanded image"
                 >
-                  <X className="h-6 w-6 text-white" />
+                  <X className="h-7 w-7 md:h-6 md:w-6 text-white" />
                 </button>
               )}
 
@@ -149,10 +162,16 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
               )}
 
               <div
-                className={`w-full h-full cursor-pointer relative ${
-                  isExpanded ? 'flex items-center justify-center bg-black' : ''
+                className={`w-full h-full relative ${
+                  isExpanded ? 'flex items-center justify-center bg-black cursor-default' : 'cursor-pointer'
                 }`}
-                onClick={() => !isExpanded && openLightbox(index)}
+                onClick={(e) => {
+                  if (!isExpanded) {
+                    openLightbox(index)
+                  } else {
+                    e.stopPropagation()
+                  }
+                }}
               >
                 {!imageErrors.has(image.url) ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -178,18 +197,6 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
               {!isExpanded && (
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <div className="flex items-center justify-center gap-4 p-4">
-                    {enableExpand && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setExpandedImage(image.url)
-                        }}
-                        className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
-                        title="Expand image"
-                      >
-                        <ZoomIn className="h-5 w-5 text-white" />
-                      </button>
-                    )}
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
