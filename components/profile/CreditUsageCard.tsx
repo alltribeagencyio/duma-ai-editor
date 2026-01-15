@@ -109,19 +109,14 @@ export function CreditUsageCard() {
             <span className="font-medium">{creditInfo.totalImagesProcessed}</span>
           </div>
 
-          {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Action Button */}
+          <div className="w-full">
             <Button
               asChild
               variant="outline"
+              className="w-full"
             >
-              <Link href="/credits">Add Credits</Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-            >
-              <Link href="/credits/transactions">History</Link>
+              <Link href="/credits/transactions">View Transaction History</Link>
             </Button>
           </div>
         </CardContent>

@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
 import heicConvert from 'heic-convert'
 import { selectWebhookForUser } from '@/lib/webhooks/selector'
+import { pricingService } from '@/lib/pricing'
 
 // Helper function to convert HEIC to JPEG
 async function convertHeicToJpeg(file: File): Promise<{ buffer: Buffer; fileName: string }> {
@@ -90,6 +91,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Missing required fields or no images provided' },
         { status: 400 }
+      )
+    }
+
+    // Calculate total number of images
+    const totalImages = images.length + imageUrls.length
+
+    // Check if user has sufficient credits BEFORE processing
+    const hasSufficientCredits = await pricingService.checkSufficientCredits(user.id, totalImages)
+
+    if (!hasSufficientCredits) {
+      // Get user credit info for detailed error message
+      const creditInfo = await pricingService.getUserCreditInfo(user.id)
+      return NextResponse.json(
+        {
+          error: 'Insufficient credits',
+          message: `You need credits for ${totalImages} image${totalImages > 1 ? 's' : ''} but only have $${creditInfo.creditBalance.toFixed(2)} (${creditInfo.imagesAvailable} images available). Please purchase more credits to continue.`,
+          creditBalance: creditInfo.creditBalance,
+          imagesAvailable: creditInfo.imagesAvailable,
+          imagesRequested: totalImages
+        },
+        { status: 402 } // 402 Payment Required
       )
     }
 
