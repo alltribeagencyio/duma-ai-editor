@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Book, MessageCircle, HelpCircle, ChevronDown, ChevronUp, Ticket } from 'lucide-react'
+import { Search, Book, MessageCircle, HelpCircle, ChevronDown, ChevronUp, Ticket, Inbox } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -109,7 +109,7 @@ export function HelpCenter() {
       </Card>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <CardHeader>
             <Book className="h-8 w-8 text-blue-600 mb-2" />
@@ -142,6 +142,18 @@ export function HelpCenter() {
             <CardTitle className="text-lg">Create Ticket</CardTitle>
             <CardDescription>
               Submit a detailed support request
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => {
+          window.location.href = '/tickets'
+        }}>
+          <CardHeader>
+            <Inbox className="h-8 w-8 text-purple-600 mb-2" />
+            <CardTitle className="text-lg">My Tickets</CardTitle>
+            <CardDescription>
+              View and manage your support tickets
             </CardDescription>
           </CardHeader>
         </Card>

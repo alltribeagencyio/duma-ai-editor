@@ -180,22 +180,22 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 md:p-4">
       <div className="bg-white rounded-lg max-w-4xl w-full flex flex-col max-h-[95vh] md:max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-start justify-between p-4 md:p-6 border-b bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+        <div className="flex items-start justify-between p-4 md:p-6 border-b bg-white">
           <div className="flex-1 min-w-0 pr-4">
             <div className="flex items-center gap-2 mb-2">
-              <Ticket className="h-5 w-5 flex-shrink-0" />
-              <h2 className="text-lg md:text-xl font-semibold break-words">{ticket.subject}</h2>
+              <Ticket className="h-5 w-5 flex-shrink-0 text-gray-600" />
+              <h2 className="text-lg md:text-xl font-semibold break-words text-gray-900">{ticket.subject}</h2>
             </div>
             <div className="flex flex-wrap gap-2 items-center text-sm">
-              <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border bg-white/20 backdrop-blur-sm ${getStatusColor(ticket.status)}`}>
+              <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(ticket.status)}`}>
                 {getStatusIcon(ticket.status)}
                 {formatStatus(ticket.status)}
               </span>
-              <span className="text-white/80 text-xs">
+              <span className="text-gray-500 text-xs">
                 Created {new Date(ticket.createdAt).toLocaleDateString()}
               </span>
               {isRefreshing && (
-                <span className="text-white/60 text-xs flex items-center gap-1">
+                <span className="text-gray-400 text-xs flex items-center gap-1">
                   <Loader2 className="h-3 w-3 animate-spin" />
                   Refreshing...
                 </span>
@@ -204,10 +204,10 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
           </div>
           <button
             onClick={onClose}
-            className="flex-shrink-0 p-1 hover:bg-white/20 rounded-full transition-colors"
+            className="flex-shrink-0 p-1 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Close"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5 text-gray-500" />
           </button>
         </div>
 
@@ -224,10 +224,10 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
               >
                 <div className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center ${
                   isSupport
-                    ? 'bg-purple-600 text-white'
+                    ? 'bg-gray-700 text-white'
                     : isSystem
                     ? 'bg-gray-400 text-white'
-                    : 'bg-blue-600 text-white'
+                    : 'bg-gray-900 text-white'
                 }`}>
                   {isSupport ? (
                     <Headphones className="h-4 w-4 md:h-5 md:w-5" />
@@ -237,9 +237,7 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
                 </div>
                 <div className={`flex-1 max-w-[85%] md:max-w-[80%]`}>
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className={`text-sm font-medium ${
-                      isSupport ? 'text-purple-700' : isSystem ? 'text-gray-700' : 'text-blue-700'
-                    }`}>
+                    <span className="text-sm font-medium text-gray-700">
                       {isSupport
                         ? msg.senderName || 'Support Team'
                         : isSystem
@@ -252,10 +250,10 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
                   </div>
                   <div className={`rounded-lg p-3 md:p-4 ${
                     isSupport
-                      ? 'bg-purple-50 text-gray-900 border border-purple-200'
+                      ? 'bg-white text-gray-900 border border-gray-200'
                       : isSystem
                       ? 'bg-gray-100 text-gray-900 border border-gray-200'
-                      : 'bg-blue-600 text-white'
+                      : 'bg-gray-900 text-white'
                   }`}>
                     <p className="text-sm whitespace-pre-wrap break-words">{msg.message}</p>
                   </div>
@@ -276,8 +274,8 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
             </div>
           ) : ticket.status === 'resolved' ? (
             <div className="space-y-3">
-              <div className="text-center py-2 bg-green-50 rounded-lg border border-green-200">
-                <p className="text-sm text-green-800">
+              <div className="text-center py-2 bg-gray-50 rounded-lg border border-gray-200">
+                <p className="text-sm text-gray-600">
                   This ticket has been marked as resolved. You can still reply if you need further assistance.
                 </p>
               </div>
@@ -294,7 +292,7 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
                 <Button
                   onClick={handleSendReply}
                   disabled={!replyMessage.trim() || isSending}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  className="bg-gray-900 hover:bg-gray-800"
                 >
                   {isSending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -318,7 +316,7 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
               <Button
                 onClick={handleSendReply}
                 disabled={!replyMessage.trim() || isSending}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                className="bg-gray-900 hover:bg-gray-800"
               >
                 {isSending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
