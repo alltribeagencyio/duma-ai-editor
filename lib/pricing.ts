@@ -365,6 +365,8 @@ class PricingService {
         }
       })
 
+      console.log('📊 User data from DB:', JSON.stringify(user, null, 2))
+
       if (!user) {
         throw new Error('User not found')
       }
@@ -377,7 +379,7 @@ class PricingService {
 
       const imagesAvailable = Math.floor(user.creditBalance / planConfig.ratePerImage)
 
-      return {
+      const result = {
         creditBalance: user.creditBalance,
         pricingPlan: user.pricingPlan,
         ratePerImage: planConfig.ratePerImage,
@@ -385,6 +387,10 @@ class PricingService {
         totalImagesProcessed: user.creditsUsed,
         hasCompletedInitialPurchase: user.hasCompletedInitialPurchase
       }
+
+      console.log('📊 Calculated credit info:', JSON.stringify(result, null, 2))
+
+      return result
     } catch (error) {
       console.error('Error fetching user credit info:', error)
       throw error

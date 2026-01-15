@@ -28,7 +28,8 @@
       "Bash(node -e:*)",
       "Bash(git checkout:*)",
       "Bash(node scripts/check_legacy_credits.js:*)",
-      "Bash(node scripts/migrate_legacy_credits.js:*)"
+      "Bash(node scripts/migrate_legacy_credits.js:*)",
+      "Bash(node scripts/check_user_credits.js:*)"
     ],
     "deny": [],
     "ask": []

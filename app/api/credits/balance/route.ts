@@ -14,7 +14,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    console.log('📊 Fetching credit info for user:', user.id)
     const creditInfo = await pricingService.getUserCreditInfo(user.id)
+    console.log('📊 Credit info returned:', JSON.stringify(creditInfo, null, 2))
 
     return NextResponse.json({ ...creditInfo }, { status: 200 })
   } catch (error) {
