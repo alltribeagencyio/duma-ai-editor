@@ -17,17 +17,19 @@ interface Job {
   createdAt: string
 }
 
-interface UserProfile {
-  monthlyCredits: number
-  creditsUsed: number
-  practiceCredits: number
+interface CreditInfo {
+  creditBalance: number
+  imagesAvailable: number
+  totalImagesProcessed: number
+  pricingPlan: string
+  ratePerImage: number
 }
 
 export function DashboardClient() {
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined)
   const [jobs, setJobs] = useState<Job[]>([])
   const [presetPrompts, setPresetPrompts] = useState<any[]>([])
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [creditInfo, setCreditInfo] = useState<CreditInfo | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
@@ -53,10 +55,10 @@ export function DashboardClient() {
 
   const fetchData = async () => {
     try {
-      const [jobsRes, presetsRes, profileRes] = await Promise.all([
+      const [jobsRes, presetsRes, creditRes] = await Promise.all([
         fetch('/api/jobs'),
         fetch('/api/prompts/presets'),
-        fetch('/api/user/profile'),
+        fetch('/api/credits/balance'),
       ])
 
       if (jobsRes.ok) {
@@ -69,12 +71,14 @@ export function DashboardClient() {
         setPresetPrompts(prompts)
       }
 
-      if (profileRes.ok) {
-        const { user } = await profileRes.json()
-        setUserProfile({
-          monthlyCredits: user.monthlyCredits || 0,
-          creditsUsed: user.creditsUsed || 0,
-          practiceCredits: user.practiceCredits || 0,
+      if (creditRes.ok) {
+        const data = await creditRes.json()
+        setCreditInfo({
+          creditBalance: data.creditBalance || 0,
+          imagesAvailable: data.imagesAvailable || 0,
+          totalImagesProcessed: data.totalImagesProcessed || 0,
+          pricingPlan: data.pricingPlan || 'personal',
+          ratePerImage: data.ratePerImage || 0.375,
         })
       }
     } catch (error) {
@@ -157,8 +161,8 @@ export function DashboardClient() {
         {/* Metrics */}
         <MetricCards
           totalEnhanced={totalEnhanced}
-          creditsRemaining={userProfile ? (userProfile.monthlyCredits + userProfile.practiceCredits - userProfile.creditsUsed) : 0}
-          creditsUsed={userProfile?.creditsUsed || 0}
+          imagesAvailable={creditInfo?.imagesAvailable || 0}
+          totalImagesProcessed={creditInfo?.totalImagesProcessed || 0}
           storageUsed={storageUsed}
           timeSaved={timeSaved}
           engineStatus={engineStatus}

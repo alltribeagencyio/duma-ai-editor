@@ -5,8 +5,8 @@ import { Check, Coins, HardDrive, Zap } from 'lucide-react'
 
 interface MetricCardsProps {
   totalEnhanced: number
-  creditsRemaining: number
-  creditsUsed: number
+  imagesAvailable: number
+  totalImagesProcessed: number
   storageUsed: number // in MB
   engineStatus: 'ready' | 'busy' | 'offline'
   timeSaved?: number // in minutes
@@ -14,8 +14,8 @@ interface MetricCardsProps {
 
 export const MetricCards = memo(function MetricCards({
   totalEnhanced,
-  creditsRemaining,
-  creditsUsed,
+  imagesAvailable,
+  totalImagesProcessed,
   storageUsed,
   engineStatus,
   timeSaved = 0,
@@ -38,9 +38,9 @@ export const MetricCards = memo(function MetricCards({
     subtitle?: string
   }> = [
     {
-      label: 'Credits Remaining',
-      value: creditsRemaining.toLocaleString(),
-      subtitle: `${creditsUsed} used this month`,
+      label: 'Images Available',
+      value: imagesAvailable.toLocaleString(),
+      subtitle: `${totalImagesProcessed} processed total`,
       icon: Coins,
       color: 'text-purple-600',
       bg: 'bg-purple-50',
