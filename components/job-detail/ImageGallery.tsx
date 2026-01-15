@@ -32,6 +32,11 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
   const [expandedImage, setExpandedImage] = useState<string | null>(null)
 
+  // Handle closing expanded image - unified function
+  const closeExpandedImage = () => {
+    setExpandedImage(null)
+  }
+
   // Normalize imageUrls to always be ImageWithVersion format
   const normalizedImages: ImageWithVersion[] = imageUrls.map((item) => {
     if (typeof item === 'string') {
@@ -88,13 +93,10 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
       {enableExpand && expandedImage && (
         <div
           className="fixed inset-0 bg-black/80 z-40"
-          onClick={(e) => {
+          onPointerDown={(e) => {
+            e.preventDefault()
             e.stopPropagation()
-            setExpandedImage(null)
-          }}
-          onTouchEnd={(e) => {
-            e.stopPropagation()
-            setExpandedImage(null)
+            closeExpandedImage()
           }}
           role="button"
           aria-label="Close expanded image"
@@ -119,21 +121,17 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
               {/* Close button for expanded image - prominent on mobile */}
               {isExpanded && (
                 <button
-                  onClick={(e) => {
+                  type="button"
+                  onPointerDown={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
-                    setExpandedImage(null)
+                    closeExpandedImage()
                   }}
-                  onTouchEnd={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    setExpandedImage(null)
-                  }}
-                  className="absolute top-2 right-2 z-[60] p-3 md:p-2 bg-black/90 hover:bg-black active:bg-black rounded-full transition-all shadow-lg touch-manipulation"
+                  className="absolute top-4 right-4 z-[60] p-4 md:p-3 bg-black/95 hover:bg-black active:bg-red-600 rounded-full transition-all shadow-2xl touch-manipulation min-w-[56px] min-h-[56px] md:min-w-[48px] md:min-h-[48px] flex items-center justify-center"
                   title="Close"
                   aria-label="Close expanded image"
                 >
-                  <X className="h-7 w-7 md:h-6 md:w-6 text-white" />
+                  <X className="h-8 w-8 md:h-6 md:w-6 text-white" strokeWidth={3} />
                 </button>
               )}
 
@@ -163,13 +161,11 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
 
               <div
                 className={`w-full h-full relative ${
-                  isExpanded ? 'flex items-center justify-center bg-black cursor-default' : 'cursor-pointer'
+                  isExpanded ? 'flex items-center justify-center bg-black pointer-events-none' : 'cursor-pointer'
                 }`}
                 onClick={(e) => {
                   if (!isExpanded) {
                     openLightbox(index)
-                  } else {
-                    e.stopPropagation()
                   }
                 }}
               >
