@@ -29,7 +29,9 @@
       "Bash(git checkout:*)",
       "Bash(node scripts/check_legacy_credits.js:*)",
       "Bash(node scripts/migrate_legacy_credits.js:*)",
-      "Bash(node scripts/check_user_credits.js:*)"
+      "Bash(node scripts/check_user_credits.js:*)",
+      "Bash(node scripts/check_webhook_logs.js:*)",
+      "Bash(node scripts/fix_missing_credit_deductions.js:*)"
     ],
     "deny": [],
     "ask": []

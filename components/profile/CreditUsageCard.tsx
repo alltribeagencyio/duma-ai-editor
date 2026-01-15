@@ -44,6 +44,12 @@ export function CreditUsageCard() {
 
   const fetchCreditInfo = async () => {
     try {
+      // First, process any completed jobs that haven't had credits deducted
+      // This handles jobs that N8N completes directly in the database
+      await fetch('/api/jobs/process-completed', { method: 'POST' }).catch(() => {
+        // Silently fail if processing fails - it will retry on next fetch
+      })
+
       const response = await fetch('/api/credits/balance')
       if (response.ok) {
         const data = await response.json()
