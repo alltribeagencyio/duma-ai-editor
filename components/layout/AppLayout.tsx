@@ -14,6 +14,11 @@ const FloatingNotifications = dynamic(
   { ssr: false }
 )
 
+const SupportProvider = dynamic(
+  () => import('../support/SupportProvider').then(mod => ({ default: mod.SupportProvider })),
+  { ssr: false }
+)
+
 interface AppLayoutProps {
   children: React.ReactNode
   userEmail?: string
@@ -108,6 +113,9 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
         {/* Apple-inspired padding: tighter on mobile, generous on desktop */}
         <div className="px-3 md:px-6 lg:px-8 py-3 md:py-6">{children}</div>
       </main>
+
+      {/* Support Chat & Ticket Modal */}
+      <SupportProvider />
     </div>
   )
 }

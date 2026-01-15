@@ -110,7 +110,7 @@ export function HelpCenter() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <CardHeader>
             <Book className="h-8 w-8 text-blue-600 mb-2" />
             <CardTitle className="text-lg">Documentation</CardTitle>
@@ -120,17 +120,21 @@ export function HelpCenter() {
           </CardHeader>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => {
+          // Simulate click on floating chat button
+          const chatEvent = new CustomEvent('openChat')
+          window.dispatchEvent(chatEvent)
+        }}>
           <CardHeader>
             <MessageCircle className="h-8 w-8 text-green-600 mb-2" />
             <CardTitle className="text-lg">Live Chat</CardTitle>
             <CardDescription>
-              Chat with our support team
+              Chat with our AI support assistant
             </CardDescription>
           </CardHeader>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.location.href = 'mailto:support@duma-ai.com'}>
           <CardHeader>
             <Mail className="h-8 w-8 text-purple-600 mb-2" />
             <CardTitle className="text-lg">Email Support</CardTitle>
@@ -219,7 +223,7 @@ export function HelpCenter() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button className="flex-1">
+            <Button className="flex-1" onClick={() => window.dispatchEvent(new CustomEvent('openChat'))}>
               <MessageCircle className="h-4 w-4 mr-2" />
               Start Live Chat
             </Button>
