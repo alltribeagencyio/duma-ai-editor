@@ -120,19 +120,28 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
             >
               {/* Close button for expanded image - prominent on mobile */}
               {isExpanded && (
-                <button
-                  type="button"
-                  onPointerDown={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    closeExpandedImage()
-                  }}
-                  className="absolute top-4 right-4 z-[60] p-4 md:p-3 bg-black/95 hover:bg-black active:bg-red-600 rounded-full transition-all shadow-2xl touch-manipulation min-w-[56px] min-h-[56px] md:min-w-[48px] md:min-h-[48px] flex items-center justify-center"
-                  title="Close"
-                  aria-label="Close expanded image"
-                >
-                  <X className="h-8 w-8 md:h-6 md:w-6 text-white" strokeWidth={3} />
-                </button>
+                <div className="absolute top-0 right-0 z-[70] pointer-events-auto">
+                  {/* Larger touch target area */}
+                  <button
+                    type="button"
+                    onPointerDown={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      closeExpandedImage()
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      closeExpandedImage()
+                    }}
+                    className="m-2 p-4 md:p-3 bg-black/95 hover:bg-black active:bg-red-600 rounded-full transition-all shadow-2xl min-w-[64px] min-h-[64px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
+                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+                    title="Close"
+                    aria-label="Close expanded image"
+                  >
+                    <X className="h-8 w-8 md:h-6 md:w-6 text-white pointer-events-none" strokeWidth={3} />
+                  </button>
+                </div>
               )}
 
               {/* Version Tag - only show if it's a re-edit */}
