@@ -115,8 +115,13 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
             <div
               key={`${image.url}-${index}`}
               className={`relative rounded-lg border border-gray-200 overflow-hidden group transition-all duration-300 ${
-                isExpanded ? 'fixed inset-4 md:inset-8 z-50 max-w-none max-h-none' : 'aspect-square'
+                isExpanded ? 'fixed inset-4 md:inset-8 z-50 max-w-none max-h-none pointer-events-none' : 'aspect-square'
               }`}
+              onClick={(e) => {
+                if (isExpanded && e.target === e.currentTarget) {
+                  closeExpandedImage()
+                }
+              }}
             >
               {/* Close button for expanded image - prominent on mobile */}
               {isExpanded && (
@@ -137,7 +142,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                     e.stopPropagation()
                     closeExpandedImage()
                   }}
-                  className="absolute top-2 right-2 z-[70] p-5 md:p-4 bg-black/95 hover:bg-black active:bg-red-600 rounded-full transition-all shadow-2xl min-w-[72px] min-h-[72px] md:min-w-[64px] md:min-h-[64px] flex items-center justify-center"
+                  className="absolute top-2 right-2 z-[70] p-5 md:p-4 bg-black/95 hover:bg-black active:bg-red-600 rounded-full transition-all shadow-2xl min-w-[72px] min-h-[72px] md:min-w-[64px] md:min-h-[64px] flex items-center justify-center pointer-events-auto"
                   style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                   title="Close"
                   aria-label="Close expanded image"
@@ -172,7 +177,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
 
               <div
                 className={`w-full h-full relative ${
-                  isExpanded ? 'flex items-center justify-center bg-black pointer-events-none' : 'cursor-pointer'
+                  isExpanded ? 'flex items-center justify-center bg-black pointer-events-auto' : 'cursor-pointer'
                 }`}
                 onClick={(e) => {
                   if (!isExpanded) {
@@ -233,7 +238,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
 
               {/* Action bar for expanded image - at bottom with larger buttons */}
               {isExpanded && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 pointer-events-auto">
                   <div className="flex items-center justify-center gap-6">
                     <button
                       onClick={(e) => {
