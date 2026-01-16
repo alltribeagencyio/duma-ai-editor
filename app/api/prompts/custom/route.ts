@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { name, description, prompt, category } = await req.json()
+    const { name, description, prompt, category, isPublic } = await req.json()
 
     if (!name || !prompt) {
       return NextResponse.json(
@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
         description: description || '',
         prompt,
         category: category || 'other',
+        isPublic: isPublic || false,
       },
     })
 

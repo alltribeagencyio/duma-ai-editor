@@ -32,7 +32,8 @@
       "Bash(node scripts/check_user_credits.js:*)",
       "Bash(node scripts/check_webhook_logs.js:*)",
       "Bash(node scripts/fix_missing_credit_deductions.js:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(npx shadcn@latest add collapsible)"
     ],
     "deny": [],
     "ask": []

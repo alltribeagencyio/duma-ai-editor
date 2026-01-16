@@ -34,7 +34,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    const { name, description, prompt, category } = await req.json()
+    const { name, description, prompt, category, isPublic } = await req.json()
 
     const updatedPrompt = await prisma.customPrompt.update({
       where: { id: promptId },
@@ -43,6 +43,7 @@ export async function PATCH(
         ...(description !== undefined && { description }),
         ...(prompt && { prompt }),
         ...(category && { category }),
+        ...(isPublic !== undefined && { isPublic }),
       },
     })
 

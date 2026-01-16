@@ -64,11 +64,41 @@ model CustomPrompt {
   description String
   prompt      String
   category    String
+  isPublic    Boolean  @default(false) // Make prompt visible in Duma Prompt Library
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
   @@index([category])
+  @@index([isPublic])
+}
+
+model PromptFavorite {
+  id        String   @id @default(uuid())
+  userId    String
+  promptId  String
+  promptType String  // 'preset', 'custom', 'brand', 'public'
+  createdAt DateTime @default(now())
+
+  @@unique([userId, promptId, promptType])
+  @@index([userId])
+  @@index([promptId])
+}
+
+model BrandPromptRequest {
+  id              String   @id @default(uuid())
+  userId          String
+  brandName       String
+  numberOfPrompts Int
+  requirements    String
+  complexity      String   // 'simple', 'moderate', 'complex'
+  status          String   @default("pending") // pending, in_progress, completed, rejected
+  adminNotes      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }
 
 model User {
