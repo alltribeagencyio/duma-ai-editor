@@ -18,18 +18,18 @@ interface UserProfile {
   brandAesthetic?: string
   brandColors?: string[]
   brandRequirements?: string
-  subscriptionTier: string
-  subscriptionStatus: string
-  monthlyCredits: number
-  practiceCredits: number
-  creditsUsed: number
-  notificationsEmail: boolean
-  notificationsWhatsApp: boolean
+  subscriptionTier?: string
+  subscriptionStatus?: string
+  monthlyCredits?: number
+  practiceCredits?: number
+  creditsUsed?: number
+  notificationsEmail?: boolean
+  notificationsWhatsApp?: boolean
   whatsappNumber?: string
-  language: string
-  timezone: string
-  hasCompletedOnboarding: boolean
-  setupFeesPaid: boolean
+  language?: string
+  timezone?: string
+  hasCompletedOnboarding?: boolean
+  setupFeesPaid?: boolean
   pricingPlan?: string
 }
 

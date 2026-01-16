@@ -21,15 +21,15 @@ interface UserProfile {
   brandAesthetic?: string
   brandColors?: string[]
   brandRequirements?: string
-  subscriptionTier: string
-  monthlyCredits: number
-  practiceCredits: number
-  creditsUsed: number
-  notificationsEmail: boolean
-  notificationsWhatsApp: boolean
+  subscriptionTier?: string
+  monthlyCredits?: number
+  practiceCredits?: number
+  creditsUsed?: number
+  notificationsEmail?: boolean
+  notificationsWhatsApp?: boolean
   whatsappNumber?: string
-  language: string
-  timezone: string
+  language?: string
+  timezone?: string
 }
 
 interface ProfileFormProps {
@@ -49,11 +49,11 @@ export function ProfileForm({ profile, onUpdate, isSaving, pricingPlan }: Profil
     brandAesthetic: profile.brandAesthetic || '',
     brandColors: profile.brandColors || [],
     brandRequirements: profile.brandRequirements || '',
-    notificationsEmail: profile.notificationsEmail,
-    notificationsWhatsApp: profile.notificationsWhatsApp,
+    notificationsEmail: profile.notificationsEmail ?? true,
+    notificationsWhatsApp: profile.notificationsWhatsApp ?? false,
     whatsappNumber: profile.whatsappNumber || '',
-    language: profile.language,
-    timezone: profile.timezone,
+    language: profile.language || 'en',
+    timezone: profile.timezone || 'UTC',
   })
 
   const handleInputChange = (field: string, value: any) => {
