@@ -47,6 +47,12 @@ export function EnhancedJobList() {
 
   const fetchJobs = async () => {
     try {
+      // First, process any completed jobs that haven't had credits deducted
+      // This handles jobs that N8N completes directly in the database
+      await fetch('/api/jobs/process-completed', { method: 'POST' }).catch(() => {
+        // Silently fail if processing fails - it will retry on next fetch
+      })
+
       const response = await fetch('/api/jobs')
       if (response.ok) {
         const { jobs: fetchedJobs } = await response.json()
