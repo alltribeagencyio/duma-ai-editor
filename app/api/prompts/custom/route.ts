@@ -21,7 +21,22 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json({ prompts: customPrompts })
+    // Get favorites for current user to mark which are favorited
+    const favorites = await prisma.promptFavorite.findMany({
+      where: {
+        userId: user.id,
+        promptType: 'custom',
+      },
+    })
+
+    const favoriteIds = new Set(favorites.map(f => f.promptId))
+
+    const promptsWithFavorites = customPrompts.map(prompt => ({
+      ...prompt,
+      isFavorited: favoriteIds.has(prompt.id),
+    }))
+
+    return NextResponse.json({ prompts: promptsWithFavorites })
   } catch (error) {
     console.error('Error fetching custom prompts:', error)
     return NextResponse.json(

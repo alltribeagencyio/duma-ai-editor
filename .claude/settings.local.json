@@ -33,7 +33,8 @@
       "Bash(node scripts/check_webhook_logs.js:*)",
       "Bash(node scripts/fix_missing_credit_deductions.js:*)",
       "Bash(findstr:*)",
-      "Bash(npx shadcn@latest add collapsible)"
+      "Bash(npx shadcn@latest add collapsible)",
+      "Bash(cd:*)"
     ],
     "deny": [],
     "ask": []
