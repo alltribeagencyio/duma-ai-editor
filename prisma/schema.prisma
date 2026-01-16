@@ -99,6 +99,8 @@ model User {
   brandAesthetic         String?
   brandColors            String[]
   brandRequirements      String?
+  brandLogo              String?   // URL to brand logo image
+  customerProfiles       Json?     // Array of customer profile objects
   notificationsEmail     Boolean?  @default(true)
   notificationsWhatsApp  Boolean?  @default(false)
   whatsappNumber         String?

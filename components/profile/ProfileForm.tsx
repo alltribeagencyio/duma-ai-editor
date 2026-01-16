@@ -5,10 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { PhoneInput } from '@/components/ui/phone-input'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { ChevronDown, Upload, X, Plus } from 'lucide-react'
+
+interface CustomerProfile {
+  name: string
+  age?: string
+  gender?: string
+  interests?: string
+  demographics?: string
+  description?: string
+}
 
 interface UserProfile {
   id: string
@@ -21,15 +31,8 @@ interface UserProfile {
   brandAesthetic?: string
   brandColors?: string[]
   brandRequirements?: string
-  subscriptionTier?: string
-  monthlyCredits?: number
-  practiceCredits?: number
-  creditsUsed?: number
-  notificationsEmail?: boolean
-  notificationsWhatsApp?: boolean
-  whatsappNumber?: string
-  language?: string
-  timezone?: string
+  brandLogo?: string
+  customerProfiles?: CustomerProfile[]
 }
 
 interface ProfileFormProps {
@@ -49,12 +52,12 @@ export function ProfileForm({ profile, onUpdate, isSaving, pricingPlan }: Profil
     brandAesthetic: profile.brandAesthetic || '',
     brandColors: profile.brandColors || [],
     brandRequirements: profile.brandRequirements || '',
-    notificationsEmail: profile.notificationsEmail ?? true,
-    notificationsWhatsApp: profile.notificationsWhatsApp ?? false,
-    whatsappNumber: profile.whatsappNumber || '',
-    language: profile.language || 'en',
-    timezone: profile.timezone || 'UTC',
+    brandLogo: profile.brandLogo || '',
+    customerProfiles: profile.customerProfiles || [],
   })
+
+  const [isCustomerProfilesOpen, setIsCustomerProfilesOpen] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -78,6 +81,66 @@ export function ProfileForm({ profile, onUpdate, isSaving, pricingPlan }: Profil
   const removeColor = (index: number) => {
     const newColors = formData.brandColors.filter((_, i) => i !== index)
     setFormData(prev => ({ ...prev, brandColors: newColors }))
+  }
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      setUploadingLogo(true)
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', 'brand-logos')
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (response.ok) {
+        const { url } = await response.json()
+        handleInputChange('brandLogo', url)
+      } else {
+        alert('Failed to upload logo. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error uploading logo:', error)
+      alert('Failed to upload logo. Please try again.')
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
+
+  const removeLogo = () => {
+    handleInputChange('brandLogo', '')
+  }
+
+  const addCustomerProfile = () => {
+    const newProfile: CustomerProfile = {
+      name: '',
+      age: '',
+      gender: '',
+      interests: '',
+      demographics: '',
+      description: ''
+    }
+    setFormData(prev => ({
+      ...prev,
+      customerProfiles: [...prev.customerProfiles, newProfile]
+    }))
+    setIsCustomerProfilesOpen(true)
+  }
+
+  const updateCustomerProfile = (index: number, field: keyof CustomerProfile, value: string) => {
+    const newProfiles = [...formData.customerProfiles]
+    newProfiles[index] = { ...newProfiles[index], [field]: value }
+    setFormData(prev => ({ ...prev, customerProfiles: newProfiles }))
+  }
+
+  const removeCustomerProfile = (index: number) => {
+    const newProfiles = formData.customerProfiles.filter((_, i) => i !== index)
+    setFormData(prev => ({ ...prev, customerProfiles: newProfiles }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -148,232 +211,283 @@ export function ProfileForm({ profile, onUpdate, isSaving, pricingPlan }: Profil
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Brand Information</h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Brand Name
-                </label>
-                <Input
-                  value={formData.brandName}
-                  onChange={(e) => handleInputChange('brandName', e.target.value)}
-                  placeholder="Your brand or company name"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Industry
-                </label>
-                <Select
-                  value={formData.brandIndustry}
-                  onValueChange={(value) => handleInputChange('brandIndustry', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your industry" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fashion">Fashion & Apparel</SelectItem>
-                    <SelectItem value="beauty">Beauty & Cosmetics</SelectItem>
-                    <SelectItem value="electronics">Electronics</SelectItem>
-                    <SelectItem value="jewelry">Jewelry</SelectItem>
-                    <SelectItem value="food">Food & Beverage</SelectItem>
-                    <SelectItem value="home">Home & Garden</SelectItem>
-                    <SelectItem value="sports">Sports & Fitness</SelectItem>
-                    <SelectItem value="automotive">Automotive</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Brand Aesthetic
-              </label>
-              <Select
-                value={formData.brandAesthetic}
-                onValueChange={(value) => handleInputChange('brandAesthetic', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your brand aesthetic" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="minimal">Minimal & Clean</SelectItem>
-                  <SelectItem value="luxury">Luxury & Premium</SelectItem>
-                  <SelectItem value="modern">Modern & Contemporary</SelectItem>
-                  <SelectItem value="vintage">Vintage & Classic</SelectItem>
-                  <SelectItem value="bold">Bold & Vibrant</SelectItem>
-                  <SelectItem value="natural">Natural & Organic</SelectItem>
-                  <SelectItem value="playful">Playful & Fun</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Brand Colors */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Brand Colors
-              </label>
-              <div className="space-y-2">
-                {formData.brandColors.map((color, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <input
-                      type="color"
-                      value={color}
-                      onChange={(e) => handleColorChange(index, e.target.value)}
-                      className="w-12 h-8 rounded border"
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Brand Name
+                    </label>
                     <Input
-                      value={color}
-                      onChange={(e) => handleColorChange(index, e.target.value)}
-                      className="flex-1"
-                      placeholder="#000000"
+                      value={formData.brandName}
+                      onChange={(e) => handleInputChange('brandName', e.target.value)}
+                      placeholder="Your brand or company name"
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Industry
+                    </label>
+                    <Select
+                      value={formData.brandIndustry}
+                      onValueChange={(value) => handleInputChange('brandIndustry', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your industry" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fashion">Fashion & Apparel</SelectItem>
+                        <SelectItem value="beauty">Beauty & Cosmetics</SelectItem>
+                        <SelectItem value="electronics">Electronics</SelectItem>
+                        <SelectItem value="jewelry">Jewelry</SelectItem>
+                        <SelectItem value="food">Food & Beverage</SelectItem>
+                        <SelectItem value="home">Home & Garden</SelectItem>
+                        <SelectItem value="sports">Sports & Fitness</SelectItem>
+                        <SelectItem value="automotive">Automotive</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Brand Aesthetic
+                  </label>
+                  <Select
+                    value={formData.brandAesthetic}
+                    onValueChange={(value) => handleInputChange('brandAesthetic', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your brand aesthetic" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="minimal">Minimal & Clean</SelectItem>
+                      <SelectItem value="luxury">Luxury & Premium</SelectItem>
+                      <SelectItem value="modern">Modern & Contemporary</SelectItem>
+                      <SelectItem value="vintage">Vintage & Classic</SelectItem>
+                      <SelectItem value="bold">Bold & Vibrant</SelectItem>
+                      <SelectItem value="natural">Natural & Organic</SelectItem>
+                      <SelectItem value="playful">Playful & Fun</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Brand Logo */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Brand Logo
+                  </label>
+                  <div className="space-y-2">
+                    {formData.brandLogo ? (
+                      <div className="flex items-center gap-4 p-4 border rounded-lg">
+                        <img
+                          src={formData.brandLogo}
+                          alt="Brand logo"
+                          className="h-20 w-20 object-contain border rounded"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600">Brand logo uploaded</p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={removeLogo}
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Remove
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                        <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600 mb-2">Upload your brand logo</p>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoUpload}
+                          disabled={uploadingLogo}
+                          className="max-w-xs mx-auto"
+                        />
+                        {uploadingLogo && (
+                          <p className="text-sm text-gray-500 mt-2">Uploading...</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Brand Colors */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Brand Colors
+                  </label>
+                  <div className="space-y-2">
+                    {formData.brandColors.map((color, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={color}
+                          onChange={(e) => handleColorChange(index, e.target.value)}
+                          className="w-12 h-8 rounded border"
+                        />
+                        <Input
+                          value={color}
+                          onChange={(e) => handleColorChange(index, e.target.value)}
+                          className="flex-1"
+                          placeholder="#000000"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeColor(index)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))}
+                    {formData.brandColors.length < 5 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addColor}
+                      >
+                        Add Color
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Brand Requirements
+                  </label>
+                  <Textarea
+                    value={formData.brandRequirements}
+                    onChange={(e) => handleInputChange('brandRequirements', e.target.value)}
+                    placeholder="Any specific requirements or style preferences for your brand images..."
+                    rows={3}
+                  />
+                </div>
+
+                {/* Ideal Customer Profiles */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-700">
+                      Ideal Customer Profiles
+                    </label>
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => removeColor(index)}
+                      onClick={addCustomerProfile}
                     >
-                      Remove
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Profile
                     </Button>
                   </div>
-                ))}
-                {formData.brandColors.length < 5 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addColor}
-                  >
-                    Add Color
-                  </Button>
-                )}
+                  <p className="text-xs text-gray-500">
+                    Define your target customers to help generate more relevant images
+                  </p>
+
+                  <div className="space-y-3 mt-3">
+                    {formData.customerProfiles.map((profile, index) => (
+                      <Collapsible key={index}>
+                        <div className="border rounded-lg overflow-hidden">
+                          <CollapsibleTrigger className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                            <div className="flex items-center gap-2">
+                              <ChevronDown className="h-4 w-4 text-gray-600" />
+                              <span className="text-sm font-medium">
+                                {profile.name || `Customer Profile ${index + 1}`}
+                              </span>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                removeCustomerProfile(index)
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="p-4 space-y-3">
+                            <div className="space-y-2">
+                              <label className="text-xs font-medium text-gray-700">
+                                Profile Name
+                              </label>
+                              <Input
+                                value={profile.name}
+                                onChange={(e) => updateCustomerProfile(index, 'name', e.target.value)}
+                                placeholder="e.g., Young Professional, Fashion Enthusiast"
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="space-y-2">
+                                <label className="text-xs font-medium text-gray-700">
+                                  Age Range
+                                </label>
+                                <Input
+                                  value={profile.age || ''}
+                                  onChange={(e) => updateCustomerProfile(index, 'age', e.target.value)}
+                                  placeholder="e.g., 25-35"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-xs font-medium text-gray-700">
+                                  Gender
+                                </label>
+                                <Input
+                                  value={profile.gender || ''}
+                                  onChange={(e) => updateCustomerProfile(index, 'gender', e.target.value)}
+                                  placeholder="e.g., Female, Male, All"
+                                />
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs font-medium text-gray-700">
+                                Interests
+                              </label>
+                              <Input
+                                value={profile.interests || ''}
+                                onChange={(e) => updateCustomerProfile(index, 'interests', e.target.value)}
+                                placeholder="e.g., Fitness, Travel, Technology"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs font-medium text-gray-700">
+                                Demographics
+                              </label>
+                              <Input
+                                value={profile.demographics || ''}
+                                onChange={(e) => updateCustomerProfile(index, 'demographics', e.target.value)}
+                                placeholder="e.g., Urban, High-income, College-educated"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs font-medium text-gray-700">
+                                Description
+                              </label>
+                              <Textarea
+                                value={profile.description || ''}
+                                onChange={(e) => updateCustomerProfile(index, 'description', e.target.value)}
+                                placeholder="Describe this customer segment in detail..."
+                                rows={3}
+                              />
+                            </div>
+                          </CollapsibleContent>
+                        </div>
+                      </Collapsible>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Brand Requirements
-              </label>
-              <Textarea
-                value={formData.brandRequirements}
-                onChange={(e) => handleInputChange('brandRequirements', e.target.value)}
-                placeholder="Any specific requirements or style preferences for your brand images..."
-                rows={3}
-              />
-            </div>
-          </div>
-
-              <Separator />
             </>
           )}
-
-          {/* Notification Settings */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Notification Settings</h3>
-
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="email-notifications"
-                  checked={formData.notificationsEmail}
-                  onCheckedChange={(checked) =>
-                    handleInputChange('notificationsEmail', checked)
-                  }
-                />
-                <label htmlFor="email-notifications" className="text-sm font-medium">
-                  Email notifications
-                </label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="whatsapp-notifications"
-                  checked={formData.notificationsWhatsApp}
-                  onCheckedChange={(checked) =>
-                    handleInputChange('notificationsWhatsApp', checked)
-                  }
-                />
-                <label htmlFor="whatsapp-notifications" className="text-sm font-medium">
-                  WhatsApp notifications
-                </label>
-              </div>
-
-              {formData.notificationsWhatsApp && (
-                <div className="ml-6 space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    WhatsApp Number
-                  </label>
-                  <Input
-                    value={formData.whatsappNumber}
-                    onChange={(e) => handleInputChange('whatsappNumber', e.target.value)}
-                    placeholder="+1 (555) 123-4567"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Preferences */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Preferences</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Language
-                </label>
-                <Select
-                  value={formData.language}
-                  onValueChange={(value) => handleInputChange('language', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="es">Spanish</SelectItem>
-                    <SelectItem value="fr">French</SelectItem>
-                    <SelectItem value="de">German</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Timezone (for notifications & scheduling)
-                </label>
-                <Select
-                  value={formData.timezone}
-                  onValueChange={(value) => handleInputChange('timezone', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="UTC">UTC</SelectItem>
-                    <SelectItem value="Africa/Nairobi">East Africa Time (Nairobi)</SelectItem>
-                    <SelectItem value="Africa/Lagos">West Africa Time (Lagos)</SelectItem>
-                    <SelectItem value="Africa/Cairo">Egypt (Cairo)</SelectItem>
-                    <SelectItem value="Africa/Johannesburg">South Africa (Johannesburg)</SelectItem>
-                    <SelectItem value="Africa/Casablanca">Morocco (Casablanca)</SelectItem>
-                    <SelectItem value="America/New_York">Eastern Time (US)</SelectItem>
-                    <SelectItem value="America/Chicago">Central Time (US)</SelectItem>
-                    <SelectItem value="America/Denver">Mountain Time (US)</SelectItem>
-                    <SelectItem value="America/Los_Angeles">Pacific Time (US)</SelectItem>
-                    <SelectItem value="Europe/London">London</SelectItem>
-                    <SelectItem value="Europe/Paris">Paris</SelectItem>
-                    <SelectItem value="Asia/Dubai">Dubai</SelectItem>
-                    <SelectItem value="Asia/Singapore">Singapore</SelectItem>
-                    <SelectItem value="Asia/Tokyo">Tokyo</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
 
           {/* Save Button */}
           <div className="flex justify-end">
