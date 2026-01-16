@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { ArrowDownCircle, ArrowUpCircle, Gift, RefreshCw, FileText } from 'lucide-react'
+import { ArrowDownCircle, ArrowUpCircle, Gift, RefreshCw, FileText, ChevronLeft, ChevronRight } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface Transaction {
@@ -27,7 +28,11 @@ export function TransactionsClient() {
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalTransactions, setTotalTransactions] = useState(0)
   const router = useRouter()
+
+  const ITEMS_PER_PAGE = 10
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -48,17 +53,40 @@ export function TransactionsClient() {
     checkAuth()
   }, [router])
 
+  useEffect(() => {
+    if (userEmail) {
+      fetchTransactions()
+    }
+  }, [currentPage, userEmail])
+
   const fetchTransactions = async () => {
     try {
-      const response = await fetch('/api/credits/transactions?limit=100')
+      setIsLoading(true)
+      const offset = (currentPage - 1) * ITEMS_PER_PAGE
+      const response = await fetch(`/api/credits/transactions?limit=${ITEMS_PER_PAGE}&offset=${offset}`)
       if (response.ok) {
-        const { transactions } = await response.json()
+        const { transactions, total } = await response.json()
         setTransactions(transactions)
+        setTotalTransactions(total)
       }
     } catch (error) {
       console.error('Error fetching transactions:', error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const totalPages = Math.ceil(totalTransactions / ITEMS_PER_PAGE)
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
     }
   }
 
@@ -92,7 +120,7 @@ export function TransactionsClient() {
     }
   }
 
-  if (isLoading) {
+  if (isLoading && transactions.length === 0) {
     return (
       <AppLayout userEmail={userEmail}>
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -117,7 +145,7 @@ export function TransactionsClient() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {transactions.length === 0 ? (
+            {transactions.length === 0 && !isLoading ? (
               <div className="text-center py-12">
                 <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600 mb-2">No transactions yet</p>
@@ -211,6 +239,38 @@ export function TransactionsClient() {
                     </div>
                   </div>
                 ))}
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t mt-6">
+                    <div className="text-sm text-gray-600">
+                      Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalTransactions)} of {totalTransactions} transactions
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1 || isLoading}
+                      >
+                        <ChevronLeft className="h-4 w-4 mr-1" />
+                        Previous
+                      </Button>
+                      <div className="text-sm text-gray-600 px-2">
+                        Page {currentPage} of {totalPages}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages || isLoading}
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
