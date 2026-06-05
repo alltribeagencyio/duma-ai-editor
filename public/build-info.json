@@ -1,0 +1,5 @@
+{
+  "app": "duma-ai-image-editor",
+  "release": "glass-ui + modal-portal + r2-upload-fix + stale-job-timeout",
+  "deployedAt": "2026-06-05T15:30:00Z"
+}
