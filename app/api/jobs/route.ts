@@ -185,6 +185,7 @@ export async function POST(req: NextRequest) {
           headers: {
             'Content-Type': 'application/json',
             'User-Agent': 'DumaAI-ImageEditor/1.0',
+            'X-Webhook-Secret': process.env.WEBHOOK_CALLBACK_SECRET || '',
           },
           body: JSON.stringify(webhookPayload),
           signal: controller.signal,

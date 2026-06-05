@@ -112,7 +112,10 @@ export async function POST(
       try {
         const response = await fetch(webhookUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Webhook-Secret': process.env.WEBHOOK_CALLBACK_SECRET || '',
+          },
           body: JSON.stringify(webhookPayload),
         })
 
