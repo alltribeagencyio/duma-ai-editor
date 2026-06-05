@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic'
  * GET /api/cron/check-stale-jobs
  *
  * Marks jobs that n8n never returned (5 min per image, no output) as failed.
- * Intended to be hit by Vercel Cron (see vercel.json). If CRON_SECRET is set,
- * the caller must send `Authorization: Bearer <CRON_SECRET>` (Vercel Cron does
- * this automatically when the env var exists).
+ * Triggered by the n8n workflow at the end of an edit run (Vercel Hobby caps
+ * crons at once/day, so we don't use Vercel Cron). If CRON_SECRET is set, the
+ * caller must send `Authorization: Bearer <CRON_SECRET>`.
  */
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET
