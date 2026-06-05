@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Upload, X, AlertCircle, Camera, Link as LinkIcon } from 'lucide-react'
+import { Upload, X, AlertCircle, Camera, Link as LinkIcon, Sparkles } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useNewEditStore } from '@/lib/stores/newEditStore'
@@ -23,6 +23,8 @@ export function Step1Upload() {
     setProductName,
     setProductCategory,
     setProductSku,
+    description,
+    setDescription,
   } = useNewEditStore()
   const cameraInputRef = useRef<HTMLInputElement>(null)
   const [pricingPlan, setPricingPlan] = useState<string>('personal')
@@ -288,6 +290,33 @@ export function Step1Upload() {
           <p className="text-xs text-gray-500 mt-2">
             Enter a direct link to an image (must end with .jpg, .png, .webp, etc.)
           </p>
+        </div>
+
+        {/* Description / context — combined with the prompt by our refinement AI */}
+        <div className="glass-card p-4 space-y-1.5">
+          <label
+            htmlFor="edit-description"
+            className="flex items-center gap-2 text-sm font-medium text-gray-900"
+          >
+            <Sparkles className="h-4 w-4 text-duma-primary" />
+            Description
+            <span className="text-xs font-normal text-gray-500">(optional)</span>
+          </label>
+          <p className="text-xs text-gray-600">
+            Describe the product or scene — brand, materials, mood, what matters. Our AI blends this
+            with your editing prompt to produce sharper results.
+          </p>
+          <textarea
+            id="edit-description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value.slice(0, 1500))}
+            placeholder="e.g. Handmade leather wallet, premium feel, warm natural lighting, e-commerce listing."
+            className="glass-input w-full px-3 py-2 text-sm focus:outline-none min-h-[88px] resize-y"
+            maxLength={1500}
+          />
+          <div className="flex justify-end">
+            <span className="text-xs text-gray-500">{description.length} / 1500</span>
+          </div>
         </div>
 
         {/* Error messages */}

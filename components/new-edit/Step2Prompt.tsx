@@ -48,11 +48,9 @@ export function Step2Prompt() {
     images,
     imageUrls,
     prompt,
-    description,
     promptType,
     presetId,
     setPrompt,
-    setDescription,
     setPromptType,
     setPreset,
     nextStep,
@@ -424,30 +422,6 @@ export function Step2Prompt() {
           </div>
         </div>
       )}
-
-      {/* Description / context — combined with the prompt by our refinement AI */}
-      <div className="glass-card p-4 space-y-1.5">
-        <label htmlFor="edit-description" className="flex items-center gap-2 text-sm font-medium text-gray-900">
-          <Sparkles className="h-4 w-4 text-duma-primary" />
-          Add context
-          <span className="text-xs font-normal text-gray-500">(optional)</span>
-        </label>
-        <p className="text-xs text-gray-600">
-          Describe the product or scene — brand, materials, mood, what matters. Our AI blends this
-          with your instructions above to produce sharper edits.
-        </p>
-        <Textarea
-          id="edit-description"
-          placeholder="e.g. Handmade leather wallet, premium feel, warm natural lighting, e-commerce listing."
-          value={description}
-          onChange={(e) => setDescription(e.target.value.slice(0, 1500))}
-          className="min-h-[88px] mt-1"
-          maxLength={1500}
-        />
-        <div className="flex justify-end">
-          <span className="text-xs text-gray-500">{description.length} / 1500</span>
-        </div>
-      </div>
 
       {/* Navigation */}
       <div className="flex items-center justify-between gap-3 pt-1">
