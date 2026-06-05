@@ -6,7 +6,7 @@ import {
   isR2Configured,
   outputKey,
 } from '@/lib/r2'
-import { verifyWebhookSecret } from '@/lib/webhook-auth'
+import { verifyOptionalWebhookSecret } from '@/lib/webhook-auth'
 
 export const runtime = 'nodejs'
 
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Storage is not configured' }, { status: 503 })
     }
 
-    if (!verifyWebhookSecret(req)) {
+    if (!verifyOptionalWebhookSecret(req)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

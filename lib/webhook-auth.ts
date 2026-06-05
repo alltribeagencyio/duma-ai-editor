@@ -35,3 +35,22 @@ export function verifyWebhookSecret(req: NextRequest): boolean {
   if (!provided) return false
   return safeEqual(provided, secret)
 }
+
+/**
+ * Lenient variant for endpoints we want working before credentials are wired
+ * up in n8n. If WEBHOOK_CALLBACK_SECRET is NOT set, the request is allowed
+ * (open). Once the secret is set, it is enforced exactly like
+ * verifyWebhookSecret. So you harden later by config alone — no code change.
+ */
+export function verifyOptionalWebhookSecret(req: NextRequest): boolean {
+  const secret = getWebhookSecret()
+  if (!secret) return true // not configured yet → allow
+
+  const provided =
+    req.headers.get('x-webhook-secret') ||
+    req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ||
+    ''
+
+  if (!provided) return false
+  return safeEqual(provided, secret)
+}
