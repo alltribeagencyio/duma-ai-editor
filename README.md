@@ -12,6 +12,7 @@ A modern, production-ready AI image editing web application by Duma AI with user
 - 📦 Bulk download with ZIP support
 - 📱 Fully responsive design
 - 🎯 Modern minimal aesthetic (muted color palette)
+- 
 
 ## 🚀 Tech Stack
 
