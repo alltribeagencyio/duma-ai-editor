@@ -41,6 +41,13 @@ function getR2Client(): S3Client {
       region: 'auto',
       endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
       credentials: { accessKeyId, secretAccessKey },
+      // AWS SDK v3 (>=3.729) adds a default CRC32 integrity checksum to
+      // PutObject. When presigning, there is no body, so it signs the checksum
+      // of an EMPTY payload (x-amz-checksum-crc32=AAAAAA==); the browser then
+      // uploads the real bytes and R2 rejects the mismatch. R2 (S3-compatible)
+      // doesn't need these flexible checksums, so only send when required.
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
     })
   }
   return _client
