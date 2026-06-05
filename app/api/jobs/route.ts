@@ -77,6 +77,11 @@ export async function POST(req: NextRequest) {
     const productCategory = (body.productCategory as string) || null
     const productSku = (body.productSku as string) || null
     const prompt = sanitizePrompt(body.prompt as string, 2000)
+    // Optional free-text context the downstream LLM combines with the prompt to
+    // refine the final edit. Passed through to n8n; not persisted on the job.
+    const description = body.description
+      ? sanitizePrompt(body.description as string, 1500)
+      : null
 
     const rawUrls = Array.isArray(body.imageUrls) ? (body.imageUrls as string[]) : []
     const imageUrls = rawUrls.filter((u) => typeof u === 'string' && isValidHttpUrl(u))
@@ -166,6 +171,7 @@ export async function POST(req: NextRequest) {
         userEmail: user.email,
         imageUrls: inputImageUrls,
         prompt,
+        description,
         promptType,
         presetId,
         productName,

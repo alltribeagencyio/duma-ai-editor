@@ -17,6 +17,7 @@ export function Step3Review() {
     images,
     imageUrls,
     prompt,
+    description,
     promptType,
     presetId,
     presetName,
@@ -68,6 +69,7 @@ export function Step3Review() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt,
+          description: description || undefined,
           promptType,
           presetId: presetId || undefined,
           phone: phone || undefined,
@@ -148,6 +150,21 @@ export function Step3Review() {
           </p>
         </div>
       </div>
+
+      {/* Review Description / context (optional) */}
+      {description && (
+        <div className="space-y-3 md:space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900">Added Context</h2>
+            <Button variant="ghost" onClick={() => setStep(2)} size="sm">
+              Edit
+            </Button>
+          </div>
+          <div className="glass-subtle rounded-xl p-3 md:p-4">
+            <p className="text-sm md:text-base text-gray-700 whitespace-pre-wrap">{description}</p>
+          </div>
+        </div>
+      )}
 
       {/* Submit */}
       <div className="space-y-3 md:space-y-4 pt-4">

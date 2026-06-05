@@ -5,6 +5,7 @@ interface NewEditStore {
   images: File[]
   imageUrls: string[]
   prompt: string
+  description: string
   promptType: 'preset' | 'custom'
   presetId: string | null
   presetName: string | null
@@ -23,6 +24,7 @@ interface NewEditStore {
   removeImage: (index: number) => void
   removeImageUrl: (index: number) => void
   setPrompt: (prompt: string) => void
+  setDescription: (description: string) => void
   setPromptType: (type: 'preset' | 'custom') => void
   setPreset: (id: string, name: string, prompt: string) => void
   setPhone: (phone: string) => void
@@ -38,6 +40,7 @@ const initialState = {
   images: [],
   imageUrls: [],
   prompt: '',
+  description: '',
   promptType: 'preset' as 'preset' | 'custom',
   presetId: null,
   presetName: null,
@@ -78,6 +81,8 @@ export const useNewEditStore = create<NewEditStore>((set) => ({
     })),
 
   setPrompt: (prompt) => set({ prompt }),
+
+  setDescription: (description) => set({ description }),
 
   setPromptType: (promptType) => set({ promptType }),
 
