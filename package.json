@@ -13,7 +13,7 @@
     "create-admin": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/create-admin.ts",
     "analyze": "ANALYZE=true npm run build",
     "postinstall": "prisma generate || true",
-    "vercel-build": "prisma generate || true && next build"
+    "vercel-build": "prisma generate && prisma db push --skip-generate && next build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1062.0",
