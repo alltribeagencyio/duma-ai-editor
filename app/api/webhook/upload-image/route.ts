@@ -5,7 +5,6 @@ import {
   outputKey,
   putObject,
 } from '@/lib/r2'
-import { verifyOptionalWebhookSecret } from '@/lib/webhook-auth'
 import { appendOutputImage } from '@/lib/jobs/complete'
 
 export const runtime = 'nodejs'
@@ -34,9 +33,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Storage is not configured' }, { status: 503 })
     }
 
-    if (!verifyOptionalWebhookSecret(req)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    // TODO(security): endpoint is open for now so the n8n workflow works without
+    // credentials. To re-enable: `import { verifyOptionalWebhookSecret }` and
+    //   if (!verifyOptionalWebhookSecret(req)) return 401
+    // then set WEBHOOK_CALLBACK_SECRET + send the X-Webhook-Secret header in n8n.
 
     const { searchParams } = new URL(req.url)
     const jobId = searchParams.get('jobId') || undefined
