@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -21,15 +21,16 @@ export function LoginForm() {
     setLoading(true)
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Failed to sign in')
 
-      if (error) throw error
-
-      router.push('/dashboard')
+      const redirect = searchParams.get('redirect') || '/dashboard'
+      router.push(redirect)
       router.refresh()
     } catch (err: any) {
       setError(err.message || 'Failed to sign in')
@@ -91,6 +92,12 @@ export function LoginForm() {
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
+
+          <p className="text-center text-sm">
+            <Link href="/forgot-password" className="text-gray-600 hover:text-gray-900 transition-colors">
+              Forgot your password?
+            </Link>
+          </p>
 
           <p className="text-center text-sm text-gray-600">
             Don&apos;t have an account?{' '}

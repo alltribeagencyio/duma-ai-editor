@@ -1,45 +1,42 @@
-import { createServerClient } from '@supabase/ssr'
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+/**
+ * Compatibility layer (formerly Supabase server client).
+ *
+ * Supabase Auth has been replaced by native JWT auth (see lib/auth/*).
+ * This module preserves the old call sites — `createClient()` /
+ * `createRouteHandlerClient()` returning an object with `auth.getUser()` —
+ * so server components and API routes keep working while reading the
+ * authenticated user from the access-token cookie.
+ */
+import { getCurrentUser } from '@/lib/auth/session'
+
+interface CompatUser {
+  id: string
+  email: string
+}
+
+async function getUser(): Promise<{ data: { user: CompatUser | null }; error: null }> {
+  const user = await getCurrentUser()
+  return {
+    data: { user: user ? { id: user.id, email: user.email } : null },
+    error: null,
+  }
+}
+
+const compatClient = {
+  auth: {
+    getUser,
+    // Legacy session shape; only `user` is consumed anywhere.
+    getSession: async () => {
+      const { data } = await getUser()
+      return { data: { session: data.user ? { user: data.user } : null }, error: null }
+    },
+  },
+}
 
 export function createClient() {
-  const cookieStore = cookies()
-
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // Server Component - ignore
-          }
-        },
-      },
-    }
-  )
+  return compatClient
 }
 
 export function createRouteHandlerClient() {
-  return createClient()
-}
-
-export function createAdminClient() {
-  return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    }
-  )
+  return compatClient
 }

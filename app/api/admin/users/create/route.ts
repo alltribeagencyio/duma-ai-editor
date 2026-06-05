@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
+import { hashPassword, validatePasswordStrength } from '@/lib/auth/password'
+import { isValidEmail } from '@/lib/security'
+
+export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,47 +28,36 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, fullName, password, monthlyCredits, subscriptionTier } = body
+    const { email: rawEmail, fullName, password, monthlyCredits, subscriptionTier } = body
+    const email = String(rawEmail || '').trim().toLowerCase()
 
     // Validate required fields
-    if (!email || !password) {
+    if (!isValidEmail(email) || !password) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: 'A valid email and password are required' },
         { status: 400 }
       )
     }
 
-    // Create user in Supabase Auth using admin client with service role key
-    const adminClient = createAdminClient()
-    const { data: authData, error: authError } = await adminClient.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: {
-        full_name: fullName || ''
-      }
-    })
-
-    if (authError) {
-      console.error('Supabase auth error:', authError)
-      return NextResponse.json(
-        { error: `Failed to create user: ${authError.message}` },
-        { status: 400 }
-      )
+    const pwError = validatePasswordStrength(password)
+    if (pwError) {
+      return NextResponse.json({ error: pwError }, { status: 400 })
     }
 
-    if (!authData.user) {
-      return NextResponse.json(
-        { error: 'Failed to create user' },
-        { status: 500 }
-      )
+    const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } })
+    if (existing) {
+      return NextResponse.json({ error: 'A user with this email already exists' }, { status: 409 })
     }
 
-    // Create user in database
+    const passwordHash = await hashPassword(password)
+
+    // Create user directly (native auth — password stored as bcrypt hash).
     const newUser = await prisma.user.create({
       data: {
-        id: authData.user.id,
         email,
+        passwordHash,
+        emailVerified: true,
+        emailVerifiedAt: new Date(),
         fullName: fullName || null,
         monthlyCredits: monthlyCredits || 100,
         subscriptionTier: subscriptionTier || 'starter',

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { pricingService } from '@/lib/pricing'
+import { createRouteHandlerClient } from '@/lib/supabase/server'
+import { verifyWebhookSecret } from '@/lib/webhook-auth'
 
 /**
  * Background job processor for completed jobs
@@ -11,6 +13,18 @@ import { pricingService } from '@/lib/pricing'
  */
 export async function POST(req: NextRequest) {
   try {
+    // Require either a logged-in user (client polling) or the cron/webhook secret.
+    // Prevents anonymous callers from triggering global credit-deduction sweeps.
+    if (!verifyWebhookSecret(req)) {
+      const supabase = createRouteHandlerClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+    }
+
     console.log('🔄 Processing completed jobs without credit deductions...')
 
     // Find all completed jobs that haven't had credits deducted

@@ -9,7 +9,15 @@ export async function GET(req: NextRequest) {
       orderBy: { order: 'asc' },
     })
 
-    return NextResponse.json({ presets })
+    // Public, rarely-changing data — cache at the edge with stale-while-revalidate.
+    return NextResponse.json(
+      { presets },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        },
+      }
+    )
   } catch (error) {
     console.error('Error fetching presets:', error)
     return NextResponse.json(

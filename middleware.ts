@@ -1,6 +1,24 @@
-import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { verifyAccessToken } from '@/lib/auth/jwt'
+import { ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/auth/constants'
+import { checkRateLimit, categoryForRequest } from '@/lib/rate-limit'
+
+// Content Security Policy — restricts the dangerous sinks without breaking Next
+// or the "add image by URL" feature (which fetches arbitrary image hosts).
+const csp = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  "img-src 'self' data: blob: https:",
+  "media-src 'self' https:",
+  "style-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "font-src 'self' data:",
+  "connect-src 'self' https: blob:",
+  "form-action 'self'",
+].join('; ')
 
 // Security headers for enhanced protection
 const securityHeaders = {
@@ -11,95 +29,67 @@ const securityHeaders = {
   'X-XSS-Protection': '1; mode=block',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  'Content-Security-Policy': csp,
 }
 
-// Simple in-memory rate limiting (use Redis in production)
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
-
-function checkRateLimit(ip: string, limit: number = 100, window: number = 60000): boolean {
-  const now = Date.now()
-  const record = rateLimitStore.get(ip)
-
-  if (!record || now > record.resetTime) {
-    rateLimitStore.set(ip, { count: 1, resetTime: now + window })
-    return true
-  }
-
-  if (record.count >= limit) {
-    return false
-  }
-
-  record.count++
-  return true
-}
+const protectedRoutes = [
+  '/dashboard', '/new', '/jobs', '/history', '/profile', '/analytics',
+  '/subscription', '/prompts', '/help', '/admin', '/onboarding',
+]
+const authPages = ['/login', '/signup']
 
 export async function middleware(req: NextRequest) {
-  let res = NextResponse.next({
-    request: req,
-  })
+  const res = NextResponse.next({ request: req })
 
-  // Apply security headers to all responses
-  Object.entries(securityHeaders).forEach(([key, value]) => {
-    res.headers.set(key, value)
-  })
+  Object.entries(securityHeaders).forEach(([key, value]) => res.headers.set(key, value))
 
-  // Rate limiting for API routes
-  if (req.nextUrl.pathname.startsWith('/api')) {
-    const ip = req.ip || req.headers.get('x-forwarded-for') || 'unknown'
+  const { pathname } = req.nextUrl
 
-    if (!checkRateLimit(ip)) {
-      return new NextResponse('Too Many Requests', {
-        status: 429,
-        headers: {
-          'Retry-After': '60',
-          ...Object.fromEntries(Object.entries(securityHeaders)),
-        },
-      })
+  // Rate limiting for API routes (aggressive, per-category, cross-instance via Upstash)
+  if (pathname.startsWith('/api')) {
+    const ip =
+      req.ip ||
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      'unknown'
+    const category = categoryForRequest(pathname, req.method)
+    if (category) {
+      const { success, limit, remaining, reset } = await checkRateLimit(ip, category)
+      if (!success) {
+        return new NextResponse('Too Many Requests', {
+          status: 429,
+          headers: {
+            'Retry-After': '60',
+            'X-RateLimit-Limit': String(limit),
+            'X-RateLimit-Remaining': String(remaining),
+            'X-RateLimit-Reset': String(reset),
+            ...securityHeaders,
+          },
+        })
+      }
     }
+    // API routes perform their own auth; don't gate them here.
+    return res
   }
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return req.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value))
-          res = NextResponse.next({
-            request: req,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            res.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
+  // Determine auth state from the access token; fall back to refresh-cookie
+  // presence so a momentarily-expired access token doesn't bounce the user
+  // (the client refreshes it). Sensitive data is still gated server-side.
+  const accessToken = req.cookies.get(ACCESS_COOKIE)?.value
+  const hasValidAccess = accessToken ? Boolean(await verifyAccessToken(accessToken)) : false
+  const hasRefresh = Boolean(req.cookies.get(REFRESH_COOKIE)?.value)
+  const isAuthenticated = hasValidAccess || hasRefresh
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+  const isProtected = protectedRoutes.some((r) => pathname.startsWith(r))
+  const isAuthPage = authPages.some((r) => pathname.startsWith(r))
 
-  // Protected routes that require authentication
-  const protectedRoutes = ['/dashboard', '/new', '/jobs', '/history', '/profile', '/analytics', '/subscription', '/prompts', '/help', '/admin']
-  const isProtectedRoute = protectedRoutes.some(route => req.nextUrl.pathname.startsWith(route))
-
-  // If no session and trying to access protected routes, redirect to login
-  if (!session && isProtectedRoute) {
-    return NextResponse.redirect(new URL('/login', req.url))
+  if (!isAuthenticated && isProtected) {
+    const url = new URL('/login', req.url)
+    url.searchParams.set('redirect', pathname)
+    return NextResponse.redirect(url)
   }
 
-  // If session exists and trying to access auth pages, redirect to dashboard
-  if (session) {
-    if (req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/signup')) {
-      return NextResponse.redirect(new URL('/dashboard', req.url))
-    }
-
-    // Note: Onboarding checks moved to page-level server components
-    // to avoid Prisma in Edge Runtime middleware
+  if (isAuthenticated && isAuthPage) {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
   return res
@@ -120,6 +110,6 @@ export const config = {
     '/onboarding/:path*',
     '/login',
     '/signup',
-    '/api/:path*'
+    '/api/:path*',
   ],
 }

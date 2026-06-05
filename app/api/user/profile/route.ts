@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
         data: {
           id: user.id,
           email: user.email!,
-          fullName: user.user_metadata?.full_name || user.user_metadata?.name,
+          fullName: user.email!.split('@')[0],
           lastLoginAt: new Date(),
         },
       })

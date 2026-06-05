@@ -11,6 +11,15 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.supabase.co',
       },
+      // Cloudflare R2 public custom domain (set R2_PUBLIC_DOMAIN, e.g. img.yourdomain.com)
+      ...(process.env.R2_PUBLIC_DOMAIN
+        ? [
+            {
+              protocol: 'https',
+              hostname: process.env.R2_PUBLIC_DOMAIN.replace(/^https?:\/\//, '').replace(/\/.*$/, ''),
+            },
+          ]
+        : []),
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],

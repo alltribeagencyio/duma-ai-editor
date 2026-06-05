@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { pricingService } from '@/lib/pricing'
+import { verifyWebhookSecret } from '@/lib/webhook-auth'
 
 // POST /api/webhook/callback - Receive n8n results
 export async function POST(req: NextRequest) {
   try {
+    // Authenticate the caller: only n8n (with the shared secret) may complete jobs.
+    if (!verifyWebhookSecret(req)) {
+      console.error('❌ Rejected callback: invalid or missing webhook secret')
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     console.log('📥 Received webhook callback from n8n')
 
     const startTime = Date.now()

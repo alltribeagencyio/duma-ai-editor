@@ -3,8 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // Direct (non-pooled) connection for migrations when DATABASE_URL points at PgBouncer.
+  directUrl = env("DIRECT_URL")
 }
 
 model Job {
@@ -104,6 +106,10 @@ model BrandPromptRequest {
 model User {
   id                     String    @id @default(uuid())
   email                  String    @unique
+  // Native auth (replaces Supabase Auth). Nullable for accounts created via other flows.
+  passwordHash           String?
+  emailVerified          Boolean   @default(false)
+  emailVerifiedAt        DateTime?
   fullName               String?
   phone                  String?
   phoneCountryCode       String?   @default("+254")
@@ -150,6 +156,35 @@ model User {
   @@index([isAdmin])
   @@index([isSuperAdmin])
   @@index([pricingPlan])
+}
+
+// Refresh-token sessions. We store only a hash of the opaque refresh token.
+// Rotation: each refresh revokes the old row and creates a new one.
+model Session {
+  id           String    @id @default(uuid())
+  userId       String
+  tokenHash    String    @unique
+  userAgent    String?
+  ipAddress    String?
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Single-use password reset tokens (delivered to the user via the n8n notifications webhook).
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model BrandPrompt {

@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Loader2 } from 'lucide-react'
 import { useNewEditStore } from '@/lib/stores/newEditStore'
 import { createClient } from '@/lib/supabase/client'
+import { uploadImagesToR2 } from '@/lib/upload-client'
 
 export function Step3Review() {
   const router = useRouter()
@@ -51,68 +52,42 @@ export function Step3Review() {
     setUploadProgress(0)
 
     try {
-      const formData = new FormData()
-      formData.append('prompt', prompt)
-      formData.append('promptType', promptType)
-      if (presetId) formData.append('presetId', presetId)
-      if (phone) formData.append('phone', phone)
-      formData.append('notifyByEmail', String(notifyByEmail))
-      if (productName) formData.append('productName', productName)
-      if (productCategory) formData.append('productCategory', productCategory)
-      if (productSku) formData.append('productSku', productSku)
+      // 1. Upload selected files directly to R2 (browser -> R2), tracking progress.
+      const uploadedUrls = await uploadImagesToR2(images, setUploadProgress)
 
-      images.forEach((image) => {
-        formData.append('images', image)
-      })
+      // 2. Combine freshly uploaded URLs with any user-provided external URLs.
+      const allImageUrls = [...uploadedUrls, ...imageUrls]
 
-      // Add image URLs as JSON array
-      if (imageUrls.length > 0) {
-        formData.append('imageUrls', JSON.stringify(imageUrls))
+      if (allImageUrls.length === 0) {
+        throw new Error('No images to submit')
       }
 
-      // Use XMLHttpRequest to track upload progress
-      const xhr = new XMLHttpRequest()
-
-      // Track upload progress
-      xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-          const percentComplete = Math.round((event.loaded / event.total) * 100)
-          setUploadProgress(percentComplete)
-        }
+      // 3. Create the job with the image URLs (no file bytes through the API).
+      const res = await fetch('/api/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt,
+          promptType,
+          presetId: presetId || undefined,
+          phone: phone || undefined,
+          notifyByEmail,
+          productName: productName || undefined,
+          productCategory: productCategory || undefined,
+          productSku: productSku || undefined,
+          imageUrls: allImageUrls,
+        }),
       })
 
-      // Handle completion
-      const uploadPromise = new Promise((resolve, reject) => {
-        xhr.addEventListener('load', () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            try {
-              const response = JSON.parse(xhr.responseText)
-              resolve(response)
-            } catch (e) {
-              reject(new Error('Failed to parse response'))
-            }
-          } else {
-            reject(new Error('Failed to create job'))
-          }
-        })
+      const data = await res.json().catch(() => ({}))
 
-        xhr.addEventListener('error', () => {
-          reject(new Error('Network error'))
-        })
-
-        xhr.addEventListener('abort', () => {
-          reject(new Error('Upload cancelled'))
-        })
-      })
-
-      xhr.open('POST', '/api/jobs')
-      xhr.send(formData)
-
-      const { job } = await uploadPromise as any
+      if (!res.ok) {
+        throw new Error(data.message || data.error || 'Failed to create job')
+      }
 
       // Reset form and redirect to job details page
       reset()
-      router.push(`/jobs/${job.id}`)
+      router.push(`/jobs/${data.job.id}`)
     } catch (err: any) {
       setError(err.message || 'Failed to submit job')
       setUploadProgress(0)

@@ -1,27 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
-import heicConvert from 'heic-convert'
 import { selectWebhookForUser } from '@/lib/webhooks/selector'
 import { pricingService } from '@/lib/pricing'
+import { sanitizePrompt } from '@/lib/security'
 
-// Helper function to convert HEIC to JPEG
-async function convertHeicToJpeg(file: File): Promise<{ buffer: Buffer; fileName: string }> {
-  const arrayBuffer = await file.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
+const MAX_IMAGES = 10
 
-  const outputBuffer = await heicConvert({
-    buffer,
-    format: 'JPEG',
-    quality: 0.9,
-  })
-
-  // Change file extension to .jpg
-  const fileName = file.name.replace(/\.(heic|HEIC)$/i, '.jpg')
-
-  return {
-    buffer: Buffer.from(outputBuffer),
-    fileName,
+function isValidHttpUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:'
+  } catch {
+    return false
   }
 }
 
@@ -37,9 +28,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Bound the result set to avoid unbounded scans as job history grows.
+    const { searchParams } = new URL(req.url)
+    const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '100', 10) || 100, 1), 200)
+    const offset = Math.max(parseInt(searchParams.get('offset') || '0', 10) || 0, 0)
+
     const jobs = await prisma.job.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: offset,
     })
 
     return NextResponse.json({ jobs })
@@ -64,38 +62,46 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const formData = await req.formData()
-    const prompt = formData.get('prompt') as string
-    const promptType = formData.get('promptType') as string
-    const presetId = formData.get('presetId') as string | null
-    const phone = formData.get('phone') as string | null
-    const notifyByEmail = formData.get('notifyByEmail') === 'true'
-    const productName = formData.get('productName') as string | null
-    const productCategory = formData.get('productCategory') as string | null
-    const productSku = formData.get('productSku') as string | null
-    const images = formData.getAll('images') as File[]
-    const imageUrlsJson = formData.get('imageUrls') as string | null
-
-    // Parse image URLs if provided
-    let imageUrls: string[] = []
-    if (imageUrlsJson) {
-      try {
-        imageUrls = JSON.parse(imageUrlsJson)
-      } catch (e) {
-        console.error('Failed to parse imageUrls:', e)
-      }
+    // Images are uploaded directly to R2 from the browser; the API now receives
+    // only the resulting URLs as JSON.
+    const body = await req.json().catch(() => null)
+    if (!body) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
     }
 
-    // Must have at least one image (file or URL)
-    if (!prompt || !promptType || (images.length === 0 && imageUrls.length === 0)) {
+    const promptType = body.promptType as string
+    const presetId = (body.presetId as string) || null
+    const phone = (body.phone as string) || null
+    const notifyByEmail = body.notifyByEmail !== false
+    const productName = (body.productName as string) || null
+    const productCategory = (body.productCategory as string) || null
+    const productSku = (body.productSku as string) || null
+    const prompt = sanitizePrompt(body.prompt as string, 2000)
+
+    const rawUrls = Array.isArray(body.imageUrls) ? (body.imageUrls as string[]) : []
+    const imageUrls = rawUrls.filter((u) => typeof u === 'string' && isValidHttpUrl(u))
+
+    // Validate required fields
+    if (!prompt || !promptType || imageUrls.length === 0) {
       return NextResponse.json(
         { error: 'Missing required fields or no images provided' },
         { status: 400 }
       )
     }
 
-    // Calculate total number of images
-    const totalImages = images.length + imageUrls.length
+    if (rawUrls.length !== imageUrls.length) {
+      return NextResponse.json({ error: 'One or more image URLs are invalid' }, { status: 400 })
+    }
+
+    if (imageUrls.length > MAX_IMAGES) {
+      return NextResponse.json(
+        { error: `Maximum ${MAX_IMAGES} images per job` },
+        { status: 400 }
+      )
+    }
+
+    // Total number of images to process
+    const totalImages = imageUrls.length
 
     // Check if user has sufficient credits BEFORE processing
     const hasSufficientCredits = await pricingService.checkSufficientCredits(user.id, totalImages)
@@ -115,46 +121,9 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Collect all input image URLs
-    const inputImageUrls: string[] = []
-
-    // Upload file images to Supabase Storage
-    for (let i = 0; i < images.length; i++) {
-      const file = images[i]
-      let uploadData: Buffer | File = file
-      let uploadFileName = file.name
-
-      // Check if file is HEIC and convert to JPEG
-      if (file.name.match(/\.(heic|HEIC)$/i)) {
-        console.log(`🔄 Converting HEIC to JPEG: ${file.name}`)
-        const converted = await convertHeicToJpeg(file)
-        uploadData = converted.buffer
-        uploadFileName = converted.fileName
-        console.log(`✅ Converted to: ${uploadFileName}`)
-      }
-
-      const fileName = `${user.id}/${Date.now()}-${i}-${uploadFileName}`
-
-      const { data, error } = await supabase.storage
-        .from('temp-images')
-        .upload(fileName, uploadData, {
-          contentType: uploadFileName.endsWith('.jpg') ? 'image/jpeg' : undefined,
-        })
-
-      if (error) {
-        console.error('Error uploading image:', error)
-        throw new Error('Failed to upload image')
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('temp-images').getPublicUrl(fileName)
-
-      inputImageUrls.push(publicUrl)
-    }
-
-    // Add URL images directly (no upload needed)
-    inputImageUrls.push(...imageUrls)
+    // Images already live in R2 (uploaded directly from the browser) or are
+    // external URLs the user supplied. No server-side upload needed.
+    const inputImageUrls: string[] = imageUrls
 
     // Select appropriate webhook for user
     const selectedWebhook = await selectWebhookForUser({
