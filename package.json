@@ -10,6 +10,7 @@
     "build": "prisma generate --skip-generate || true && next build",
     "start": "next start",
     "lint": "next lint",
+    "create-admin": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/create-admin.ts",
     "analyze": "ANALYZE=true npm run build",
     "postinstall": "prisma generate || true",
     "vercel-build": "prisma generate || true && next build"
