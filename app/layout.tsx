@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthRefreshProvider } from "@/components/auth/AuthRefreshProvider";
 
 export const metadata: Metadata = {
   title: "Duma AI - Image Editor",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthRefreshProvider />
+        {children}
+      </body>
     </html>
   );
 }
