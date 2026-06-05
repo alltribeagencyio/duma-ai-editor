@@ -53,7 +53,7 @@ export function AdminSidebar({ collapsed, onCollapsedChange, userEmail }: AdminS
         {!collapsed && (
           <div className="flex items-center justify-center w-full px-2">
             <Image
-              src="/duma-logo.png"
+              src="/duma-logo-no-bg.png"
               alt="Duma Logo"
               width={180}
               height={90}
@@ -65,7 +65,7 @@ export function AdminSidebar({ collapsed, onCollapsedChange, userEmail }: AdminS
         {collapsed && (
           <div className="flex items-center justify-center">
             <Image
-              src="/duma-icon.png"
+              src="/duma-icon-no-bg.png"
               alt="Duma"
               width={32}
               height={32}

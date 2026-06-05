@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { showToast } from '@/components/feedback/ToastContainer'
+import { ModalPortal } from '@/components/ui/modal-portal'
 
 interface SupportTicketModalProps {
   isOpen: boolean
@@ -74,6 +75,7 @@ export function SupportTicketModal({ isOpen, onClose }: SupportTicketModalProps)
   if (!isOpen) return null
 
   return (
+    <ModalPortal>
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="glass-panel max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
         {isSuccess ? (
@@ -216,5 +218,6 @@ export function SupportTicketModal({ isOpen, onClose }: SupportTicketModalProps)
         )}
       </div>
     </div>
+    </ModalPortal>
   )
 }

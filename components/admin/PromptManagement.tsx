@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Search, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react'
 import { showToast } from '@/components/feedback/ToastContainer'
+import { ModalPortal } from '@/components/ui/modal-portal'
 
 interface PromptPreset {
   id: string
@@ -368,6 +369,7 @@ export function PromptManagement() {
 
       {/* Create Modal */}
       {showCreateModal && (
+        <ModalPortal>
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="glass-panel max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold">Create New Prompt</h3>
@@ -460,10 +462,12 @@ export function PromptManagement() {
             </div>
           </div>
         </div>
+        </ModalPortal>
       )}
 
       {/* Edit Modal */}
       {showEditModal && selectedPrompt && (
+        <ModalPortal>
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="glass-panel max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold">Edit Prompt</h3>
@@ -557,10 +561,12 @@ export function PromptManagement() {
             </div>
           </div>
         </div>
+        </ModalPortal>
       )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && selectedPrompt && (
+        <ModalPortal>
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="glass-panel max-w-md w-full p-6 space-y-4">
             <div className="flex items-start gap-3">
@@ -597,6 +603,7 @@ export function PromptManagement() {
             </div>
           </div>
         </div>
+        </ModalPortal>
       )}
     </Card>
   )

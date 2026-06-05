@@ -19,6 +19,11 @@ const sora = Sora({
 export const metadata: Metadata = {
   title: "Duma AI - Image Editor",
   description: "Professional AI-powered product photo editing by Duma AI",
+  icons: {
+    icon: "/duma-icon-no-bg.png",
+    shortcut: "/duma-icon-no-bg.png",
+    apple: "/duma-icon-no-bg.png",
+  },
 };
 
 export default function RootLayout({

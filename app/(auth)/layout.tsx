@@ -7,17 +7,15 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center p-4">
-      <div className="mb-6 text-center flex flex-col items-center animate-fade-in-up">
-        <div className="relative w-24 h-24">
-          <Image
-            src="/duma-logo.png"
-            alt="Duma Logo"
-            width={96}
-            height={96}
-            className="object-contain"
-            priority
-          />
-        </div>
+      <div className="mb-8 flex items-center justify-center animate-fade-in-up">
+        <Image
+          src="/duma-logo-no-bg.png"
+          alt="Duma AI"
+          width={220}
+          height={88}
+          className="h-16 w-auto object-contain drop-shadow-[0_8px_24px_rgba(173,0,171,0.25)]"
+          priority
+        />
       </div>
       {children}
     </div>

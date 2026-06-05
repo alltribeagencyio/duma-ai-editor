@@ -3,6 +3,7 @@
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
+import { ModalPortal } from './modal-portal'
 
 interface ModalProps {
   isOpen: boolean
@@ -56,6 +57,7 @@ export function Modal({
   }
 
   return (
+    <ModalPortal>
     <div
       className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200"
       onClick={onClose}
@@ -87,5 +89,6 @@ export function Modal({
         <div className="text-gray-700">{children}</div>
       </div>
     </div>
+    </ModalPortal>
   )
 }

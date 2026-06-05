@@ -5,6 +5,7 @@ import { X, Send, User, Headphones, Clock, Ticket, AlertCircle, CheckCircle, Loa
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { showToast } from '@/components/feedback/ToastContainer'
+import { ModalPortal } from '@/components/ui/modal-portal'
 
 interface TicketMessage {
   id: string
@@ -177,6 +178,7 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
   ]
 
   return (
+    <ModalPortal>
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
       <div className="glass-panel max-w-4xl w-full flex flex-col max-h-[95vh] md:max-h-[90vh] overflow-hidden">
         {/* Header */}
@@ -329,5 +331,6 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
         </div>
       </div>
     </div>
+    </ModalPortal>
   )
 }

@@ -130,7 +130,7 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
           {!collapsed && (
             <div className="flex items-center justify-center w-full px-2">
               <Image
-                src="/duma-logo.png"
+                src="/duma-logo-no-bg.png"
                 alt="Duma Logo"
                 width={180}
                 height={90}
@@ -142,7 +142,7 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
           {collapsed && (
             <div className="flex items-center justify-center">
               <Image
-                src="/duma-icon.png"
+                src="/duma-icon-no-bg.png"
                 alt="Duma"
                 width={32}
                 height={32}

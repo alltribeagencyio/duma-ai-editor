@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { X, ChevronLeft, ChevronRight, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ModalPortal } from '@/components/ui/modal-portal'
 
 interface ImageLightboxProps {
   images: string[]
@@ -49,6 +50,7 @@ export function ImageLightbox({
   }
 
   return (
+    <ModalPortal>
     <div
       className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center"
       onClick={onClose}
@@ -118,5 +120,6 @@ export function ImageLightbox({
         {currentIndex + 1} / {images.length}
       </div>
     </div>
+    </ModalPortal>
   )
 }

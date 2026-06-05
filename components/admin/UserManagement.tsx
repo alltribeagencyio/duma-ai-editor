@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Search, Edit, Ban, CheckCircle, XCircle, UserPlus, Plus, Minus, RotateCcw } from 'lucide-react'
 import { showToast } from '@/components/feedback/ToastContainer'
+import { ModalPortal } from '@/components/ui/modal-portal'
 
 interface User {
   id: string
@@ -332,6 +333,7 @@ export function UserManagement() {
 
     {/* Create User Modal */}
     {showCreateModal && (
+      <ModalPortal>
       <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div className="glass-panel max-w-md w-full p-6 space-y-4">
           <div className="flex justify-between items-center">
@@ -429,10 +431,12 @@ export function UserManagement() {
           </form>
         </div>
       </div>
+      </ModalPortal>
     )}
 
     {/* Change Plan Modal */}
     {showPlanModal && selectedUser && (
+      <ModalPortal>
       <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div className="glass-panel max-w-md w-full p-6 space-y-4">
           <div className="flex justify-between items-center">
@@ -497,10 +501,12 @@ export function UserManagement() {
           </form>
         </div>
       </div>
+      </ModalPortal>
     )}
 
     {/* Manage Credits Modal */}
     {showCreditsModal && selectedUser && (
+      <ModalPortal>
       <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div className="glass-panel max-w-md w-full p-6 space-y-4">
           <div className="flex justify-between items-center">
@@ -580,6 +586,7 @@ export function UserManagement() {
           </form>
         </div>
       </div>
+      </ModalPortal>
     )}
     </>
   )
