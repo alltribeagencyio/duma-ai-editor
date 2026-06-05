@@ -66,6 +66,11 @@ export async function POST(
         userEmail: user.email,
         imageUrls: job.inputImages,
         prompt: job.prompt,
+        promptType: job.promptType,
+        presetId: job.presetId,
+        productName: job.productName,
+        productCategory: job.productCategory,
+        productSku: job.productSku,
         callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhook/callback`,
       }
 
@@ -76,7 +81,6 @@ export async function POST(
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Webhook-Secret': process.env.WEBHOOK_CALLBACK_SECRET || '',
           },
           body: JSON.stringify(webhookPayload),
         })

@@ -101,6 +101,8 @@ export async function POST(
         userEmail: user.email,
         imageUrls: reEditJob.inputImages,
         prompt,
+        promptType,
+        presetId,
         productName: reEditJob.productName,
         productCategory: reEditJob.productCategory,
         productSku: reEditJob.productSku,
@@ -114,7 +116,6 @@ export async function POST(
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Webhook-Secret': process.env.WEBHOOK_CALLBACK_SECRET || '',
           },
           body: JSON.stringify(webhookPayload),
         })
