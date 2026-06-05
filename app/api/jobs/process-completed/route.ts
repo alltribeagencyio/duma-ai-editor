@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { pricingService } from '@/lib/pricing'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { verifyWebhookSecret } from '@/lib/webhook-auth'
+import { markStaleJobsFailed } from '@/lib/jobs/stale'
 
 /**
  * Background job processor for completed jobs
@@ -26,6 +27,15 @@ export async function POST(req: NextRequest) {
     }
 
     console.log('🔄 Processing completed jobs without credit deductions...')
+
+    // Time out jobs that n8n never returned (5 min per image) so users can retry.
+    let staleFailed = 0
+    try {
+      staleFailed = await markStaleJobsFailed()
+      if (staleFailed > 0) console.log(`⏱️ Marked ${staleFailed} stale job(s) as failed`)
+    } catch (e) {
+      console.error('⚠️ Stale-job sweep failed:', e)
+    }
 
     // Find all completed jobs that haven't had credits deducted
     const jobs = await prisma.job.findMany({
@@ -54,7 +64,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'No jobs to process',
-        processed: 0
+        processed: 0,
+        staleFailed,
       })
     }
 
@@ -122,6 +133,7 @@ export async function POST(req: NextRequest) {
       success: true,
       processed: successful,
       failed,
+      staleFailed,
       total: jobsWithOutput.length,
       errors: errors.length > 0 ? errors : undefined
     })
