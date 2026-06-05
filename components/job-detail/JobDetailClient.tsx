@@ -109,8 +109,9 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
   // Consolidate all edited images from all versions into one array with tags
   const allEditedImages: Array<{ url: string; version: number; isReEdit: boolean }> = []
 
-  // Add Version 1 images (no tag for first edit as per user requirement)
-  if (job.status === 'completed' && outputImages.length > 0) {
+  // Add Version 1 images. Show them as they stream in (n8n posts each finished
+  // image to /api/webhook/image-complete), not only once the whole job is done.
+  if (job.status !== 'failed' && outputImages.length > 0) {
     outputImages.forEach((url: string) => {
       allEditedImages.push({ url, version: 1, isReEdit: false })
     })
@@ -130,8 +131,15 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
   })
 
   // Check if any version is still processing
-  const isAnyProcessing = job.status === 'pending' || job.status === 'processing' ||
+  const isMainProcessing = job.status === 'pending' || job.status === 'processing'
+  const isAnyProcessing = isMainProcessing ||
     reEditJobs.some(r => r.status === 'pending' || r.status === 'processing')
+
+  // While the main job streams images in, show a spinner tile for each image
+  // that hasn't arrived yet (total inputs minus outputs received so far).
+  const pendingImageCount = isMainProcessing
+    ? Math.max((totalImages || 1) - outputImages.length, 0)
+    : 0
 
   const handleRetry = async () => {
     setIsRetrying(true)
@@ -260,18 +268,6 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
             </span>
           </div>
 
-          {/* Processing/Failed states */}
-          {isAnyProcessing && allEditedImages.length === 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {Array.from({ length: totalImages || 1 }).map((_, idx) => (
-                <div key={idx} className="aspect-square rounded-xl border-2 border-dashed border-white/70 bg-white/30 backdrop-blur-sm flex flex-col items-center justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary mb-2" />
-                  <p className="text-xs text-gray-500">Processing...</p>
-                </div>
-              ))}
-            </div>
-          )}
-
           {job.status === 'failed' && allEditedImages.length === 0 && (
             <div className="text-center py-8 bg-red-50/70 backdrop-blur-sm rounded-xl border border-red-200/60">
               <p className="text-red-600 font-semibold">Failed</p>
@@ -299,7 +295,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
             </div>
           )}
 
-          {/* Unified Gallery - Show all completed images with tags */}
+          {/* Unified Gallery - completed + streaming images with tags */}
           {allEditedImages.length > 0 && (
             <ImageGallery
               imageUrls={allEditedImages}
@@ -312,6 +308,18 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
                 setReEditModalOpen(true)
               }}
             />
+          )}
+
+          {/* Spinner tiles for images still being edited (streaming) */}
+          {pendingImageCount > 0 && (
+            <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 ${allEditedImages.length > 0 ? 'mt-3' : ''}`}>
+              {Array.from({ length: pendingImageCount }).map((_, idx) => (
+                <div key={idx} className="aspect-square rounded-xl border-2 border-dashed border-white/70 bg-white/30 backdrop-blur-sm flex flex-col items-center justify-center">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary mb-2" />
+                  <p className="text-xs text-gray-500">Processing...</p>
+                </div>
+              ))}
+            </div>
           )}
 
           {!isAnyProcessing && allEditedImages.length === 0 && job.status !== 'failed' && (
