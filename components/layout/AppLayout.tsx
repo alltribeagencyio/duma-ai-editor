@@ -78,7 +78,7 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Sidebar
         userEmail={userEmail}
         collapsed={sidebarCollapsed}
@@ -87,7 +87,7 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
 
       {/* Top header bar - z-30 to be below sidebar z-50 */}
       <header
-        className={`fixed top-0 right-0 h-12 md:h-16 bg-white border-b border-gray-100 z-30 ${mounted ? 'transition-all duration-300' : ''} ${
+        className={`fixed top-0 right-0 h-12 md:h-16 glass-nav border-b z-30 ${mounted ? 'transition-all duration-300' : ''} ${
           sidebarCollapsed ? 'left-0 md:left-16' : 'left-0 md:left-64'
         }`}
       >

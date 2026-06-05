@@ -54,9 +54,9 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-          <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="max-w-md w-full glass-panel glass-highlight p-6 text-center">
+            <div className="w-16 h-16 bg-red-500/15 ring-1 ring-inset ring-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <AlertTriangle className="h-8 w-8 text-red-600" />
             </div>
 
@@ -69,7 +69,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </p>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg text-left">
+              <div className="mb-6 p-4 glass-subtle rounded-xl text-left">
                 <p className="font-mono text-sm text-red-600 mb-2">
                   {this.state.error.toString()}
                 </p>

@@ -40,10 +40,10 @@ export function Toast({ id, type, title, message, duration = 5000, onClose }: To
   }
 
   const colors = {
-    success: 'bg-green-50 border-green-200 text-green-800',
-    error: 'bg-red-50 border-red-200 text-red-800',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800',
+    success: 'bg-emerald-50/80 border-emerald-200/70 text-emerald-800',
+    error: 'bg-red-50/80 border-red-200/70 text-red-800',
+    warning: 'bg-amber-50/80 border-amber-200/70 text-amber-800',
+    info: 'bg-white/70 border-white/70 text-gray-800',
   }
 
   const iconColors = {
@@ -58,7 +58,7 @@ export function Toast({ id, type, title, message, duration = 5000, onClose }: To
   return (
     <div
       className={cn(
-        'flex items-start gap-3 p-4 rounded-lg border shadow-lg transition-all duration-300',
+        'flex items-start gap-3 p-4 rounded-xl border shadow-glass backdrop-blur-xl transition-all duration-300',
         colors[type],
         isExiting ? 'opacity-0 translate-x-full' : 'opacity-100 translate-x-0'
       )}

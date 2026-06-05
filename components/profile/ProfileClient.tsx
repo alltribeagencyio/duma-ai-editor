@@ -108,7 +108,7 @@ export function ProfileClient() {
     return (
       <AppLayout userEmail={userEmail}>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+          <div className="h-9 w-9 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
         </div>
       </AppLayout>
     )
@@ -127,7 +127,7 @@ export function ProfileClient() {
               setError(null)
               fetchProfile()
             }}
-            className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 border border-purple-100"
+            className="px-5 py-2.5 bg-brand-gradient text-white rounded-xl shadow-glow hover:brightness-105 transition-all font-medium"
           >
             Retry
           </button>

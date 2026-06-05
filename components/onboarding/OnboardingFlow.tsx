@@ -381,10 +381,10 @@ export function OnboardingFlow() {
                   {colorOptions.map(color => (
                     <label
                       key={color}
-                      className={`flex items-center space-x-2 p-3 border rounded-lg cursor-pointer transition-colors ${
+                      className={`flex items-center space-x-2 p-3 rounded-xl cursor-pointer transition-all ${
                         data.colorPreferences.includes(color)
-                          ? 'bg-blue-50 border-blue-300'
-                          : 'hover:bg-gray-50'
+                          ? 'bg-duma-primary/10 ring-1 ring-inset ring-duma-primary/30 shadow-glass-sm'
+                          : 'glass-subtle hover:bg-white/70'
                       }`}
                     >
                       <Checkbox
@@ -403,10 +403,10 @@ export function OnboardingFlow() {
                   {styleOptions.map(style => (
                     <label
                       key={style}
-                      className={`flex items-center space-x-2 p-3 border rounded-lg cursor-pointer transition-colors ${
+                      className={`flex items-center space-x-2 p-3 rounded-xl cursor-pointer transition-all ${
                         data.stylePreferences.includes(style)
-                          ? 'bg-purple-50 border-purple-300'
-                          : 'hover:bg-gray-50'
+                          ? 'bg-duma-primary/10 ring-1 ring-inset ring-duma-primary/30 shadow-glass-sm'
+                          : 'glass-subtle hover:bg-white/70'
                       }`}
                     >
                       <Checkbox
@@ -439,10 +439,10 @@ export function OnboardingFlow() {
                   {goalOptions.map(goal => (
                     <label
                       key={goal}
-                      className={`flex items-center space-x-2 p-3 border rounded-lg cursor-pointer transition-colors ${
+                      className={`flex items-center space-x-2 p-3 rounded-xl cursor-pointer transition-all ${
                         data.primaryGoals.includes(goal)
-                          ? 'bg-green-50 border-green-300'
-                          : 'hover:bg-gray-50'
+                          ? 'bg-emerald-500/10 ring-1 ring-inset ring-emerald-500/30 shadow-glass-sm'
+                          : 'glass-subtle hover:bg-white/70'
                       }`}
                     >
                       <Checkbox
@@ -554,7 +554,7 @@ export function OnboardingFlow() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-2xl mx-auto px-4">
         {/* Progress Bar */}
         <div className="mb-8">

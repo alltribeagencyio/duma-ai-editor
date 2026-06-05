@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Download, Search, Calendar, X, ChevronLeft, ChevronRight, ArrowUpDown, Eye } from 'lucide-react'
+import { Download, Search, Calendar, X, ChevronLeft, ChevronRight, ArrowUpDown, Eye, ImageIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -188,7 +188,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
     <AppLayout userEmail={userEmail} title="Gallery" subtitle={`${sortedImages.length} edited images`}>
       <div className="max-w-7xl mx-auto">
         {/* Filters and Controls */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 mb-6">
+        <div className="glass-card p-4 md:p-6 mb-6">
           {/* Search, Date, Sort */}
           <div className="flex flex-col md:flex-row gap-4 mb-4">
             {/* Search */}
@@ -200,7 +200,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search by prompt or product name..."
-                  className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  className="glass-input w-full pl-9 pr-3 py-2 text-sm focus:outline-none"
                 />
               </div>
             </div>
@@ -213,7 +213,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  className="glass-input w-full pl-9 pr-3 py-2 text-sm focus:outline-none"
                 />
               </div>
             </div>
@@ -225,7 +225,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent appearance-none bg-white"
+                  className="glass-input w-full pl-9 pr-3 py-2 text-sm focus:outline-none appearance-none"
                 >
                   <option value="date-desc">Newest First</option>
                   <option value="date-asc">Oldest First</option>
@@ -248,7 +248,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
           </div>
 
           {/* Results count */}
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-white/50">
             <p className="text-sm text-gray-600 text-center">
               Showing {indexOfFirstImage + 1}-{Math.min(indexOfLastImage, sortedImages.length)} of{' '}
               <span className="font-semibold text-gray-900">{sortedImages.length}</span> images
@@ -262,7 +262,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-square bg-gray-200 rounded-lg animate-pulse"
+                className="aspect-square glass-subtle rounded-xl animate-pulse"
               />
             ))}
           </div>
@@ -270,11 +270,11 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
 
         {/* Empty State */}
         {!loading && images.length === 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <div className="glass-card p-12 text-center">
             <p className="text-gray-600 mb-4">No edited images yet</p>
             <Link
               href="/new"
-              className="inline-flex items-center px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-all font-medium border border-purple-100"
+              className="inline-flex items-center px-5 py-2.5 bg-brand-gradient text-white rounded-xl shadow-glow hover:brightness-105 transition-all font-medium"
             >
               Create Your First Edit
             </Link>
@@ -283,11 +283,11 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
 
         {/* No Results State */}
         {!loading && images.length > 0 && sortedImages.length === 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <div className="glass-card p-12 text-center">
             <p className="text-gray-600 mb-2">No images match your filters</p>
             <button
               onClick={clearFilters}
-              className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+              className="text-sm text-duma-primary hover:text-duma-primary-dark font-medium"
             >
               Clear filters to see all images
             </button>
@@ -302,7 +302,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                 const isSelected = selectedImageId === image.id
 
                 return (
-                  <div key={image.id} className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 active:border-purple-300 transition-all">
+                  <div key={image.id} className="group relative aspect-square glass-subtle rounded-xl overflow-hidden hover:shadow-glass transition-all">
                     {/* Image - clickable on desktop (Link), tappable on mobile (toggles actions) */}
                     <div
                       className="block w-full h-full cursor-pointer md:cursor-default"
@@ -327,8 +327,8 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                             onError={() => setImageErrors(prev => new Set(prev).add(image.imageUrl))}
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <span className="text-4xl">📷</span>
+                          <div className="w-full h-full flex items-center justify-center text-duma-primary/40">
+                            <ImageIcon className="h-9 w-9" />
                           </div>
                         )}
                       </Link>
@@ -347,8 +347,8 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                             onError={() => setImageErrors(prev => new Set(prev).add(image.imageUrl))}
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <span className="text-4xl">📷</span>
+                          <div className="w-full h-full flex items-center justify-center text-duma-primary/40">
+                            <ImageIcon className="h-9 w-9" />
                           </div>
                         )}
                       </div>
@@ -405,13 +405,13 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
 
             {/* Pagination - Simplified for mobile */}
             {totalPages > 1 && (
-              <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
+              <div className="glass-card p-3 md:p-4">
                 {/* Mobile: Simple prev/next with page count */}
                 <div className="flex md:hidden items-center justify-between">
                   <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-lg active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-transform font-medium"
+                    className="flex items-center gap-1 px-3 py-2 text-sm glass-subtle rounded-xl hover:text-duma-primary active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-all font-medium"
                   >
                     <ChevronLeft className="h-4 w-4" />
                     Prev
@@ -424,7 +424,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                   <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-lg active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-transform font-medium"
+                    className="flex items-center gap-1 px-3 py-2 text-sm glass-subtle rounded-xl hover:text-duma-primary active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-all font-medium"
                   >
                     Next
                     <ChevronRight className="h-4 w-4" />
@@ -441,7 +441,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                     <button
                       onClick={() => goToPage(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 glass-subtle rounded-xl hover:text-duma-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
@@ -475,10 +475,10 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                           <button
                             key={page}
                             onClick={() => goToPage(page)}
-                            className={`px-3 py-2 rounded-lg transition-colors ${
+                            className={`px-3 py-2 rounded-xl transition-all ${
                               currentPage === page
-                                ? 'bg-purple-50 text-purple-700 border border-purple-100'
-                                : 'border border-gray-300 hover:bg-gray-50'
+                                ? 'bg-brand-gradient text-white shadow-glow'
+                                : 'glass-subtle hover:text-duma-primary'
                             }`}
                           >
                             {page}
@@ -490,7 +490,7 @@ export function GalleryClient({ userEmail }: GalleryClientProps) {
                     <button
                       onClick={() => goToPage(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 glass-subtle rounded-xl hover:text-duma-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>

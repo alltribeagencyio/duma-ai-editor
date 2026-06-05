@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -34,7 +34,7 @@ export function PromptManagement() {
     description: '',
     prompt: '',
     category: '',
-    icon: '✨',
+    icon: 'âœ¨',
     order: 0,
     isActive: true
   })
@@ -64,7 +64,7 @@ export function PromptManagement() {
       description: '',
       prompt: '',
       category: '',
-      icon: '✨',
+      icon: 'âœ¨',
       order: 0,
       isActive: true
     })
@@ -249,7 +249,7 @@ export function PromptManagement() {
         <div className="border rounded-lg">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-white/40 backdrop-blur-sm">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
@@ -274,7 +274,7 @@ export function PromptManagement() {
                   </tr>
                 ) : (
                   filteredPrompts.map((prompt) => (
-                    <tr key={prompt.id} className="hover:bg-gray-50">
+                    <tr key={prompt.id} className="hover:bg-white/40">
                       <td className="px-4 py-3">
                         <div className="font-medium text-gray-900">{prompt.name}</div>
                         <div className="text-xs text-gray-500 truncate max-w-xs">
@@ -368,8 +368,8 @@ export function PromptManagement() {
 
       {/* Create Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-panel max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold">Create New Prompt</h3>
 
             <div className="space-y-4">
@@ -416,7 +416,7 @@ export function PromptManagement() {
                   <Input
                     value={formData.icon}
                     onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                    placeholder="✨"
+                    placeholder="âœ¨"
                   />
                 </div>
                 <div>
@@ -464,8 +464,8 @@ export function PromptManagement() {
 
       {/* Edit Modal */}
       {showEditModal && selectedPrompt && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-panel max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold">Edit Prompt</h3>
 
             <div className="space-y-4">
@@ -512,7 +512,7 @@ export function PromptManagement() {
                   <Input
                     value={formData.icon}
                     onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                    placeholder="✨"
+                    placeholder="âœ¨"
                   />
                 </div>
                 <div>
@@ -561,8 +561,8 @@ export function PromptManagement() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && selectedPrompt && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-panel max-w-md w-full p-6 space-y-4">
             <div className="flex items-start gap-3">
               <div className="p-2 bg-red-100 rounded-full">
                 <Trash2 className="h-5 w-5 text-red-600" />

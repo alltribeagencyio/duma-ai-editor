@@ -110,14 +110,14 @@ export function Step2Prompt() {
       {promptType === 'preset' && (
         <>
           {/* Tabs for Preset vs Custom Saved */}
-          <div className="flex gap-2 border-b border-gray-200">
+          <div className="flex gap-2 border-b border-white/50">
             <button
               onClick={() => setShowSaved(true)}
               className={cn(
                 'px-4 py-2 font-medium transition-colors',
                 showSaved
-                  ? 'text-gray-900 border-b-2 border-gray-900'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'text-duma-primary border-b-2 border-duma-primary'
+                  : 'text-gray-600 hover:text-duma-primary'
               )}
             >
               Presets ({presets.length})
@@ -127,8 +127,8 @@ export function Step2Prompt() {
               className={cn(
                 'px-4 py-2 font-medium transition-colors',
                 !showSaved
-                  ? 'text-gray-900 border-b-2 border-gray-900'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'text-duma-primary border-b-2 border-duma-primary'
+                  : 'text-gray-600 hover:text-duma-primary'
               )}
             >
               My Prompts ({customSavedPrompts.length})
@@ -162,13 +162,13 @@ export function Step2Prompt() {
                       key={preset.id}
                       onClick={() => handlePresetClick(preset)}
                       className={cn(
-                        'border rounded-lg p-4 text-left transition-all duration-200 flex flex-col gap-2 min-w-[280px] md:min-w-0 snap-start flex-shrink-0 active:scale-95 md:active:scale-100',
+                        'glass-card glass-interactive p-4 text-left transition-all duration-200 flex flex-col gap-2 min-w-[280px] md:min-w-0 snap-start flex-shrink-0 active:scale-95 md:active:scale-100',
                         isSelected
-                          ? 'border-gray-900 border-2 bg-gray-50'
-                          : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                          ? 'ring-2 ring-duma-primary bg-duma-primary/10 shadow-glow'
+                          : ''
                       )}
                     >
-                      <Icon className="h-6 w-6 text-gray-900" />
+                      <Icon className="h-6 w-6 text-duma-primary" />
                       <h3 className="font-medium text-gray-900">{preset.name}</h3>
                       <p className="text-sm text-gray-600 line-clamp-2">{preset.description}</p>
                     </button>
@@ -177,11 +177,11 @@ export function Step2Prompt() {
               </div>
             ) : (
               customSavedPrompts.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                <div className="text-center py-12 glass-card">
                   <p className="text-gray-600">No custom prompts saved yet.</p>
                   <button
                     onClick={() => window.location.href = '/prompts'}
-                    className="text-sm text-gray-900 hover:underline mt-2"
+                    className="text-sm text-duma-primary font-medium hover:underline mt-2"
                   >
                     Create your first prompt
                   </button>
@@ -203,8 +203,8 @@ export function Step2Prompt() {
                         )}
                       >
                         <div className="flex items-center gap-2">
-                          <Circle className="h-5 w-5 text-gray-900" />
-                          <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                          <Circle className="h-5 w-5 text-duma-primary" />
+                          <span className="text-xs px-2 py-1 bg-duma-secondary/10 text-duma-secondary rounded-full">
                             {savedPrompt.category}
                           </span>
                         </div>

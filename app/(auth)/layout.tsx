@@ -6,8 +6,8 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
-      <div className="mb-6 text-center flex flex-col items-center">
+    <div className="min-h-dvh flex flex-col items-center justify-center p-4">
+      <div className="mb-6 text-center flex flex-col items-center animate-fade-in-up">
         <div className="relative w-24 h-24">
           <Image
             src="/duma-logo.png"

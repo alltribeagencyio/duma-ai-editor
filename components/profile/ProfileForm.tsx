@@ -195,7 +195,7 @@ export function ProfileForm({ profile, onUpdate, isSaving, pricingPlan }: Profil
               <Input
                 value={profile.email}
                 disabled
-                className="bg-gray-50"
+                className="bg-white/30"
               />
               <p className="text-xs text-gray-500">
                 Email cannot be changed. Contact support if needed.
@@ -395,8 +395,8 @@ export function ProfileForm({ profile, onUpdate, isSaving, pricingPlan }: Profil
                   <div className="space-y-3 mt-3">
                     {formData.customerProfiles.map((profile, index) => (
                       <Collapsible key={index}>
-                        <div className="border rounded-lg overflow-hidden">
-                          <CollapsibleTrigger className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div className="rounded-xl overflow-hidden glass-subtle">
+                          <CollapsibleTrigger className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/50 transition-colors">
                             <div className="flex items-center gap-2">
                               <ChevronDown className="h-4 w-4 text-gray-600" />
                               <span className="text-sm font-medium">

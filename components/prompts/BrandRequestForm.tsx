@@ -51,9 +51,9 @@ export function BrandRequestForm({ onSubmit, onCancel }: BrandRequestFormProps) 
 
   if (submitSuccess) {
     return (
-      <div className="bg-white rounded-lg border border-green-200 p-6 mb-6 shadow-sm">
+      <div className="glass-card glass-highlight p-6 mb-6 animate-fade-in-up">
         <div className="text-center">
-          <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+          <div className="h-12 w-12 rounded-2xl bg-emerald-500/15 ring-1 ring-inset ring-emerald-500/20 flex items-center justify-center mx-auto mb-4">
             <Star className="h-6 w-6 text-green-600" />
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Request Submitted!</h3>
@@ -69,7 +69,7 @@ export function BrandRequestForm({ onSubmit, onCancel }: BrandRequestFormProps) 
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-6 shadow-sm">
+    <div className="glass-card glass-highlight p-4 sm:p-6 mb-6 animate-fade-in-up">
       <div className="mb-4">
         <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
           Request Premium Brand Prompts
@@ -79,7 +79,7 @@ export function BrandRequestForm({ onSubmit, onCancel }: BrandRequestFormProps) 
         </p>
       </div>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-6">
+      <div className="bg-duma-secondary/10 border border-duma-secondary/20 backdrop-blur-sm rounded-xl p-3 mb-6">
         <div className="flex items-start gap-2">
           <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
           <div className="text-xs sm:text-sm text-blue-800">

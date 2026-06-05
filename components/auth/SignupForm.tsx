@@ -53,9 +53,9 @@ export function SignupForm() {
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md glass-highlight animate-fade-in-up">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">Create Account</CardTitle>
+        <CardTitle className="text-2xl text-center text-gradient-duma">Create Account</CardTitle>
         <CardDescription className="text-center">
           Enter your email to create your account
         </CardDescription>

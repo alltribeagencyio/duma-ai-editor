@@ -96,7 +96,7 @@ export function CreditVerifyClient() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-white rounded-lg p-6 space-y-4">
+              <div className="glass-card rounded-2xl p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Credits Added:</span>
                   <span className="text-2xl font-bold text-green-600">
@@ -155,7 +155,7 @@ export function CreditVerifyClient() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
 
-              <div className="bg-white rounded-lg p-6">
+              <div className="glass-card rounded-2xl p-6">
                 <p className="text-sm text-gray-600 mb-4">
                   Don&apos;t worry, you haven&apos;t been charged. Common reasons for payment failure:
                 </p>

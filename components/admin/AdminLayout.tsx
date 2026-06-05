@@ -40,7 +40,7 @@ export function AdminLayout({ children, title, subtitle, userEmail: initialUserE
   }, [initialUserEmail])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <AdminSidebar
         collapsed={sidebarCollapsed}
         onCollapsedChange={setSidebarCollapsed}
@@ -48,7 +48,7 @@ export function AdminLayout({ children, title, subtitle, userEmail: initialUserE
       />
 
       {/* Header */}
-      <header className={`fixed top-0 right-0 h-16 bg-white border-b border-gray-100 z-40 ${mounted ? 'transition-all duration-300' : ''} ${
+      <header className={`fixed top-0 right-0 h-16 glass-nav border-b z-40 ${mounted ? 'transition-all duration-300' : ''} ${
         sidebarCollapsed ? 'left-0 md:left-16' : 'left-0 md:left-64'
       }`}>
         <div className="h-full px-5 md:px-6 flex items-center">

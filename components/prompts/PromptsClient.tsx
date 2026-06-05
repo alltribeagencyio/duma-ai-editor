@@ -171,14 +171,14 @@ export function PromptsClient() {
   const renderPrompts = (prompts: Prompt[], promptType: string) => {
     if (prompts.length === 0) {
       return (
-        <div className="col-span-full text-center py-16 bg-white rounded-lg border border-gray-100">
+        <div className="col-span-full text-center py-16 glass-card">
           <div className="max-w-sm mx-auto">
-            <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-              {promptType === 'custom' && <Plus className="h-8 w-8 text-gray-400" />}
-              {promptType === 'preset' && <Sparkles className="h-8 w-8 text-gray-400" />}
-              {promptType === 'brand' && <Star className="h-8 w-8 text-gray-400" />}
-              {promptType === 'public' && <Users className="h-8 w-8 text-gray-400" />}
-              {promptType === 'favorites' && <Heart className="h-8 w-8 text-gray-400" />}
+            <div className="h-16 w-16 rounded-2xl glass-subtle glass-highlight flex items-center justify-center mx-auto mb-4 text-duma-primary/70">
+              {promptType === 'custom' && <Plus className="h-8 w-8" />}
+              {promptType === 'preset' && <Sparkles className="h-8 w-8" />}
+              {promptType === 'brand' && <Star className="h-8 w-8" />}
+              {promptType === 'public' && <Users className="h-8 w-8" />}
+              {promptType === 'favorites' && <Heart className="h-8 w-8" />}
             </div>
             <p className="text-gray-600 mb-2">No prompts here yet</p>
             <p className="text-sm text-gray-500">
@@ -299,7 +299,7 @@ export function PromptsClient() {
 
           {isLoading ? (
             <div className="flex justify-center py-16">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900" />
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
             </div>
           ) : (
             <>

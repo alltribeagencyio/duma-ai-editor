@@ -100,9 +100,9 @@ export function ChatWindow({ onClose }: ChatWindowProps) {
 
   return (
     <div className="fixed bottom-2 top-16 left-2 right-2 md:bottom-6 md:right-6 md:top-auto md:left-auto md:w-full md:max-w-md z-50">
-      <div className="bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col h-full md:h-[600px] md:max-h-[80vh]">
+      <div className="glass-panel flex flex-col h-full md:h-[600px] md:max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-lg">
+        <div className="flex items-center justify-between p-4 bg-brand-gradient text-white">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white/20 rounded-full">
               <Bot className="h-5 w-5" />
@@ -130,8 +130,8 @@ export function ChatWindow({ onClose }: ChatWindowProps) {
             >
               <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                 message.sender === 'user'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-200 text-gray-600'
+                  ? 'bg-brand-gradient text-white shadow-glow'
+                  : 'glass-subtle text-gray-600'
               }`}>
                 {message.sender === 'user' ? (
                   <User className="h-4 w-4" />
@@ -140,10 +140,10 @@ export function ChatWindow({ onClose }: ChatWindowProps) {
                 )}
               </div>
               <div className={`flex-1 max-w-[80%]`}>
-                <div className={`rounded-lg p-3 ${
+                <div className={`rounded-2xl p-3 ${
                   message.sender === 'user'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
+                    ? 'bg-brand-gradient text-white shadow-glow'
+                    : 'glass-subtle text-gray-900'
                 }`}>
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                 </div>
@@ -204,7 +204,7 @@ export function ChatWindow({ onClose }: ChatWindowProps) {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t bg-gray-50">
+        <div className="p-4 border-t border-white/50">
           <div className="flex gap-2">
             <Input
               ref={inputRef}

@@ -45,9 +45,9 @@ export function CreditUsageHistory({
 
         {/* Credit Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-lg border border-gray-100 p-6">
+          <div className="glass-card glass-interactive p-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 ring-1 ring-inset ring-white/50 flex items-center justify-center">
                 <CreditCard className="h-5 w-5 text-blue-600" />
               </div>
               <div>
@@ -57,9 +57,9 @@ export function CreditUsageHistory({
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-100 p-6">
+          <div className="glass-card glass-interactive p-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-green-50 ring-1 ring-inset ring-white/50 flex items-center justify-center">
                 <TrendingDown className="h-5 w-5 text-green-600" />
               </div>
               <div>
@@ -69,9 +69,9 @@ export function CreditUsageHistory({
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-100 p-6">
+          <div className="glass-card glass-interactive p-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-red-50 ring-1 ring-inset ring-white/50 flex items-center justify-center">
                 <Calendar className="h-5 w-5 text-red-600" />
               </div>
               <div>
@@ -84,8 +84,8 @@ export function CreditUsageHistory({
 
         {/* Reset Date */}
         {creditsReset && (
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-            <div className="flex items-center gap-2 text-sm text-blue-900">
+          <div className="bg-duma-secondary/10 border border-duma-secondary/20 backdrop-blur-sm rounded-xl p-4">
+            <div className="flex items-center gap-2 text-sm text-duma-secondary-dark">
               <Calendar className="h-4 w-4" />
               <span>Credits reset on: <strong>{format(new Date(creditsReset), 'MMMM d, yyyy')}</strong></span>
             </div>
@@ -93,13 +93,13 @@ export function CreditUsageHistory({
         )}
 
         {/* Transaction History */}
-        <div className="bg-white rounded-lg border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
+        <div className="glass-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-white/50">
             <h2 className="text-lg font-semibold text-gray-900">Transaction History</h2>
             <p className="text-sm text-gray-600 mt-1">All credit usage transactions</p>
           </div>
 
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-white/40">
             {creditHistory.length === 0 ? (
               <div className="px-6 py-12 text-center">
                 <CreditCard className="h-12 w-12 text-gray-300 mx-auto mb-3" />
@@ -108,7 +108,7 @@ export function CreditUsageHistory({
               </div>
             ) : (
               creditHistory.map((transaction) => (
-                <div key={transaction.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
+                <div key={transaction.id} className="px-6 py-4 hover:bg-white/40 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
@@ -162,7 +162,7 @@ export function CreditUsageHistory({
         </div>
 
         {/* Help Text */}
-        <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
+        <div className="glass-subtle rounded-xl p-4">
           <p className="text-sm text-gray-700">
             <strong>Note:</strong> Credits are deducted only when your image edit completes successfully.
             Failed jobs do not consume credits.

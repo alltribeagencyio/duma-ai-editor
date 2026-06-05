@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Download, Loader2, Edit3, X } from 'lucide-react'
+import { Download, Loader2, Edit3, X, ImageIcon } from 'lucide-react'
 
 const ImageLightbox = dynamic(
   () => import('./ImageLightbox').then(mod => ({ default: mod.ImageLightbox })),
@@ -114,8 +114,8 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
           return (
             <div
               key={`${image.url}-${index}`}
-              className={`relative rounded-lg border border-gray-200 overflow-hidden group transition-all duration-300 ${
-                isExpanded ? 'fixed inset-4 md:inset-8 z-50 max-w-none max-h-none pointer-events-none' : 'aspect-square'
+              className={`relative rounded-xl glass-subtle overflow-hidden group transition-all duration-300 ${
+                isExpanded ? 'fixed inset-4 md:inset-8 z-50 max-w-none max-h-none pointer-events-none' : 'aspect-square hover:shadow-glass'
               }`}
               onClick={(e) => {
                 if (isExpanded && e.target === e.currentTarget) {
@@ -154,7 +154,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
               {/* Version Tag - only show if it's a re-edit */}
               {!isExpanded && image.isReEdit && image.version && (
                 <div className="absolute top-2 right-2 z-10">
-                  <span className="px-2 py-1 bg-purple-600 text-white text-xs font-medium rounded shadow-md">
+                  <span className="px-2 py-1 bg-brand-gradient text-white text-xs font-medium rounded-full shadow-glow">
                     Re-edit V{image.version}
                   </span>
                 </div>
@@ -170,7 +170,7 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                       e.stopPropagation()
                       toggleSelection(image.url)
                     }}
-                    className="h-5 w-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
+                    className="h-5 w-5 rounded border-gray-300 text-duma-primary accent-duma-primary focus:ring-duma-primary cursor-pointer"
                   />
                 </div>
               )}
@@ -199,8 +199,8 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
                     onError={() => setImageErrors(prev => new Set(prev).add(image.url))}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-                    <span className="text-4xl">📷</span>
+                  <div className="w-full h-full flex items-center justify-center bg-white/40 text-duma-primary/40">
+                    <ImageIcon className="h-9 w-9" />
                   </div>
                 )}
               </div>
@@ -274,10 +274,10 @@ export function ImageGallery({ imageUrls, totalImages, onSelectionChange, jobId,
         {loadingPlaceholders.map((_, index) => (
           <div
             key={`loading-${index}`}
-            className="relative aspect-square rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center"
+            className="relative aspect-square rounded-xl glass-subtle overflow-hidden flex items-center justify-center"
           >
             <div className="text-center">
-              <Loader2 className="h-8 w-8 text-gray-400 animate-spin mx-auto mb-2" />
+              <Loader2 className="h-8 w-8 text-duma-primary/60 animate-spin mx-auto mb-2" />
               <p className="text-xs text-gray-500">Processing...</p>
             </div>
           </div>

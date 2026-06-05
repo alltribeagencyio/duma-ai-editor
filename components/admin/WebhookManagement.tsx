@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -276,7 +276,7 @@ export function WebhookManagement() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
       </div>
     )
   }
@@ -320,7 +320,7 @@ export function WebhookManagement() {
 
       {/* Header */}
       <div className="flex items-center justify-end">
-        <Button onClick={handleCreate} className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
+        <Button onClick={handleCreate}>
           <Plus className="h-4 w-4 mr-2" />
           Add Webhook
         </Button>
@@ -413,7 +413,7 @@ export function WebhookManagement() {
                     <code className="px-2 py-1 bg-gray-100 rounded text-xs">{webhook.webhookUrl}</code>
                   </div>
                   <div className="text-xs text-gray-500">
-                    Type: {webhook.webhookType} • Created: {new Date(webhook.createdAt).toLocaleDateString()}
+                    Type: {webhook.webhookType} â€¢ Created: {new Date(webhook.createdAt).toLocaleDateString()}
                   </div>
                 </div>
               </CardContent>

@@ -119,16 +119,16 @@ export const FloatingNotifications = memo(function FloatingNotifications({ userI
       {/* Notification panel - responsive width */}
       <div
         className={cn(
-          'fixed md:absolute top-16 md:top-12 right-2 md:right-0 left-2 md:left-auto z-50 md:w-96 bg-white shadow-2xl rounded-lg border border-gray-200 transition-all duration-300',
+          'fixed md:absolute top-16 md:top-12 right-2 md:right-0 left-2 md:left-auto z-50 md:w-96 glass-panel transition-all duration-300',
           isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/50">
           <h3 className="font-semibold text-gray-900 text-sm md:text-base">Notifications</h3>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-1.5 hover:bg-gray-200 rounded transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
+            className="p-1.5 hover:bg-white/60 rounded-lg transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
             aria-label="Close notifications"
           >
             <X className="h-4 w-4 text-gray-600" />
@@ -148,8 +148,8 @@ export const FloatingNotifications = memo(function FloatingNotifications({ userI
                 href={`/jobs/${notification.jobId}`}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  'block px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 cursor-pointer transition-colors',
-                  index !== notifications.length - 1 && 'border-b border-gray-100'
+                  'block px-4 py-3.5 hover:bg-white/50 cursor-pointer transition-colors',
+                  index !== notifications.length - 1 && 'border-b border-white/40'
                 )}
               >
                 <p className="text-sm font-medium text-gray-900">

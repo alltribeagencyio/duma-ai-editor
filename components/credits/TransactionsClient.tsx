@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
@@ -124,7 +124,7 @@ export function TransactionsClient() {
     return (
       <AppLayout userEmail={userEmail}>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
         </div>
       </AppLayout>
     )
@@ -158,7 +158,7 @@ export function TransactionsClient() {
                 {transactions.map((transaction) => (
                   <div
                     key={transaction.id}
-                    className="flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    className="flex items-start gap-4 p-4 rounded-xl glass-subtle hover:bg-white/70 transition-colors"
                   >
                     {/* Icon */}
                     <div className="flex-shrink-0 mt-1">
@@ -218,7 +218,7 @@ export function TransactionsClient() {
                       <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
                         <span>Balance:</span>
                         <span>${transaction.balanceBefore.toFixed(2)}</span>
-                        <span>→</span>
+                        <span>â†’</span>
                         <span className="font-medium text-gray-700">
                           ${transaction.balanceAfter.toFixed(2)}
                         </span>
@@ -230,7 +230,7 @@ export function TransactionsClient() {
                           <span>Rate: ${transaction.ratePerImage}/image</span>
                           {transaction.pricingPlan && (
                             <>
-                              <span>•</span>
+                              <span>â€¢</span>
                               <span className="capitalize">{transaction.pricingPlan} Plan</span>
                             </>
                           )}

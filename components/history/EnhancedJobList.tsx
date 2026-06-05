@@ -147,7 +147,7 @@ export function EnhancedJobList() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+        <div className="h-9 w-9 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
       </div>
     )
   }
@@ -315,7 +315,7 @@ function JobRow({ job }: { job: Job }) {
     (Array.isArray(job.outputData) ? job.outputData.length : job.outputData?.images?.length || 0) : 0
 
   return (
-    <div className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors">
+    <div className="flex items-center justify-between p-4 hover:bg-white/40 rounded-xl transition-colors">
       <div className="flex-1">
         <div className="flex items-center gap-3 mb-2">
           <Badge className={getStatusColor(job.status)}>

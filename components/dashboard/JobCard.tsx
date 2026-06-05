@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
+import { ImageIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Job } from '@/lib/types'
 import { useState } from 'react'
@@ -37,10 +38,10 @@ export function JobCard({ job }: JobCardProps) {
 
   return (
     <Link href={`/jobs/${job.id}`} className="block mb-6 last:mb-0">
-      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm hover:border-gray-300 transition-all duration-200 cursor-pointer">
+      <div className="glass-card glass-interactive p-4 cursor-pointer">
         <div className="flex gap-4">
           {/* Thumbnail */}
-          <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+          <div className="relative w-20 h-20 flex-shrink-0 bg-white/50 ring-1 ring-inset ring-white/60 rounded-xl overflow-hidden">
             {hasValidImage && !imageError ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -51,8 +52,8 @@ export function JobCard({ job }: JobCardProps) {
                 onError={() => setImageError(true)}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                <span className="text-2xl">📷</span>
+              <div className="w-full h-full flex items-center justify-center text-duma-primary/40">
+                <ImageIcon className="h-7 w-7" />
               </div>
             )}
           </div>
@@ -77,7 +78,7 @@ export function JobCard({ job }: JobCardProps) {
               <span className="text-xs text-gray-500">
                 {formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}
               </span>
-              <span className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors">
+              <span className="text-sm font-semibold text-gradient-duma">
                 View Details →
               </span>
             </div>

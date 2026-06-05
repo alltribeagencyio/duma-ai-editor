@@ -90,13 +90,13 @@ export function SubscriptionCard({ profile }: SubscriptionCardProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
+          <div className="text-center p-3 glass-subtle rounded-xl">
             <div className="text-2xl font-bold text-gray-900">
               {profile.monthlyCredits}
             </div>
             <div className="text-sm text-gray-600">Monthly Credits</div>
           </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
+          <div className="text-center p-3 glass-subtle rounded-xl">
             <div className="text-2xl font-bold text-gray-900">
               {profile.practiceCredits}
             </div>
@@ -105,28 +105,28 @@ export function SubscriptionCard({ profile }: SubscriptionCardProps) {
         </div>
 
         {!profile.hasCompletedOnboarding && (
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="p-3 bg-duma-secondary/10 border border-duma-secondary/20 backdrop-blur-sm rounded-xl">
             <div className="text-sm font-medium text-blue-800 mb-1">
               Complete Your Setup
             </div>
             <div className="text-sm text-blue-600 mb-2">
               Finish onboarding to unlock all features and get your practice credits
             </div>
-            <Button size="sm" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
+            <Button size="sm">
               Continue Setup
             </Button>
           </div>
         )}
 
         {profile.subscriptionTier === 'free' && (
-          <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+          <div className="p-3 bg-duma-primary/10 border border-duma-primary/20 backdrop-blur-sm rounded-xl">
             <div className="text-sm font-medium text-purple-800 mb-1">
               Upgrade Your Plan
             </div>
             <div className="text-sm text-purple-600 mb-2">
               Get more credits and premium features
             </div>
-            <Button size="sm" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
+            <Button size="sm">
               View Plans
             </Button>
           </div>

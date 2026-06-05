@@ -102,7 +102,7 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
       {/* Mobile menu button - aligned with header */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-2 left-2 z-50 md:hidden p-2 rounded-lg bg-white border border-gray-200 shadow-sm active:scale-95 transition-transform"
+        className="fixed top-2 left-2 z-50 md:hidden p-2 rounded-xl glass-nav border active:scale-95 transition-transform"
         aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
       >
         {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -111,7 +111,7 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
       {/* Mobile backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-black/20 z-40 md:hidden"
+          className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -119,7 +119,7 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-full bg-white border-r border-gray-100 flex flex-col',
+          'fixed left-0 top-0 z-40 h-full glass-nav border-r flex flex-col',
           mounted && 'transition-all duration-300',
           collapsed ? 'w-16' : 'w-64',
           mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
@@ -173,10 +173,10 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-sm',
+                  'group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 text-sm',
                   isActive
-                    ? 'bg-gradient-to-r from-duma-primary/10 to-duma-secondary/10 text-duma-primary border-l-2 border-duma-primary'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                    ? 'bg-gradient-to-r from-duma-primary/15 to-duma-secondary/15 text-duma-primary font-semibold shadow-glass-sm ring-1 ring-inset ring-white/60'
+                    : 'text-gray-600 hover:bg-white/60 hover:text-duma-primary',
                   collapsed && 'justify-center px-2'
                 )}
                 title={collapsed ? item.label : undefined}

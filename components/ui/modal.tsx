@@ -57,7 +57,7 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -65,19 +65,19 @@ export function Modal({
     >
       <div
         className={cn(
-          'bg-white rounded-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200 border border-gray-200',
+          'glass-panel w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200',
           sizeClasses[size]
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+        <div className="flex justify-between items-center pb-3 border-b border-white/50">
           <h3 id="modal-title" className="text-xl font-semibold text-gray-900">
             {title}
           </h3>
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-lg"
+              className="text-gray-400 hover:text-duma-primary transition-colors p-1.5 hover:bg-white/70 rounded-lg"
               aria-label="Close modal"
             >
               <X className="h-5 w-5" />

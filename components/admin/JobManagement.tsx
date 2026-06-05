@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -79,7 +79,7 @@ export function JobManagement() {
         <div className="border rounded-lg">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-white/40 backdrop-blur-sm">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Job ID</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
@@ -104,7 +104,7 @@ export function JobManagement() {
                   </tr>
                 ) : (
                   filteredJobs.slice(0, 50).map((job) => (
-                    <tr key={job.id} className="hover:bg-gray-50">
+                    <tr key={job.id} className="hover:bg-white/40">
                       <td className="px-4 py-3">
                         <div className="font-mono text-xs text-gray-600">
                           {job.id.substring(0, 8)}...

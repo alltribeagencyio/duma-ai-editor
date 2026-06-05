@@ -92,9 +92,9 @@ export function ChatbotWidget() {
   }
 
   return (
-    <div className="fixed bottom-2 top-16 left-2 right-2 md:bottom-6 md:right-6 md:top-auto md:left-auto md:w-96 md:h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200 h-full">
+    <div className="fixed bottom-2 top-16 left-2 right-2 md:bottom-6 md:right-6 md:top-auto md:left-auto md:w-96 md:h-[600px] glass-panel flex flex-col z-50 h-full overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-duma-primary to-duma-secondary text-white p-4 rounded-t-lg flex items-center justify-between">
+      <div className="bg-brand-gradient text-white p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <MessageCircle className="h-5 w-5" />
           <div>
@@ -145,7 +145,7 @@ export function ChatbotWidget() {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-white/50">
         <div className="flex gap-2">
           <Input
             value={inputMessage}
@@ -159,7 +159,6 @@ export function ChatbotWidget() {
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isLoading}
             size="sm"
-            className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100"
           >
             <Send className="h-4 w-4" />
           </Button>

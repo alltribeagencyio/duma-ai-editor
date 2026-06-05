@@ -175,10 +175,10 @@ export function TicketsList() {
 
         {/* Tickets List */}
         {tickets.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+          <div className="text-center py-12 glass-card">
             <div className="flex justify-center mb-4">
-              <div className="p-4 bg-gray-100 rounded-full">
-                <Ticket className="h-12 w-12 text-gray-400" />
+              <div className="p-4 rounded-2xl glass-subtle glass-highlight text-duma-primary/70">
+                <Ticket className="h-12 w-12" />
               </div>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No tickets found</h3>
@@ -187,10 +187,7 @@ export function TicketsList() {
                 ? "You haven't created any support tickets yet."
                 : `No ${formatStatus(statusFilter).toLowerCase()} tickets.`}
             </p>
-            <Button
-              onClick={handleCreateTicket}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-            >
+            <Button onClick={handleCreateTicket}>
               <Plus className="h-4 w-4 mr-2" />
               Create Your First Ticket
             </Button>
@@ -201,13 +198,13 @@ export function TicketsList() {
               <div
                 key={ticket.id}
                 onClick={() => handleTicketClick(ticket)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                className="glass-card glass-interactive p-6 cursor-pointer"
               >
                 <div className="flex flex-col sm:flex-row gap-4 justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start gap-3 mb-3">
-                      <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-                        <Ticket className="h-5 w-5 text-purple-600" />
+                      <div className="p-2 bg-duma-primary/10 ring-1 ring-inset ring-duma-primary/20 rounded-xl flex-shrink-0">
+                        <Ticket className="h-5 w-5 text-duma-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-semibold text-gray-900 mb-1 break-words">

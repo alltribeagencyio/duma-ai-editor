@@ -74,8 +74,8 @@ export function SupportTicketModal({ isOpen, onClose }: SupportTicketModalProps)
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="glass-panel max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
         {isSuccess ? (
           // Success State
           <div className="text-center py-8">
@@ -97,8 +97,8 @@ export function SupportTicketModal({ isOpen, onClose }: SupportTicketModalProps)
           <>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-full">
-                  <Ticket className="h-5 w-5 text-purple-600" />
+                <div className="p-2 bg-duma-primary/10 ring-1 ring-inset ring-duma-primary/20 rounded-full">
+                  <Ticket className="h-5 w-5 text-duma-primary" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">Create Support Ticket</h3>

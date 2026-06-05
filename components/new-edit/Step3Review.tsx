@@ -116,7 +116,7 @@ export function Step3Review() {
           {images.map((image, index) => (
             <div
               key={index}
-              className="relative aspect-square rounded-lg border border-gray-200 overflow-hidden"
+              className="relative aspect-square rounded-xl glass-subtle overflow-hidden"
             >
               <Image
                 src={URL.createObjectURL(image)}
@@ -139,7 +139,7 @@ export function Step3Review() {
             Edit
           </Button>
         </div>
-        <div className="bg-gray-50 rounded-lg p-3 md:p-4">
+        <div className="glass-subtle rounded-xl p-3 md:p-4">
           <p className="text-sm md:text-base text-gray-700">
             {promptType === 'preset' && presetName && (
               <span className="font-medium">{presetName}: </span>
@@ -166,9 +166,9 @@ export function Step3Review() {
           {/* Minimal Progress Bar */}
           {submitting && uploadProgress > 0 && (
             <div className="space-y-1.5">
-              <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-white/50 rounded-full overflow-hidden border border-white/60">
                 <div
-                  className="h-full bg-purple-600 transition-all duration-300 ease-out"
+                  className="h-full bg-brand-gradient shadow-glow transition-all duration-300 ease-out"
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>

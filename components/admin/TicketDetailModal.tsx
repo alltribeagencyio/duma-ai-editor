@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { X, Send, User, Mail, Calendar, Tag, AlertCircle, CheckCircle } from 'lucide-react'
@@ -147,8 +147,8 @@ export function TicketDetailModal({ ticketId, isOpen, onClose, onUpdate }: Ticke
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="glass-panel max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center gap-3">
@@ -173,12 +173,12 @@ export function TicketDetailModal({ ticketId, isOpen, onClose, onUpdate }: Ticke
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
             </div>
           ) : ticket ? (
             <>
               {/* User Info */}
-              <div className="bg-gray-50 rounded-lg p-4">
+              <div className="glass-subtle rounded-xl p-4">
                 <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
                   <User className="h-4 w-4" />
                   User Information
@@ -213,7 +213,7 @@ export function TicketDetailModal({ ticketId, isOpen, onClose, onUpdate }: Ticke
 
               <div>
                 <h4 className="font-medium text-gray-900 mb-3">Message</h4>
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="glass-subtle rounded-xl p-4">
                   <p className="text-gray-700 whitespace-pre-wrap">{ticket.message}</p>
                 </div>
               </div>
@@ -311,7 +311,7 @@ export function TicketDetailModal({ ticketId, isOpen, onClose, onUpdate }: Ticke
         </div>
 
         {/* Footer */}
-        <div className="flex gap-3 p-6 border-t bg-gray-50">
+        <div className="flex gap-3 p-6 border-t border-white/50">
           <Button
             variant="outline"
             onClick={onClose}
@@ -327,7 +327,7 @@ export function TicketDetailModal({ ticketId, isOpen, onClose, onUpdate }: Ticke
           >
             {isSubmitting ? (
               <>
-                <span className="animate-spin mr-2">⏳</span>
+                <span className="animate-spin mr-2">â³</span>
                 Updating...
               </>
             ) : (

@@ -164,10 +164,10 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
     >
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Original Images & Prompts Section - Collapsible */}
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="glass-card overflow-hidden">
           <button
             onClick={() => setShowOriginalImages(!showOriginalImages)}
-            className="w-full px-4 md:px-6 py-3 md:py-4 hover:bg-gray-50 active:bg-gray-100 transition-colors group text-left"
+            className="w-full px-4 md:px-6 py-3 md:py-4 hover:bg-white/40 transition-colors group text-left"
           >
             {/* Row 1: Title + Arrow */}
             <div className="flex items-center justify-between mb-2">
@@ -194,7 +194,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
           </button>
 
           {showOriginalImages && (
-            <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-200">
+            <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-white/50">
               {/* Original Images */}
               {job.inputImages && job.inputImages.length > 0 && (
                 <div className="pt-3 sm:pt-4">
@@ -209,9 +209,9 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
 
                 {/* Version 1 Prompt */}
                 {job.prompt && (
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+                  <div className="glass-subtle p-3 sm:p-4 rounded-xl">
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
-                      <span className="text-xs px-2 py-0.5 bg-purple-600 text-white rounded font-medium">
+                      <span className="text-xs px-2 py-0.5 bg-brand-gradient text-white rounded-full font-medium shadow-glow">
                         Version 1
                       </span>
                       <span className="text-xs text-gray-600">
@@ -225,9 +225,9 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
                 {/* Re-edit Prompts */}
                 {reEditJobs.map((reEdit, index) => (
                   reEdit.prompt && (
-                    <div key={reEdit.id} className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+                    <div key={reEdit.id} className="glass-subtle p-3 sm:p-4 rounded-xl">
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
-                        <span className="text-xs px-2 py-0.5 bg-purple-600 text-white rounded font-medium">
+                        <span className="text-xs px-2 py-0.5 bg-brand-gradient text-white rounded-full font-medium shadow-glow">
                           Version {index + 2}
                         </span>
                         <span className="text-xs text-gray-600">
@@ -252,10 +252,10 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
         </div>
 
         {/* Edited Images Gallery - Unified */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
+        <div className="glass-card p-4 md:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Edited Images</h3>
-            <span className="text-xs px-2 py-1 bg-purple-50 text-purple-700 rounded font-medium">
+            <span className="text-xs px-2.5 py-1 bg-duma-primary/10 text-duma-primary ring-1 ring-inset ring-duma-primary/20 rounded-full font-medium">
               {allEditedImages.length} image{allEditedImages.length !== 1 ? 's' : ''} · {reEditJobs.length + 1} version{reEditJobs.length > 0 ? 's' : ''}
             </span>
           </div>
@@ -264,8 +264,8 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
           {isAnyProcessing && allEditedImages.length === 0 && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {Array.from({ length: totalImages || 1 }).map((_, idx) => (
-                <div key={idx} className="aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-purple-600 mb-2" />
+                <div key={idx} className="aspect-square rounded-xl border-2 border-dashed border-white/70 bg-white/30 backdrop-blur-sm flex flex-col items-center justify-center">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary mb-2" />
                   <p className="text-xs text-gray-500">Processing...</p>
                 </div>
               ))}
@@ -273,7 +273,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
           )}
 
           {job.status === 'failed' && allEditedImages.length === 0 && (
-            <div className="text-center py-8 bg-red-50 rounded-lg border border-red-200">
+            <div className="text-center py-8 bg-red-50/70 backdrop-blur-sm rounded-xl border border-red-200/60">
               <p className="text-red-600 font-semibold">Failed</p>
               {job.errorMessage && (
                 <p className="text-sm text-gray-600 mt-2">{job.errorMessage}</p>
@@ -315,7 +315,7 @@ export function JobDetailClient({ initialJob }: JobDetailClientProps) {
           )}
 
           {!isAnyProcessing && allEditedImages.length === 0 && job.status !== 'failed' && (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
+            <div className="text-center py-8 glass-subtle rounded-xl">
               <p className="text-gray-600">No images generated yet</p>
             </div>
           )}

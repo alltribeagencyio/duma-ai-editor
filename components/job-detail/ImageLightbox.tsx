@@ -50,7 +50,7 @@ export function ImageLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+      className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center"
       onClick={onClose}
     >
       {/* Close button */}

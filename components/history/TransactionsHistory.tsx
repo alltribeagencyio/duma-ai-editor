@@ -97,7 +97,7 @@ export function TransactionsHistory() {
   if (isLoading && transactions.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[40vh]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+        <div className="h-9 w-9 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
       </div>
     )
   }
@@ -119,7 +119,7 @@ export function TransactionsHistory() {
               {transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  className="flex items-start gap-4 p-4 rounded-xl glass-subtle hover:bg-white/70 transition-colors"
                 >
                   {/* Icon */}
                   <div className="flex-shrink-0 mt-1">

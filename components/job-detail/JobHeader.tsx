@@ -25,11 +25,11 @@ export function JobHeader({ job }: JobHeaderProps) {
     : ((job.outputData as any)?.images || [])
 
   return (
-    <div className="bg-white border-b border-gray-200 p-6">
+    <div className="glass-card p-6 mb-6">
       <div className="max-w-6xl mx-auto">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-duma-primary mb-4 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard

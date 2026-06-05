@@ -3,19 +3,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/20 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-duma-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
   {
     variants: {
       variant: {
-        default: "bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800 shadow-sm",
-        ghost: "hover:bg-gray-100 text-gray-700 hover:text-gray-900",
-        outline: "border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 hover:border-gray-400",
-        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+        default:
+          "bg-brand-gradient text-white shadow-glow hover:shadow-glow-lg hover:brightness-105",
+        ghost: "text-gray-600 hover:bg-white/60 hover:text-duma-primary backdrop-blur-sm",
+        outline:
+          "border border-white/70 bg-white/50 text-gray-700 backdrop-blur-md hover:bg-white/80 hover:text-duma-primary hover:border-duma-primary/30 shadow-glass-sm",
+        secondary:
+          "border border-white/60 bg-white/60 text-gray-900 backdrop-blur-md hover:bg-white/80 shadow-glass-sm",
+        destructive:
+          "bg-gradient-to-br from-red-500 to-rose-600 text-white shadow-glow hover:brightness-105",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-lg px-3 text-sm",
-        lg: "h-11 rounded-lg px-6",
+        default: "h-10 px-5 py-2",
+        sm: "h-9 rounded-lg px-3.5 text-sm",
+        lg: "h-12 rounded-2xl px-7 text-base",
         icon: "h-10 w-10",
       },
     },

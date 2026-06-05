@@ -99,24 +99,24 @@ export function NotificationBell({ userId }: NotificationBellProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-80 bg-white shadow-lg border border-gray-200 rounded-lg z-50"
+        className="w-80 z-50 p-0"
         sideOffset={8}
       >
-        <div className="px-4 py-3 border-b border-gray-200 bg-white">
+        <div className="px-4 py-3 border-b border-white/50">
           <h3 className="font-semibold text-gray-900">Notifications</h3>
         </div>
 
         {notifications.length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-gray-500 bg-white">
+          <div className="px-4 py-8 text-center text-sm text-gray-500">
             No notifications yet
           </div>
         ) : (
-          <div className="max-h-96 overflow-y-auto bg-white divide-y divide-gray-200">
+          <div className="max-h-96 overflow-y-auto divide-y divide-white/40">
             {notifications.map((notification) => (
               <DropdownMenuItem key={notification.id} asChild>
                 <Link
                   href={`/jobs/${notification.jobId}`}
-                  className="flex flex-col items-start gap-1 px-4 py-4 hover:bg-gray-50 cursor-pointer bg-white transition-colors"
+                  className="flex flex-col items-start gap-1 px-4 py-4 hover:bg-white/50 cursor-pointer transition-colors"
                 >
                   <p className="text-sm font-medium text-gray-900">
                     {notification.title}

@@ -19,7 +19,7 @@ export function AdminStats() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Growth Metrics</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-blue-50 rounded-lg">
+                <div className="p-4 bg-blue-50/70 ring-1 ring-inset ring-white/50 backdrop-blur-sm rounded-xl">
                   <div className="flex items-center gap-2 text-blue-600 mb-2">
                     <Users className="h-5 w-5" />
                     <span className="font-medium">User Growth</span>
@@ -28,7 +28,7 @@ export function AdminStats() {
                   <div className="text-sm text-gray-600">vs last month</div>
                 </div>
 
-                <div className="p-4 bg-green-50 rounded-lg">
+                <div className="p-4 bg-green-50/70 ring-1 ring-inset ring-white/50 backdrop-blur-sm rounded-xl">
                   <div className="flex items-center gap-2 text-green-600 mb-2">
                     <Briefcase className="h-5 w-5" />
                     <span className="font-medium">Job Volume</span>
@@ -37,8 +37,8 @@ export function AdminStats() {
                   <div className="text-sm text-gray-600">vs last month</div>
                 </div>
 
-                <div className="p-4 bg-purple-50 rounded-lg">
-                  <div className="flex items-center gap-2 text-purple-600 mb-2">
+                <div className="p-4 bg-duma-primary/10 ring-1 ring-inset ring-white/50 backdrop-blur-sm rounded-xl">
+                  <div className="flex items-center gap-2 text-duma-primary mb-2">
                     <DollarSign className="h-5 w-5" />
                     <span className="font-medium">Revenue</span>
                   </div>
@@ -52,7 +52,7 @@ export function AdminStats() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Subscription Distribution</h3>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 glass-subtle rounded-xl">
                   <span className="font-medium">Free</span>
                   <div className="flex items-center gap-4">
                     <div className="w-48 bg-gray-200 rounded-full h-2">
@@ -62,7 +62,7 @@ export function AdminStats() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 glass-subtle rounded-xl">
                   <span className="font-medium">Starter</span>
                   <div className="flex items-center gap-4">
                     <div className="w-48 bg-gray-200 rounded-full h-2">
@@ -72,7 +72,7 @@ export function AdminStats() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 glass-subtle rounded-xl">
                   <span className="font-medium">Pro</span>
                   <div className="flex items-center gap-4">
                     <div className="w-48 bg-gray-200 rounded-full h-2">
@@ -82,7 +82,7 @@ export function AdminStats() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 glass-subtle rounded-xl">
                   <span className="font-medium">Enterprise</span>
                   <div className="flex items-center gap-4">
                     <div className="w-48 bg-gray-200 rounded-full h-2">
@@ -98,13 +98,13 @@ export function AdminStats() {
             <div>
               <h3 className="text-lg font-semibold mb-4">System Health</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg">
+                <div className="p-4 glass-subtle rounded-xl">
                   <div className="text-sm text-gray-600 mb-1">Success Rate</div>
                   <div className="text-3xl font-bold text-green-600">98.5%</div>
                   <div className="text-xs text-gray-500 mt-1">Last 30 days</div>
                 </div>
 
-                <div className="p-4 border rounded-lg">
+                <div className="p-4 glass-subtle rounded-xl">
                   <div className="text-sm text-gray-600 mb-1">Avg Processing Time</div>
                   <div className="text-3xl font-bold text-blue-600">3.2m</div>
                   <div className="text-xs text-gray-500 mt-1">Per job</div>

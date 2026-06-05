@@ -170,7 +170,7 @@ export function ReEditModal({ isOpen, onClose, imageUrl, jobId, onSuccess }: ReE
                   className={`p-3 rounded-lg border text-center transition-colors ${
                     selectedPromptType === 'preset'
                       ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'glass-subtle hover:bg-white/70'
                   }`}
                 >
                   <Sparkles className="h-5 w-5 mx-auto mb-1" />
@@ -183,7 +183,7 @@ export function ReEditModal({ isOpen, onClose, imageUrl, jobId, onSuccess }: ReE
                   className={`p-3 rounded-lg border text-center transition-colors ${
                     selectedPromptType === 'brand'
                       ? 'border-purple-500 bg-purple-50 text-purple-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'glass-subtle hover:bg-white/70'
                   }`}
                   disabled={brandPrompts.length === 0}
                 >
@@ -197,7 +197,7 @@ export function ReEditModal({ isOpen, onClose, imageUrl, jobId, onSuccess }: ReE
                   className={`p-3 rounded-lg border text-center transition-colors ${
                     selectedPromptType === 'custom'
                       ? 'border-green-500 bg-green-50 text-green-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'glass-subtle hover:bg-white/70'
                   }`}
                 >
                   <Edit3 className="h-5 w-5 mx-auto mb-1" />
@@ -228,7 +228,7 @@ export function ReEditModal({ isOpen, onClose, imageUrl, jobId, onSuccess }: ReE
                         className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                           selectedPreset === prompt.id
                             ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            : 'glass-subtle hover:bg-white/70'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
@@ -267,7 +267,7 @@ export function ReEditModal({ isOpen, onClose, imageUrl, jobId, onSuccess }: ReE
                         className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                           selectedBrand === prompt.id
                             ? 'border-purple-500 bg-purple-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            : 'glass-subtle hover:bg-white/70'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
@@ -310,7 +310,7 @@ export function ReEditModal({ isOpen, onClose, imageUrl, jobId, onSuccess }: ReE
             {getSelectedPrompt() && (
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">Prompt Preview</h4>
-                <div className="p-3 bg-gray-50 rounded-lg border">
+                <div className="p-3 glass-subtle rounded-xl">
                   <p className="text-sm text-gray-700">{getSelectedPrompt()}</p>
                 </div>
               </div>

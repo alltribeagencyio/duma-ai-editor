@@ -203,7 +203,7 @@ export function HelpCenter() {
                 <CardContent className="p-0">
                   <button
                     onClick={() => setExpandedFAQ(expandedFAQ === index ? null : index)}
-                    className="w-full text-left p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                    className="w-full text-left p-4 flex items-center justify-between rounded-xl hover:bg-white/40 transition-colors"
                   >
                     <div className="flex-1 pr-4">
                       <div className="text-xs text-gray-500 mb-1">{faq.category}</div>

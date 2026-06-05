@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -118,7 +118,7 @@ export function SupportTickets() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
       </div>
     )
   }
@@ -205,9 +205,9 @@ export function SupportTickets() {
                     <CardDescription>
                       <div className="flex items-center gap-4 text-sm">
                         <span>{ticket.userEmail}</span>
-                        <span>•</span>
+                        <span>â€¢</span>
                         <span className="capitalize">{ticket.category}</span>
-                        <span>•</span>
+                        <span>â€¢</span>
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {new Date(ticket.createdAt).toLocaleDateString()}

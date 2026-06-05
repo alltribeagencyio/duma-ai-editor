@@ -83,7 +83,7 @@ export function AdminAnalytics() {
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-white rounded-lg border border-gray-100 p-6 animate-pulse">
+            <div key={i} className="glass-card p-6 animate-pulse">
               <div className="h-4 bg-gray-200 rounded w-24 mb-4" />
               <div className="h-8 bg-gray-200 rounded w-16 mb-2" />
               <div className="h-3 bg-gray-200 rounded w-32" />
@@ -96,7 +96,7 @@ export function AdminAnalytics() {
 
   if (!analytics) {
     return (
-      <div className="bg-white rounded-lg border border-gray-100 p-8 text-center">
+      <div className="glass-card p-8 text-center">
         <p className="text-gray-600">Failed to load analytics data</p>
       </div>
     )

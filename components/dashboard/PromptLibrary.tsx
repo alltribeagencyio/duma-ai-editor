@@ -43,11 +43,11 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-100 p-8">
+    <div className="glass-card p-8">
       <h2 className="text-xl font-semibold text-gray-900 mb-6">Prompt Library</h2>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-100 mb-6">
+      <div className="flex gap-2 border-b border-white/50 mb-6">
         <button
           onClick={() => setActiveTab('presets')}
           className={cn(
@@ -86,7 +86,7 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
                   <div
                     key={preset.id}
                     className={cn(
-                      'bg-gradient-to-br p-6 rounded-lg border border-gray-100 hover:border-duma-primary/30 transition-all group cursor-pointer hover:shadow-sm min-w-[280px] md:min-w-0 snap-start flex-shrink-0 active:scale-95 md:active:scale-100',
+                      'glass-card glass-interactive bg-gradient-to-br p-6 group cursor-pointer min-w-[280px] md:min-w-0 snap-start flex-shrink-0 active:scale-95 md:active:scale-100',
                       categoryGradients[preset.category] || 'from-gray-50 to-gray-100'
                     )}
                     onClick={() => onUsePrompt(preset.prompt)}
@@ -96,7 +96,7 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
                     </div>
                     <h4 className="text-base font-semibold text-gray-900 mb-2">{preset.name}</h4>
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{preset.description}</p>
-                    <button className="w-full px-4 py-2 rounded-lg text-sm font-medium transition-all bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
+                    <button className="w-full px-4 py-2 rounded-xl text-sm font-medium transition-all bg-brand-gradient text-white shadow-glow hover:brightness-105">
                       Use this Prompt
                     </button>
                   </div>
@@ -121,7 +121,7 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
               placeholder="Search your prompts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-duma-primary/20 focus:border-duma-primary transition-colors"
+              className="glass-input w-full pl-10 pr-4 py-2 focus:outline-none"
             />
           </div>
 
@@ -137,7 +137,7 @@ export function PromptLibrary({ myPrompts, presetPrompts, onUsePrompt }: PromptL
               {filteredPrompts.map((prompt, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-duma-primary/5 transition-colors group"
+                  className="flex items-center justify-between p-3 glass-subtle rounded-xl hover:bg-white/70 transition-colors group"
                 >
                   <p className="text-sm text-gray-900 flex-1 pr-4">{prompt}</p>
                   <button

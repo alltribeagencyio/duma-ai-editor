@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,11 +21,11 @@ import {
 } from 'lucide-react'
 // Simple chart components (replace with recharts after npm install)
 const SimpleLineChart = ({ data }: { data: any[] }) => (
-  <div className="h-72 flex items-end justify-center space-x-2 p-4 bg-gray-50 rounded">
+  <div className="h-72 flex items-end justify-center space-x-2 p-4 glass-subtle rounded-xl">
     {data.slice(-10).map((item, index) => (
       <div
         key={index}
-        className="bg-blue-500 rounded-t"
+        className="bg-brand-gradient rounded-t shadow-glow"
         style={{
           height: `${Math.max((item.credits / Math.max(...data.map(d => d.credits))) * 100, 10)}%`,
           width: '20px'
@@ -50,11 +50,11 @@ const SimplePieChart = ({ data }: { data: any[] }) => (
 )
 
 const SimpleBarChart = ({ data }: { data: any[] }) => (
-  <div className="h-64 flex items-end justify-center space-x-4 p-4 bg-gray-50 rounded">
+  <div className="h-64 flex items-end justify-center space-x-4 p-4 glass-subtle rounded-xl">
     {data.map((item, index) => (
       <div key={index} className="flex flex-col items-center">
         <div
-          className="bg-blue-500 rounded-t mb-2"
+          className="bg-brand-gradient rounded-t mb-2 shadow-glow"
           style={{
             height: `${Math.max((item.count / Math.max(...data.map(d => d.count))) * 100, 20)}px`,
             width: '40px'
@@ -173,7 +173,7 @@ export function CreditAnalytics() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
       </div>
     )
   }
@@ -365,7 +365,7 @@ export function CreditAnalytics() {
             <div className="space-y-4">
               <h4 className="font-medium">Performance Summary</h4>
               <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                <div className="flex justify-between items-center p-3 glass-subtle rounded-xl">
                   <span className="text-sm font-medium">Total Jobs</span>
                   <span className="text-lg font-bold">{analytics.jobs.total}</span>
                 </div>
@@ -377,9 +377,9 @@ export function CreditAnalytics() {
                   <span className="text-sm font-medium">Success Rate</span>
                   <span className="text-lg font-bold text-blue-600">{analytics.jobs.successRate}%</span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-purple-50 rounded">
+                <div className="flex justify-between items-center p-3 bg-duma-primary/10 rounded-xl">
                   <span className="text-sm font-medium">Efficiency</span>
-                  <span className="text-lg font-bold text-purple-600">{analytics.jobs.avgCreditsPerJob} credits/job</span>
+                  <span className="text-lg font-bold text-duma-primary">{analytics.jobs.avgCreditsPerJob} credits/job</span>
                 </div>
               </div>
             </div>

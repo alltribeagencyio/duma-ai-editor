@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -238,7 +238,7 @@ export function UserManagement() {
         <div className="border rounded-lg">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-white/40 backdrop-blur-sm">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pricing Plan</th>
@@ -263,7 +263,7 @@ export function UserManagement() {
                   </tr>
                 ) : (
                   filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
+                    <tr key={user.id} className="hover:bg-white/40">
                       <td className="px-4 py-3">
                         <div>
                           <div className="font-medium text-gray-900">
@@ -332,8 +332,8 @@ export function UserManagement() {
 
     {/* Create User Modal */}
     {showCreateModal && (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="glass-panel max-w-md w-full p-6 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Create New User</h3>
             <button
@@ -433,8 +433,8 @@ export function UserManagement() {
 
     {/* Change Plan Modal */}
     {showPlanModal && selectedUser && (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="glass-panel max-w-md w-full p-6 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Change Pricing Plan</h3>
             <button
@@ -448,7 +448,7 @@ export function UserManagement() {
             </button>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="glass-subtle rounded-xl p-4">
             <div className="text-sm text-gray-600">User</div>
             <div className="font-medium">{selectedUser.fullName || selectedUser.email}</div>
             <div className="text-sm text-gray-500 mt-2">
@@ -501,8 +501,8 @@ export function UserManagement() {
 
     {/* Manage Credits Modal */}
     {showCreditsModal && selectedUser && (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="glass-panel max-w-md w-full p-6 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Manage Credits</h3>
             <button
@@ -516,7 +516,7 @@ export function UserManagement() {
             </button>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="glass-subtle rounded-xl p-4">
             <div className="text-sm text-gray-600">User</div>
             <div className="font-medium">{selectedUser.fullName || selectedUser.email}</div>
             <div className="text-sm text-gray-500 mt-2">

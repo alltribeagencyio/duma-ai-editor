@@ -177,10 +177,10 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
   ]
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 md:p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full flex flex-col max-h-[95vh] md:max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
+      <div className="glass-panel max-w-4xl w-full flex flex-col max-h-[95vh] md:max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-start justify-between p-4 md:p-6 border-b bg-white">
+        <div className="flex items-start justify-between p-4 md:p-6 border-b border-white/50">
           <div className="flex-1 min-w-0 pr-4">
             <div className="flex items-center gap-2 mb-2">
               <Ticket className="h-5 w-5 flex-shrink-0 text-gray-600" />
@@ -204,7 +204,7 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
           </div>
           <button
             onClick={onClose}
-            className="flex-shrink-0 p-1 hover:bg-gray-100 rounded-full transition-colors"
+            className="flex-shrink-0 p-1 hover:bg-white/60 rounded-full transition-colors"
             aria-label="Close"
           >
             <X className="h-5 w-5 text-gray-500" />
@@ -212,7 +212,7 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-gray-50">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-white/20">
           {allMessages.map((msg, index) => {
             const isSupport = msg.senderRole === 'admin' || msg.senderRole === 'support'
             const isSystem = msg.senderRole === 'system'
@@ -248,12 +248,12 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
                       {new Date(msg.createdAt).toLocaleString()}
                     </span>
                   </div>
-                  <div className={`rounded-lg p-3 md:p-4 ${
+                  <div className={`rounded-2xl p-3 md:p-4 ${
                     isSupport
-                      ? 'bg-white text-gray-900 border border-gray-200'
+                      ? 'glass-card text-gray-900'
                       : isSystem
-                      ? 'bg-gray-100 text-gray-900 border border-gray-200'
-                      : 'bg-gray-900 text-white'
+                      ? 'glass-subtle text-gray-900'
+                      : 'bg-brand-gradient text-white shadow-glow'
                   }`}>
                     <p className="text-sm whitespace-pre-wrap break-words">{msg.message}</p>
                   </div>
@@ -265,16 +265,16 @@ export function TicketDetailModal({ ticket: initialTicket, onClose }: TicketDeta
         </div>
 
         {/* Reply Input */}
-        <div className="p-4 md:p-6 border-t bg-white">
+        <div className="p-4 md:p-6 border-t border-white/50">
           {ticket.status === 'closed' ? (
-            <div className="text-center py-4 bg-gray-50 rounded-lg">
+            <div className="text-center py-4 glass-subtle rounded-xl">
               <p className="text-sm text-gray-600">
                 This ticket is closed. To continue the conversation, please create a new ticket.
               </p>
             </div>
           ) : ticket.status === 'resolved' ? (
             <div className="space-y-3">
-              <div className="text-center py-2 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="text-center py-2 glass-subtle rounded-xl">
                 <p className="text-sm text-gray-600">
                   This ticket has been marked as resolved. You can still reply if you need further assistance.
                 </p>

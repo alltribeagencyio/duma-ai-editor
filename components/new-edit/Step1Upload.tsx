@@ -160,7 +160,7 @@ export function Step1Upload() {
     <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
       {/* Product Information - Only visible for business users */}
       {!isLoadingPlan && pricingPlan === 'business' && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
+        <div className="glass-card p-4 md:p-6">
           <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">Product Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -172,7 +172,7 @@ export function Step1Upload() {
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
                 placeholder="e.g., Classic T-Shirt"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                className="glass-input w-full px-3.5 py-2 focus:outline-none"
               />
             </div>
             <div>
@@ -184,7 +184,7 @@ export function Step1Upload() {
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
                 placeholder="e.g., Apparel"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                className="glass-input w-full px-3.5 py-2 focus:outline-none"
               />
             </div>
             <div>
@@ -196,7 +196,7 @@ export function Step1Upload() {
                 value={productSku}
                 onChange={(e) => setProductSku(e.target.value)}
                 placeholder="e.g., TSH-001-BLK"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                className="glass-input w-full px-3.5 py-2 focus:outline-none"
               />
             </div>
           </div>
@@ -207,15 +207,17 @@ export function Step1Upload() {
       <div
         {...getRootProps()}
         className={cn(
-          'border-2 border-dashed rounded-xl p-6 md:p-10 transition-all duration-200 cursor-pointer',
+          'border-2 border-dashed rounded-2xl p-6 md:p-10 transition-all duration-200 cursor-pointer backdrop-blur-md',
           isDragActive
-            ? 'border-gray-900 bg-gray-100'
-            : 'border-gray-300 bg-white hover:border-gray-400 hover:bg-gray-50'
+            ? 'border-duma-primary bg-duma-primary/10 shadow-glow'
+            : 'border-white/70 bg-white/40 hover:border-duma-primary/40 hover:bg-white/60'
         )}
       >
         <input {...getInputProps()} />
         <div className="flex flex-col items-center justify-center text-center space-y-3 md:space-y-4">
-          <Upload className="h-10 w-10 md:h-12 md:w-12 text-gray-400" />
+          <div className="grid place-items-center h-14 w-14 rounded-2xl bg-brand-gradient text-white shadow-glow">
+            <Upload className="h-7 w-7" />
+          </div>
           <div>
             <p className="text-sm md:text-base text-gray-900 font-medium">
               Drag images here or click to browse
@@ -240,7 +242,7 @@ export function Step1Upload() {
         />
         <button
           onClick={() => cameraInputRef.current?.click()}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 glass-subtle rounded-xl hover:bg-white/70 hover:text-duma-primary transition-colors"
         >
           <Camera className="h-5 w-5 text-gray-600" />
           <span className="text-sm font-medium text-gray-900">Take Photo</span>
@@ -250,15 +252,15 @@ export function Step1Upload() {
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200"></div>
+          <div className="w-full border-t border-white/60"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">or add image by URL</span>
+          <span className="px-3 py-0.5 rounded-full glass-subtle text-gray-500">or add image by URL</span>
         </div>
       </div>
 
       {/* URL Input */}
-      <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
+      <div className="glass-card p-3 md:p-4">
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-1">
             <input
@@ -267,7 +269,7 @@ export function Step1Upload() {
               onChange={(e) => setUrlInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleAddUrl()}
               placeholder="https://example.com/image.jpg"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="glass-input w-full px-3.5 py-2 text-sm focus:outline-none"
               disabled={isValidatingUrl}
             />
           </div>
@@ -319,7 +321,7 @@ export function Step1Upload() {
           {images.map((image, index) => (
             <div
               key={`file-${index}`}
-              className="relative aspect-square rounded-lg border border-gray-200 overflow-hidden group"
+              className="relative aspect-square rounded-xl glass-subtle overflow-hidden group"
             >
               <Image
                 src={URL.createObjectURL(image)}
@@ -329,7 +331,7 @@ export function Step1Upload() {
               />
               <button
                 onClick={() => removeImage(index)}
-                className="absolute top-1 right-1 md:top-2 md:right-2 w-8 h-8 md:w-6 md:h-6 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+                className="absolute top-1 right-1 md:top-2 md:right-2 w-8 h-8 md:w-6 md:h-6 glass-nav border rounded-full flex items-center justify-center hover:text-red-600 transition-colors"
                 aria-label={`Remove image ${index + 1}`}
               >
                 <X className="h-5 w-5 md:h-4 md:w-4 text-gray-600" />
@@ -340,7 +342,7 @@ export function Step1Upload() {
           {imageUrls.map((url, index) => (
             <div
               key={`url-${index}`}
-              className="relative aspect-square rounded-lg border border-gray-200 overflow-hidden group"
+              className="relative aspect-square rounded-xl glass-subtle overflow-hidden group"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -353,7 +355,7 @@ export function Step1Upload() {
               </div>
               <button
                 onClick={() => removeImageUrl(index)}
-                className="absolute top-1 right-1 md:top-2 md:right-2 w-8 h-8 md:w-6 md:h-6 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+                className="absolute top-1 right-1 md:top-2 md:right-2 w-8 h-8 md:w-6 md:h-6 glass-nav border rounded-full flex items-center justify-center hover:text-red-600 transition-colors"
                 aria-label={`Remove URL image ${index + 1}`}
               >
                 <X className="h-5 w-5 md:h-4 md:w-4 text-gray-600" />

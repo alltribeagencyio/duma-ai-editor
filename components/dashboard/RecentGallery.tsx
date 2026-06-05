@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, memo, useCallback, useEffect } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
@@ -65,12 +65,10 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
     return (
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Edits</h2>
-        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <div className="glass-card p-12 text-center">
           <p className="text-gray-600 mb-4">No recent edits yet</p>
           <Link href="/new">
-            <Button className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-100">
-              Start Your First Edit
-            </Button>
+            <Button>Start Your First Edit</Button>
           </Link>
         </div>
       </div>
@@ -81,7 +79,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
     <div className="mb-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-900">Recent Edits</h2>
-        <Link href="/history" className="text-sm text-gray-600 hover:text-gray-900">
+        <Link href="/history" className="text-sm font-medium text-duma-primary hover:text-duma-primary-dark transition-colors">
           View All →
         </Link>
       </div>
@@ -97,7 +95,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
               href={`/jobs/${edit.id}`}
               className="block group"
             >
-              <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 hover:border-gray-300 transition-all min-h-[150px]">
+              <div className="relative aspect-square glass-subtle rounded-xl overflow-hidden hover:shadow-glass transition-all min-h-[150px]">
                 {!imageErrors.has(editedImage) ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -108,8 +106,8 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
                     onError={() => setImageErrors(prev => new Set(prev).add(editedImage))}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <span className="text-4xl">📷</span>
+                  <div className="w-full h-full flex items-center justify-center text-duma-primary/40">
+                    <ImageIcon className="h-9 w-9" />
                   </div>
                 )}
 
@@ -157,7 +155,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
                           href={`/jobs/${edit.id}`}
                           className="block group"
                         >
-                          <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200 hover:border-gray-300 transition-all">
+                          <div className="relative aspect-square glass-subtle rounded-xl overflow-hidden hover:shadow-glass transition-all">
                             {!imageErrors.has(editedImage) ? (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
@@ -168,8 +166,8 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
                                 onError={() => setImageErrors(prev => new Set(prev).add(editedImage))}
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                <span className="text-4xl">📷</span>
+                              <div className="w-full h-full flex items-center justify-center text-duma-primary/40">
+                                <ImageIcon className="h-9 w-9" />
                               </div>
                             )}
 
@@ -201,14 +199,14 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
           <>
             <button
               onClick={prevSlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-all opacity-0 hover:opacity-100 group-hover:opacity-100"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 glass-nav border rounded-full hover:text-duma-primary transition-all"
               aria-label="Previous slide"
             >
               <ChevronLeft className="h-5 w-5 text-gray-700" />
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-all opacity-0 hover:opacity-100 group-hover:opacity-100"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 glass-nav border rounded-full hover:text-duma-primary transition-all"
               aria-label="Next slide"
             >
               <ChevronRight className="h-5 w-5 text-gray-700" />
@@ -225,7 +223,7 @@ export const RecentGallery = memo(function RecentGallery({ recentEdits }: Recent
                 onClick={() => setCurrentSlide(index)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   index === currentSlide
-                    ? 'w-8 bg-purple-600'
+                    ? 'w-8 bg-brand-gradient shadow-glow'
                     : 'w-1.5 bg-gray-300 hover:bg-gray-400'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}

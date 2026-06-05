@@ -38,7 +38,7 @@ export function PromptForm({ prompt, onSubmit, onCancel }: PromptFormProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-6 shadow-sm">
+    <div className="glass-card glass-highlight p-4 sm:p-6 mb-6 animate-fade-in-up">
       <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
         {prompt ? 'Edit Prompt' : 'Create New Prompt'}
       </h3>

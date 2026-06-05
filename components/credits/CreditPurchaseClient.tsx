@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
@@ -153,7 +153,7 @@ export function CreditPurchaseClient() {
     return (
       <AppLayout userEmail={userEmail}>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-duma-primary/20 border-t-duma-primary" />
         </div>
       </AppLayout>
     )
@@ -254,9 +254,9 @@ export function CreditPurchaseClient() {
                   <CardDescription className="mt-2">{plan.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="glass-subtle p-4 rounded-xl">
                     <div className="text-center">
-                      <p className="text-3xl font-bold text-gray-900">
+                      <p className="text-3xl font-bold text-gradient-duma">
                         ${plan.ratePerImage}
                       </p>
                       <p className="text-sm text-gray-600">per image</p>
@@ -317,19 +317,19 @@ export function CreditPurchaseClient() {
               </div>
 
               {purchaseAmount && parseFloat(purchaseAmount) >= getMinimumAmount() && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-duma-secondary/10 border border-duma-secondary/20 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-start gap-3">
-                    <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <Info className="h-5 w-5 text-duma-secondary mt-0.5 flex-shrink-0" />
                     <div className="space-y-2 flex-1">
-                      <p className="text-sm font-medium text-blue-900">
+                      <p className="text-sm font-medium text-duma-secondary-dark">
                         You will receive approximately:
                       </p>
-                      <div className="bg-white rounded p-3">
-                        <p className="text-2xl font-bold text-blue-600">
+                      <div className="glass-card rounded-xl p-3">
+                        <p className="text-2xl font-bold text-gradient-duma">
                           {calculateCredits()} images
                         </p>
                         <p className="text-xs text-gray-600 mt-1">
-                          ${purchaseAmount} ÷ ${selectedPlanConfig.ratePerImage} per image
+                          ${purchaseAmount} Ã· ${selectedPlanConfig.ratePerImage} per image
                         </p>
                       </div>
                     </div>
@@ -370,35 +370,35 @@ export function CreditPurchaseClient() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium mb-2">💳 Pay As You Go</h4>
+              <h4 className="font-medium mb-2">ðŸ’³ Pay As You Go</h4>
               <p className="text-sm text-gray-600">
                 Purchase credits in any amount above the minimum. Use them whenever you need to edit images. No monthly subscriptions or unused credits going to waste.
               </p>
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">🎯 Simple Pricing</h4>
+              <h4 className="font-medium mb-2">ðŸŽ¯ Simple Pricing</h4>
               <p className="text-sm text-gray-600">
                 Each image edit costs one credit at your plan&apos;s rate. Personal plan: $0.375/image, Business plan: $0.35/image (7% savings).
               </p>
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">⚡ Instant Activation</h4>
+              <h4 className="font-medium mb-2">âš¡ Instant Activation</h4>
               <p className="text-sm text-gray-600">
                 Credits are added to your account immediately after payment. Start editing right away with no delays.
               </p>
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">🔄 Flexible Top-ups</h4>
+              <h4 className="font-medium mb-2">ðŸ”„ Flexible Top-ups</h4>
               <p className="text-sm text-gray-600">
                 After your first purchase, top up with lower minimums ($1.50 for Personal, $10 for Business). Add credits whenever you need them.
               </p>
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">📈 Upgrade Anytime</h4>
+              <h4 className="font-medium mb-2">ðŸ“ˆ Upgrade Anytime</h4>
               <p className="text-sm text-gray-600">
                 Start with Personal and upgrade to Business plan for better rates. Your existing balance stays intact, and future purchases get the new rate.
               </p>

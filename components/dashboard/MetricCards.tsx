@@ -80,12 +80,12 @@ export const MetricCards = memo(function MetricCards({
         return (
           <div
             key={metric.label}
-            className="bg-white rounded-lg border border-gray-100 p-3 md:p-4 lg:p-6 hover:border-duma-primary/20 transition-all hover:shadow-sm"
+            className="glass-card glass-interactive p-3 md:p-4 lg:p-6 animate-fade-in-up"
           >
             {/* Mobile: Centered layout */}
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               <div className="flex items-center justify-center w-full lg:justify-between mb-2 lg:mb-2">
-                <div className={`p-2 rounded-lg ${metric.bg}`}>
+                <div className={`p-2.5 rounded-xl ring-1 ring-inset ring-white/50 ${metric.bg}`}>
                   <Icon className={`h-4 w-4 md:h-5 md:w-5 ${metric.color}`} />
                 </div>
                 {metric.pulse && (

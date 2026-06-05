@@ -40,9 +40,9 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md glass-highlight animate-fade-in-up">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">Sign In</CardTitle>
+        <CardTitle className="text-2xl text-center text-gradient-duma">Sign In</CardTitle>
         <CardDescription className="text-center">
           Enter your email and password to access your account
         </CardDescription>
