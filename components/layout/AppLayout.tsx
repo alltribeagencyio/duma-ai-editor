@@ -59,24 +59,6 @@ export function AppLayout({ children, userEmail, title, subtitle }: AppLayoutPro
     fetchUser()
   }, [fetchUser])
 
-  // Check for stale jobs every 15 minutes
-  useEffect(() => {
-    const checkStaleJobs = async () => {
-      try {
-        await fetch('/api/cron/check-stale-jobs')
-      } catch (error) {
-        console.error('Error checking stale jobs:', error)
-      }
-    }
-
-    // Run immediately on mount
-    checkStaleJobs()
-
-    // Then run every 15 minutes
-    const interval = setInterval(checkStaleJobs, 15 * 60 * 1000)
-    return () => clearInterval(interval)
-  }, [])
-
   return (
     <div className="min-h-screen">
       <Sidebar
