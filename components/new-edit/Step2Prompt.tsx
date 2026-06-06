@@ -14,6 +14,7 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
+  Check,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -30,7 +31,7 @@ const iconMap: Record<string, any> = {
   Home,
 }
 
-const PAGE_SIZE = 6
+const PAGE_SIZE = 10
 
 type SortKey = 'recommended' | 'name-asc' | 'name-desc' | 'category'
 
@@ -165,6 +166,7 @@ export function Step2Prompt() {
 
   const canProceed = promptType === 'preset' ? !!presetId : prompt.trim().length > 0
 
+  // Record-style row card: icon tile → name + category → description → check.
   const renderCard = (item: PromptItem) => {
     const Icon = iconMap[item.icon || ''] || Square
     const isSelected = presetId === item.id
@@ -174,20 +176,43 @@ export function Step2Prompt() {
         onClick={() => setPreset(item.id, item.name, item.prompt)}
         aria-pressed={isSelected}
         className={cn(
-          'glass-card glass-interactive p-4 text-left transition-all duration-200 flex flex-col gap-2 active:scale-[0.98]',
+          'group w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200 glass-card glass-interactive',
           isSelected ? 'ring-2 ring-duma-primary bg-duma-primary/10 shadow-glow' : ''
         )}
       >
-        <div className="flex items-center justify-between">
-          <Icon className="h-6 w-6 text-duma-primary" />
-          {item.category && (
-            <span className="text-xs px-2 py-0.5 bg-duma-secondary/10 text-duma-secondary rounded-full capitalize">
-              {item.category}
-            </span>
+        <div
+          className={cn(
+            'grid place-items-center h-11 w-11 flex-shrink-0 rounded-xl transition-colors',
+            isSelected ? 'bg-brand-gradient text-white shadow-glow' : 'glass-subtle text-duma-primary'
+          )}
+        >
+          <Icon className="h-5 w-5" />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium text-gray-900 truncate">{item.name}</h3>
+            {item.category && (
+              <span className="hidden sm:inline-block text-xs px-2 py-0.5 bg-duma-secondary/10 text-duma-secondary rounded-full capitalize flex-shrink-0">
+                {item.category}
+              </span>
+            )}
+          </div>
+          {item.description && (
+            <p className="text-sm text-gray-600 line-clamp-1 mt-0.5">{item.description}</p>
           )}
         </div>
-        <h3 className="font-medium text-gray-900 leading-tight">{item.name}</h3>
-        {item.description && <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>}
+
+        <div
+          className={cn(
+            'grid place-items-center h-6 w-6 flex-shrink-0 rounded-full border-2 transition-all',
+            isSelected
+              ? 'bg-brand-gradient border-white text-white shadow-glow'
+              : 'border-gray-300 text-transparent group-hover:border-duma-primary/50'
+          )}
+        >
+          <Check className="h-4 w-4" />
+        </div>
       </button>
     )
   }
@@ -331,12 +356,14 @@ export function Step2Prompt() {
 
           {/* Cards */}
           {loading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="space-y-2">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="glass-card p-4 space-y-2 animate-pulse">
-                  <div className="h-6 w-6 bg-white/60 rounded" />
-                  <div className="h-5 w-3/4 bg-white/60 rounded" />
-                  <div className="h-4 w-full bg-white/60 rounded" />
+                <div key={i} className="glass-card p-3 flex items-center gap-3 animate-pulse">
+                  <div className="h-11 w-11 rounded-xl bg-white/60 flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-1/3 bg-white/60 rounded" />
+                    <div className="h-3 w-2/3 bg-white/60 rounded" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -365,7 +392,7 @@ export function Step2Prompt() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">{pageItems.map(renderCard)}</div>
+              <div className="space-y-2">{pageItems.map(renderCard)}</div>
 
               {/* Pagination */}
               <div className="flex items-center justify-between pt-1">
