@@ -161,13 +161,13 @@ export function Step1Upload() {
 
   return (
     <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 items-start">
-      {/* ── Left column: upload controls ────────────────────────── */}
+      {/* ── Left column: product details ────────────────────────── */}
       <div className="space-y-4">
         {/* Product Information - Only visible for business users */}
         {!isLoadingPlan && pricingPlan === 'business' && (
           <div className="glass-card p-4">
             <h3 className="text-base font-semibold text-gray-900 mb-3">Product Information</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="space-y-3">
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1.5">
                   Product Name
@@ -180,117 +180,35 @@ export function Step1Upload() {
                   className="glass-input w-full px-3 py-2 text-sm focus:outline-none"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                  Category
-                </label>
-                <input
-                  type="text"
-                  value={productCategory}
-                  onChange={(e) => setProductCategory(e.target.value)}
-                  placeholder="e.g., Apparel"
-                  className="glass-input w-full px-3 py-2 text-sm focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                  SKU
-                </label>
-                <input
-                  type="text"
-                  value={productSku}
-                  onChange={(e) => setProductSku(e.target.value)}
-                  placeholder="e.g., TSH-001-BLK"
-                  className="glass-input w-full px-3 py-2 text-sm focus:outline-none"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    value={productCategory}
+                    onChange={(e) => setProductCategory(e.target.value)}
+                    placeholder="e.g., Apparel"
+                    className="glass-input w-full px-3 py-2 text-sm focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    SKU
+                  </label>
+                  <input
+                    type="text"
+                    value={productSku}
+                    onChange={(e) => setProductSku(e.target.value)}
+                    placeholder="e.g., TSH-001-BLK"
+                    className="glass-input w-full px-3 py-2 text-sm focus:outline-none"
+                  />
+                </div>
               </div>
             </div>
           </div>
         )}
-
-        {/* Dropzone */}
-        <div
-          {...getRootProps()}
-          className={cn(
-            'border-2 border-dashed rounded-2xl p-6 md:p-8 transition-all duration-200 cursor-pointer backdrop-blur-md',
-            isDragActive
-              ? 'border-duma-primary bg-duma-primary/10 shadow-glow'
-              : 'border-white/70 bg-white/40 hover:border-duma-primary/40 hover:bg-white/60'
-          )}
-        >
-          <input {...getInputProps()} />
-          <div className="flex flex-col items-center justify-center text-center space-y-3">
-            <div className="grid place-items-center h-14 w-14 rounded-2xl bg-brand-gradient text-white shadow-glow">
-              <Upload className="h-7 w-7" />
-            </div>
-            <div>
-              <p className="text-sm md:text-base text-gray-900 font-medium">
-                Drag images here or click to browse
-              </p>
-              <p className="text-xs md:text-sm text-gray-600 mt-1">
-                JPG, PNG, WEBP, HEIC up to 5MB • Max 10 images
-              </p>
-            </div>
-            {/* Camera Capture Button */}
-            <input
-              ref={cameraInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handleCameraCapture}
-              className="hidden"
-              multiple
-            />
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                cameraInputRef.current?.click()
-              }}
-              className="flex items-center gap-2 px-4 py-2 glass-subtle rounded-xl hover:bg-white/70 hover:text-duma-primary transition-colors"
-            >
-              <Camera className="h-5 w-5 text-gray-600" />
-              <span className="text-sm font-medium text-gray-900">Take Photo</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/60"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-3 py-0.5 rounded-full glass-subtle text-gray-500">or add image by URL</span>
-          </div>
-        </div>
-
-        {/* URL Input */}
-        <div className="glass-card p-3 md:p-4">
-          <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex-1">
-              <input
-                type="url"
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAddUrl()}
-                placeholder="https://example.com/image.jpg"
-                className="glass-input w-full px-3.5 py-2 text-sm focus:outline-none"
-                disabled={isValidatingUrl}
-              />
-            </div>
-            <Button
-              onClick={handleAddUrl}
-              disabled={isValidatingUrl || !urlInput.trim()}
-              className="flex items-center justify-center gap-2 w-full sm:w-auto"
-            >
-              <LinkIcon className="h-4 w-4" />
-              <span>{isValidatingUrl ? 'Validating...' : 'Add URL'}</span>
-            </Button>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Enter a direct link to an image (must end with .jpg, .png, .webp, etc.)
-          </p>
-        </div>
 
         {/* Description / context — combined with the prompt by our refinement AI */}
         <div className="glass-card p-4 space-y-1.5">
@@ -311,17 +229,88 @@ export function Step1Upload() {
             value={description}
             onChange={(e) => setDescription(e.target.value.slice(0, 1500))}
             placeholder="e.g. Handmade leather wallet, premium feel, warm natural lighting, e-commerce listing."
-            className="glass-input w-full px-3 py-2 text-sm focus:outline-none min-h-[88px] resize-y"
+            className="glass-input w-full px-3 py-2 text-sm focus:outline-none min-h-[120px] resize-y"
             maxLength={1500}
           />
           <div className="flex justify-end">
             <span className="text-xs text-gray-500">{description.length} / 1500</span>
           </div>
         </div>
+      </div>
+
+      {/* ── Right column: upload + previews + next ──────────────── */}
+      <div className="glass-card p-4 md:p-5 flex flex-col lg:sticky lg:top-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-base font-semibold text-gray-900">Images</h3>
+          <span className="px-2.5 py-0.5 rounded-full glass-subtle text-xs font-medium text-gray-600">
+            {totalImages}/10
+          </span>
+        </div>
+
+        {/* Compact dropzone */}
+        <div
+          {...getRootProps()}
+          className={cn(
+            'border-2 border-dashed rounded-xl p-3.5 transition-all duration-200 cursor-pointer backdrop-blur-md',
+            isDragActive
+              ? 'border-duma-primary bg-duma-primary/10 shadow-glow'
+              : 'border-white/70 bg-white/40 hover:border-duma-primary/40 hover:bg-white/60'
+          )}
+        >
+          <input {...getInputProps()} />
+          <div className="flex items-center gap-3 text-left">
+            <div className="grid place-items-center h-10 w-10 flex-shrink-0 rounded-xl bg-brand-gradient text-white shadow-glow">
+              <Upload className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm text-gray-900 font-medium">Drag images or click to browse</p>
+              <p className="text-xs text-gray-600">JPG, PNG, WEBP, HEIC • 5MB • Max 10</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Camera + URL row */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={handleCameraCapture}
+          className="hidden"
+          multiple
+        />
+        <div className="flex flex-wrap items-center gap-2 mt-2.5">
+          <button
+            onClick={() => cameraInputRef.current?.click()}
+            className="flex items-center gap-1.5 px-3 py-2 glass-subtle rounded-xl hover:bg-white/70 hover:text-duma-primary transition-colors flex-shrink-0"
+          >
+            <Camera className="h-4 w-4 text-gray-600" />
+            <span className="text-sm font-medium text-gray-900">Photo</span>
+          </button>
+          <div className="flex-1 min-w-[180px] flex gap-2">
+            <input
+              type="url"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleAddUrl()}
+              placeholder="Paste image URL…"
+              className="glass-input flex-1 min-w-0 px-3 py-2 text-sm focus:outline-none"
+              disabled={isValidatingUrl}
+            />
+            <Button
+              onClick={handleAddUrl}
+              disabled={isValidatingUrl || !urlInput.trim()}
+              className="flex items-center justify-center gap-1.5 flex-shrink-0 px-3"
+            >
+              <LinkIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">{isValidatingUrl ? '…' : 'Add'}</span>
+            </Button>
+          </div>
+        </div>
 
         {/* Error messages */}
         {fileRejections.length > 0 && (
-          <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
+          <div className="flex items-start gap-2 p-3 mt-2.5 bg-red-50 rounded-lg">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-red-600">
               <p className="font-medium">Some files were rejected:</p>
@@ -335,41 +324,26 @@ export function Step1Upload() {
             </div>
           </div>
         )}
-
-        {/* URL Error */}
         {urlError && (
-          <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
+          <div className="flex items-start gap-2 p-3 mt-2.5 bg-red-50 rounded-lg">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-red-600">
               <p className="font-medium">{urlError}</p>
             </div>
           </div>
         )}
-      </div>
 
-      {/* ── Right column: live previews + next ──────────────────── */}
-      <div className="glass-card p-4 md:p-5 flex flex-col lg:sticky lg:top-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-semibold text-gray-900">
-            Selected Images
-          </h3>
-          <span className="px-2.5 py-0.5 rounded-full glass-subtle text-xs font-medium text-gray-600">
-            {totalImages}/10
-          </span>
-        </div>
-
+        {/* Previews */}
         {totalImages === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center border-2 border-dashed border-white/60 rounded-xl py-12 px-4 min-h-[260px]">
-            <div className="grid place-items-center h-12 w-12 rounded-2xl glass-subtle text-gray-400 mb-3">
-              <Upload className="h-6 w-6" />
+          <div className="flex-1 flex flex-col items-center justify-center text-center mt-3 border-2 border-dashed border-white/60 rounded-xl py-10 px-4 min-h-[200px]">
+            <div className="grid place-items-center h-11 w-11 rounded-2xl glass-subtle text-gray-400 mb-2.5">
+              <Upload className="h-5 w-5" />
             </div>
             <p className="text-sm font-medium text-gray-600">No images yet</p>
-            <p className="text-xs text-gray-500 mt-1">
-              Upload or add a URL to see previews here
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Your selected images appear here</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 overflow-y-auto pr-1 max-h-[calc(100vh-22rem)] min-h-[260px]">
+          <div className="grid grid-cols-3 gap-3 overflow-y-auto pr-1 mt-3 max-h-[calc(100vh-26rem)] min-h-[200px]">
             {/* File uploads */}
             {images.map((image, index) => (
               <div
