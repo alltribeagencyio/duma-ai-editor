@@ -4,7 +4,7 @@ import { useState, useEffect, memo, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, Plus, Clock, Settings, Menu, X, LogOut, FileText, ChevronLeft, ChevronRight, User, BarChart3, CreditCard, HelpCircle, Images } from 'lucide-react'
+import { Home, Plus, Clock, Settings, Menu, X, LogOut, FileText, ChevronLeft, ChevronRight, User, BarChart3, CreditCard, HelpCircle, Images, UploadCloud } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -66,6 +66,7 @@ export const Sidebar = memo(function Sidebar({ userEmail, collapsed, onCollapsed
     const items = [
       { icon: Home, label: 'Dashboard', href: '/dashboard' },
       { icon: Plus, label: 'New Edit', href: '/new' },
+      { icon: UploadCloud, label: 'Uploads', href: '/uploads' },
       { icon: Images, label: 'Gallery', href: '/gallery' },
       { icon: FileText, label: 'Prompts', href: '/prompts' },
       { icon: Clock, label: 'History', href: '/history' },
