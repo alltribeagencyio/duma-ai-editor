@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
+import { prisma } from '@/lib/prisma'
 import {
   ALLOWED_IMAGE_TYPES,
   MAX_UPLOAD_BYTES,
@@ -75,6 +76,20 @@ export async function POST(req: NextRequest) {
         return getPresignedUploadUrl(inputKey(user.id, contentType), contentType)
       })
     )
+
+    // Record each upload so it shows in the Uploads tab regardless of whether a
+    // job is ever created. Best-effort — never block the upload on this.
+    prisma.upload
+      .createMany({
+        data: uploads.map((u, i) => ({
+          userId: user.id,
+          key: u.key,
+          url: u.publicUrl,
+          contentType: files[i].contentType.toLowerCase(),
+        })),
+        skipDuplicates: true,
+      })
+      .catch((err) => console.error('Failed to record uploads:', err))
 
     return NextResponse.json({ uploads })
   } catch (error) {

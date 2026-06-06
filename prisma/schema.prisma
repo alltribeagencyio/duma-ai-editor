@@ -45,6 +45,20 @@ model Job {
   @@index([webhookId])
 }
 
+// Every image a user uploads to R2 (recorded at presign time), independent of
+// whether it ever became a job. Powers the Uploads tab.
+model Upload {
+  id          String   @id @default(uuid())
+  userId      String
+  key         String   @unique
+  url         String
+  contentType String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
 model PromptPreset {
   id          String  @id @default(uuid())
   name        String
