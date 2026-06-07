@@ -16,6 +16,7 @@ export function Step3Review() {
   const {
     images,
     imageUrls,
+    referenceImage,
     prompt,
     description,
     promptType,
@@ -63,6 +64,14 @@ export function Step3Review() {
         throw new Error('No images to submit')
       }
 
+      // 2b. Upload the optional design-inspiration reference image (separately,
+      // so it isn't treated as one of the images being edited).
+      let referenceImageUrl: string | undefined
+      if (referenceImage) {
+        const [refUrl] = await uploadImagesToR2([referenceImage])
+        referenceImageUrl = refUrl
+      }
+
       // 3. Create the job with the image URLs (no file bytes through the API).
       const res = await fetch('/api/jobs', {
         method: 'POST',
@@ -70,6 +79,7 @@ export function Step3Review() {
         body: JSON.stringify({
           prompt,
           description: description || undefined,
+          referenceImageUrl,
           promptType,
           presetId: presetId || undefined,
           phone: phone || undefined,
@@ -150,6 +160,29 @@ export function Step3Review() {
           </p>
         </div>
       </div>
+
+      {/* Review Design inspiration (optional) */}
+      {referenceImage && (
+        <div className="space-y-3 md:space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900">Design Inspiration</h2>
+            <Button variant="ghost" onClick={() => setStep(1)} size="sm">
+              Edit
+            </Button>
+          </div>
+          <div className="flex items-center gap-3 glass-subtle rounded-xl p-3">
+            <div className="relative h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden">
+              <Image
+                src={URL.createObjectURL(referenceImage)}
+                alt="Reference"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <p className="text-sm text-gray-700 truncate">{referenceImage.name}</p>
+          </div>
+        </div>
+      )}
 
       {/* Review Description / context (optional) */}
       {description && (

@@ -25,8 +25,11 @@ export function Step1Upload() {
     setProductSku,
     description,
     setDescription,
+    referenceImage,
+    setReferenceImage,
   } = useNewEditStore()
   const cameraInputRef = useRef<HTMLInputElement>(null)
+  const referenceInputRef = useRef<HTMLInputElement>(null)
   const [pricingPlan, setPricingPlan] = useState<string>('personal')
   const [isLoadingPlan, setIsLoadingPlan] = useState(true)
   const [urlInput, setUrlInput] = useState('')
@@ -89,6 +92,15 @@ export function Step1Upload() {
       const newImages = [...images, ...validFiles].slice(0, 10)
       setImages(newImages)
     }
+  }
+
+  const handleReferenceSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024) {
+      setReferenceImage(file)
+    }
+    // Allow re-selecting the same file later
+    event.target.value = ''
   }
 
   const validateImageUrl = (url: string): boolean => {
@@ -235,6 +247,62 @@ export function Step1Upload() {
           <div className="flex justify-end">
             <span className="text-xs text-gray-500">{description.length} / 1500</span>
           </div>
+        </div>
+
+        {/* Design inspiration — a single reference image passed to the AI */}
+        <div className="glass-card p-4 space-y-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-duma-primary" />
+            <span className="text-sm font-medium text-gray-900">Design inspiration</span>
+            <span className="text-xs font-normal text-gray-500">(optional)</span>
+          </div>
+          <p className="text-xs text-gray-600">
+            Add one reference image — a style, look or mood you want the AI to draw from. This is a
+            guide, not one of the images being edited.
+          </p>
+          <input
+            ref={referenceInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleReferenceSelect}
+            className="hidden"
+          />
+          {referenceImage ? (
+            <div className="flex items-center gap-3">
+              <div className="relative h-16 w-16 flex-shrink-0 rounded-xl glass-subtle overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={URL.createObjectURL(referenceImage)}
+                  alt="Reference"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm text-gray-900 truncate">{referenceImage.name}</p>
+                <button
+                  onClick={() => referenceInputRef.current?.click()}
+                  className="text-xs text-duma-primary font-medium hover:underline"
+                >
+                  Replace
+                </button>
+              </div>
+              <button
+                onClick={() => setReferenceImage(null)}
+                aria-label="Remove reference image"
+                className="grid place-items-center h-8 w-8 flex-shrink-0 glass-nav border rounded-full hover:text-red-600 transition-colors"
+              >
+                <X className="h-4 w-4 text-gray-600" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => referenceInputRef.current?.click()}
+              className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-white/70 bg-white/40 hover:border-duma-primary/40 hover:bg-white/60 rounded-xl py-3 transition-colors"
+            >
+              <Upload className="h-4 w-4 text-duma-primary" />
+              <span className="text-sm font-medium text-gray-900">Upload reference image</span>
+            </button>
+          )}
         </div>
       </div>
 

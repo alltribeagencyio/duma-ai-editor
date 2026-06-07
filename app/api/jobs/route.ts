@@ -82,6 +82,12 @@ export async function POST(req: NextRequest) {
     const description = body.description
       ? sanitizePrompt(body.description as string, 1500)
       : null
+    // Optional single reference image for design inspiration. Passed to n8n; not
+    // persisted on the job.
+    const referenceImageUrl =
+      typeof body.referenceImageUrl === 'string' && isValidHttpUrl(body.referenceImageUrl)
+        ? body.referenceImageUrl
+        : null
 
     const rawUrls = Array.isArray(body.imageUrls) ? (body.imageUrls as string[]) : []
     const imageUrls = rawUrls.filter((u) => typeof u === 'string' && isValidHttpUrl(u))
@@ -172,6 +178,7 @@ export async function POST(req: NextRequest) {
         imageUrls: inputImageUrls,
         prompt,
         description,
+        referenceImageUrl,
         promptType,
         presetId,
         productName,

@@ -4,6 +4,7 @@ interface NewEditStore {
   step: 1 | 2 | 3
   images: File[]
   imageUrls: string[]
+  referenceImage: File | null
   prompt: string
   description: string
   promptType: 'preset' | 'custom'
@@ -21,6 +22,7 @@ interface NewEditStore {
   prevStep: () => void
   setImages: (images: File[]) => void
   setImageUrls: (urls: string[]) => void
+  setReferenceImage: (file: File | null) => void
   removeImage: (index: number) => void
   removeImageUrl: (index: number) => void
   setPrompt: (prompt: string) => void
@@ -39,6 +41,7 @@ const initialState = {
   step: 1 as 1 | 2 | 3,
   images: [],
   imageUrls: [],
+  referenceImage: null,
   prompt: '',
   description: '',
   promptType: 'preset' as 'preset' | 'custom',
@@ -69,6 +72,8 @@ export const useNewEditStore = create<NewEditStore>((set) => ({
   setImages: (images) => set({ images }),
 
   setImageUrls: (imageUrls) => set({ imageUrls }),
+
+  setReferenceImage: (referenceImage) => set({ referenceImage }),
 
   removeImage: (index) =>
     set((state) => ({
